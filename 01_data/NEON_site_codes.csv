@@ -1,0 +1,6 @@
+siteCode,siteName,type,terrain,domainCode,stateCode,latitude,longitude
+CPER,Central Plains Experimental Range NEON,CORE,TERRESTRIAL,D10,CO,40.81554,-104.74559
+GRSM,Great Smoky Mountains National Park NEON,GRADIENT,TERRESTRIAL,D07,TN,35.68896,-83.50195
+TEAK,Lower Teakettle NEON,GRADIENT,TERRESTRIAL,D17,CA,37.00583,-119.00602
+SRER,Santa Rita Experimental Range NEON,CORE,TERRESTRIAL,D14,AZ,31.91068,-110.83549
+SERC,Smithsonian Environmental Research Center NEON,GRADIENT,TERRESTRIAL,D02,MD,38.89013,-76.56001
