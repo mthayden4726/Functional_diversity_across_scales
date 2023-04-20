@@ -70,4 +70,22 @@ for i in range(len(files)):
     # Calculate functional richness based on PCA components
     scale_fric[i] = calc_fun_rich(neon, window_sizes, x_mean)
     
- 
+
+## Export file ##
+# Save as numpy file
+np.save('CPER_FRic_scales.npy', scale_fric) 
+# Save to .csv
+w = csv.writer(open("output.csv", "w"))
+dict = scale_fric
+# loop over dictionary keys and values
+for key, val in dict.items():
+    # write every key and value to file
+    w.writerow([key, val])
+w.close()
+# Save to .txt
+# open file for writing
+f = open("dict.txt","w")
+# write file
+f.write( str(dict) )
+# close file
+f.close()
