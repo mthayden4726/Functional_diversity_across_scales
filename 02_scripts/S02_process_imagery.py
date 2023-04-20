@@ -302,7 +302,13 @@ plt.show()
 # points need to be 2-D
 
 chv_results, chv_mean = calc_fun_rich(neon, window_sizes, x_mean)
-        
+
+# Plot results
+names = list(chv_results.keys())
+values = list(chv_results.values())
+
+plt.bar(range(len(chv_results)), values, tick_label=names)
+plt.show()
 
 ##########
 

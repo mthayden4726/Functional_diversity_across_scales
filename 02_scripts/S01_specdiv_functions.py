@@ -225,9 +225,8 @@ def calc_fun_rich(neon, window_sizes, x_mean):
             hull = ConvexHull(sub_arr)
             fric = hull.volume
             results_FR[iterator.current_line, window] = fric
-        volumes[iterator.current_line] = np.array(list(results_FR.values()))
-    volume_mean = np.array(list(volumes.values())).mean()
-    return volumes, volume_mean
+    volume_mean = np.array(list(results_FR.values())).mean()
+    return results_FR, volume_mean
 
     
 #### In progress below this point - commenting out for now ####
