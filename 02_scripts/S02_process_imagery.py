@@ -64,9 +64,6 @@ filename = PRODUCTCODE + '/' + SITECODE + '/' + YEAR
 file_paths = find_neon_files(SITECODE,
                              PRODUCTCODE,
                              YEAR)
-file = file_paths[1]
-subprocess.run(['wget', file, '-O', filename])
-wget.download(file)
 
 filename = 'NEON_D10_CPER_DP3_526000_4519000_reflectance.h5'
 

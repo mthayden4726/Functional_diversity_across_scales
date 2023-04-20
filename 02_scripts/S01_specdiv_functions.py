@@ -15,6 +15,7 @@ Author: M. Hayden
 Date: 4/12/2023
 """
 import numpy as np
+import requests
 # 01_specdiv_functions>
 
 def find_neon_files(SITECODE, PRODUCTCODE, 
@@ -52,6 +53,26 @@ def find_neon_files(SITECODE, PRODUCTCODE,
             file_paths.insert(1, file['url'])
             print(file['url'])
     return file_paths
+
+def retrieve_neon_files(file_paths):
+    """Function to download files from list of file paths.
+    
+    Parameters:
+    -----------
+    
+    file_paths: list of strings
+
+        
+    Returns:
+    -----------
+    files: list of locations of downloaded files on OS
+    
+    """
+    files = []
+    for i in range(len(file_paths)):
+        loc, message = urlretrieve(file_paths[i])
+        files.insert(1, loc)
+    return files
 
 def show_rgb(hy_obj,r=660,g=550,b=440, correct= []):
     """Display raster in RGB.
@@ -93,7 +114,7 @@ def show_rgb(hy_obj,r=660,g=550,b=440, correct= []):
     plt.show()
     #plt.close()
 
-def subsample(hy_obj,args):
+def subsample(hy_obj,sample_size):
 
     print("Sampling %s" % os.path.basename(hy_obj.file_name))
 
@@ -101,7 +122,7 @@ def subsample(hy_obj,args):
     # This can probably be written more concisely
     sub_samples = np.zeros((hy_obj.lines,hy_obj.columns)).astype(bool)
     idx = np.array(np.where(hy_obj.mask['no_data'])).T
-    idxRand= idx[np.random.choice(range(len(idx)),int(len(idx)*args.sample), replace = False)].T
+    idxRand= idx[np.random.choice(range(len(idx)),int(len(idx)*sample_size), replace = False)].T
     sub_samples[idxRand[0],idxRand[1]] = True
     hy_obj.mask['samples'] = sub_samples
 
@@ -112,6 +133,19 @@ def subsample(hy_obj,args):
         if ~band:
             X.append(hy_obj.get_band(band_num,mask='samples'))
     return  np.array(X).T
+
+def scale_transform(X):
+    # Center, scale and fit PCA transform - scales based on mean reflectance at each band
+    x_mean = X.mean(axis=0)[np.newaxis,:]
+    X = X.astype('float32') # necessary to manually convert to float for next function to work
+    X -=x_mean
+    x_std = X.std(axis=0,ddof=1)[np.newaxis,:]
+    X /=x_std
+    X = X[~np.isnan(X.sum(axis=1)) & ~np.isinf(X.sum(axis=1)),:]
+    # Perform initial PCA fit
+    pca = PCA(n_components=15) # set max number of components
+    pca.fit(X)
+    return x_mean, x_std
     
 def progbar(curr, total, full_progbar = 100):
     '''Display progress bar.
