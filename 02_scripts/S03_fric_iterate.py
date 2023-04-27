@@ -26,11 +26,12 @@ import os
 from S01_specdiv_functions import * # add scripts folder to python path manager
 
 ## Set global parameters ##
-window_sizes = [10, 15, 20, 30, 40, 50, 75, 100, 150]  # list of window sizes to test
+window_sizes = [10, 50, 100]  # list of window sizes to test
 ndvi_threshold = 0.4 # ndvi threshold for radiometric filtering
 # shade_threshold = 500 # should be low threshold across NIR region (15%)
 # cloud_threshold = 1500 # should be high threshold in blue band
 bad_bands = [[300,400],[1300,1450],[1780,2000],[2450,2600]] # bands to be masked out
+sample_size = 0.1 # proportion of pixels to subsample for fitting PCA
 comps = 4 # default component numbers for PCA 
 nclusters = 15 # default component numbers for K-means clustering
 nbCPU = 4 # computational parameters
@@ -42,9 +43,9 @@ Output_Dir = 'Users/meha3816/Desktop/BioSCape_across_scales/01_data/02_processed
 Temp_Dir = 'Users/meha3816/Desktop/BioSCape_across_scales/01_data/temp_neon' # for files downloaded from NEON API
 
 # Set parameters for data import
-SITECODE = 'CPER' # NEON site of interest
+SITECODE = 'TEAK' # NEON site of interest
 PRODUCTCODE = 'DP3.30006.001' # NEON product of interest (DP3.30006.001 is orthorectified mosaic)
-YEAR = '2021-06' # Timeframe of desired imagery
+YEAR = '2021-07' # Timeframe of desired imagery
 
 ## Create list of data files to process in remainder of script ##
 file_paths = find_neon_files(SITECODE,
@@ -53,8 +54,10 @@ file_paths = find_neon_files(SITECODE,
 # Download files to temp OS location - WARNING: LARGE STORAGE REQUIREMENT
 files = retrieve_neon_files(file_paths)
 
+
 #####################  CALCULATE FRIC FOR THE SITE  #####################
 scale_fric = {} # dict for storing output
+scale_list = []
 for i in range(len(files)):
     # Read image
     neon_image = files[i]
@@ -65,11 +68,24 @@ for i in range(len(files)):
     ndvi = neon.ndi()
     neon.mask['sample'] = (neon.mask['no_data']) & (ndvi > ndvi_threshold)
     # Scale, center and PCA transform
-    X = subsample(neon, sample_size = 0.1)
-    x_mean, x_std = scale_transform(X)
+    X = subsample(neon,sample_size,bad_bands)
+    x_mean, x_std, pca = scale_transform(X, comps)
     # Calculate functional richness based on PCA components
-    scale_fric[i] = calc_fun_rich(neon, window_sizes, x_mean)
+    volumes = calc_fun_rich(neon, window_sizes, 
+                            x_mean, x_std, pca, comps)
+    scale_fric[i] = volumes
+    scale_list.append(volumes)
     
+## Plot results ##
+names = list(scale_fric.keys())
+values = list(scale_fric.values())
+plt.scatter(names, values)
+plt.show()
+
+names2 = list(scale_fric[0][500].keys())
+values2 = list(scale_fric[0][500].values())
+plt.scatter(names2, values2)
+plt.show()
 
 ## Export file ##
 # Save as numpy file

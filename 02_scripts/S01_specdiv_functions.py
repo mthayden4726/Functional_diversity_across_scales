@@ -14,8 +14,19 @@ Additionally contains processing functions to:
 Author: M. Hayden
 Date: 4/12/2023
 """
+import hytools as ht
+import matplotlib.pyplot as plt
 import numpy as np
 import requests
+import sklearn
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+import kneed
+from kneed import KneeLocator
+from scipy.spatial import ConvexHull
+import subprocess
+from urllib.request import urlretrieve
+import os
 # 01_specdiv_functions>
 
 def find_neon_files(SITECODE, PRODUCTCODE, 
@@ -114,7 +125,7 @@ def show_rgb(hy_obj,r=660,g=550,b=440, correct= []):
     plt.show()
     #plt.close()
 
-def subsample(hy_obj,sample_size):
+def subsample(hy_obj,sample_size,bad_bands):
 
     print("Sampling %s" % os.path.basename(hy_obj.file_name))
 
@@ -134,7 +145,7 @@ def subsample(hy_obj,sample_size):
             X.append(hy_obj.get_band(band_num,mask='samples'))
     return  np.array(X).T
 
-def scale_transform(X):
+def scale_transform(X, comps):
     # Center, scale and fit PCA transform - scales based on mean reflectance at each band
     x_mean = X.mean(axis=0)[np.newaxis,:]
     X = X.astype('float32') # necessary to manually convert to float for next function to work
@@ -143,9 +154,9 @@ def scale_transform(X):
     X /=x_std
     X = X[~np.isnan(X.sum(axis=1)) & ~np.isinf(X.sum(axis=1)),:]
     # Perform initial PCA fit
-    pca = PCA(n_components=15) # set max number of components
+    pca = PCA(n_components=comps) # set max number of components
     pca.fit(X)
-    return x_mean, x_std
+    return x_mean, x_std, pca
     
 def progbar(curr, total, full_progbar = 100):
     '''Display progress bar.
@@ -221,7 +232,7 @@ def calc_chv(arr):
     volume = hull.volume
     return volume
 
-def calc_fun_rich(neon, window_sizes, x_mean):
+def calc_fun_rich(neon, window_sizes, x_mean, x_std, pca, comps):
     """ Calculate convex hull volume for an array at a variety of window sizes.
     
     Parameters:
@@ -253,19 +264,104 @@ def calc_fun_rich(neon, window_sizes, x_mean):
             for i in range(half_window, pca_chunk.shape[0]-half_window):
                 for j in range(half_window, pca_chunk.shape[1]-half_window):
                     sub_arr = pca_chunk[i-half_window:i+half_window+1, j-half_window:j+half_window+1, :]
+                    sub_arr = sub_arr.reshape((sub_arr.shape[0]*sub_arr.shape[1],comps))
+                    if np.nanmean(sub_arr) == 0.0:
+                        continue
+                    hull = ConvexHull(sub_arr) 
+                    fric[i,j]= hull.volume
+            results_FR[window] = np.nanmean(fric)
+        volumes[iterator.current_line] = results_FR
+    volume_mean = np.array(list(results_FR.values())).mean()
+    return volumes
+
+def calc_fun_rich(neon, window_sizes, x_mean, x_std, pca, comps):
+    """Calculate convex hull volume for an array at a variety of window sizes.
+    
+    Parameters:
+    -----------
+    neon: hytools image
+    window_sizes: list/array of integers
+    x_mean: PCA mean from previous sampling?? 
+    Returns:
+    -----------
+    volume_mean: functional richness for given window size and image.
+    
+    """
+    volumes = {}
+    results_FR = {}
+    iterator = neon.iterate(by = 'chunk',chunk_size = (250,250))
+    for window in window_sizes:
+        half_window = window // 2
+        while not iterator.complete:
+            chunk = iterator.read_next()
+            X_chunk = chunk[:,:,~neon.bad_bands].astype(np.float32)
+            X_chunk = X_chunk.reshape((X_chunk.shape[0]*X_chunk.shape[1],X_chunk.shape[2]))
+            X_chunk -=x_mean
+            X_chunk /=x_std
+            X_chunk[np.isnan(X_chunk) | np.isinf(X_chunk)] = 0
+            pca_chunk=  pca.transform(X_chunk)
+            pca_chunk = pca_chunk.reshape((chunk.shape[0],chunk.shape[1],comps))
+            pca_chunk[chunk[:,:,0] == neon.no_data] =0
+            fric = np.zeros(pca_chunk.shape)
+            for i in range(half_window, pca_chunk.shape[0]-half_window):
+                for j in range(half_window, pca_chunk.shape[1]-half_window):
+                    sub_arr = pca_chunk[i-half_window:i+half_window+1, j-half_window:j+half_window+1, :]
+                    sub_arr = sub_arr.reshape((sub_arr.shape[0]*sub_arr.shape[1],comps))
+                    if np.nanmean(sub_arr) == 0.0:
+                        continue
+                    hull = ConvexHull(sub_arr)
+                    fric[i,j]= hull.volume
+            results_FR[iterator.current_line] = np.nanmean(fric)
+        volumes[window] = results_FR
+    volume_mean = np.array(list(results_FR.values())).mean()
+    return volumes
+#### In progress below this point - commenting out for now ####
+
+"""
+
+# Rewrite to improve averaging
+def calc_fun_rich(neon, window_sizes, x_mean, x_std, pca):
+    Calculate convex hull volume for an array at a variety of window sizes.
+    
+    Parameters:
+    -----------
+    neon: hytools image
+    window_sizes: list/array of integers
+    x_mean: PCA mean from previous sampling?? 
+    Returns:
+    -----------
+    volume_mean: functional richness for given window size and image.
+    
+    
+    volumes = {}
+    results_FR = {}
+    iterator = neon.iterate(by = 'chunk',chunk_size = (500,500))
+    for window in window_sizes:
+        half_window = window // 2
+        while not iterator.complete:
+            chunk = iterator.read_next()
+            X_chunk = chunk[:,:,~neon.bad_bands].astype(np.float32)
+            X_chunk = X_chunk.reshape((X_chunk.shape[0]*X_chunk.shape[1],X_chunk.shape[2]))
+            X_chunk -=x_mean
+            X_chunk /=x_std
+            X_chunk[np.isnan(X_chunk) | np.isinf(X_chunk)] = 0
+            pca_chunk=  pca.transform(X_chunk)
+            pca_chunk = pca_chunk.reshape((chunk.shape[0],chunk.shape[1],comps))
+            pca_chunk[chunk[:,:,0] == neon.no_data] =0
+            fric = np.zeros(pca_chunk.shape)
+            for i in range(half_window, pca_chunk.shape[0]-half_window):
+                for j in range(half_window, pca_chunk.shape[1]-half_window):
+                    sub_arr = pca_chunk[i-half_window:i+half_window+1, j-half_window:j+half_window+1, :]
             sub_arr = sub_arr.reshape((sub_arr.shape[0]*sub_arr.shape[1],comps))
             if np.nanmean(sub_arr) == 0.0:
                 continue
             hull = ConvexHull(sub_arr)
             fric = hull.volume
-            results_FR[iterator.current_line, window] = fric
+            results_FR[iterator.current_line] = fric
+        volumes[window] = results_FR
     volume_mean = np.array(list(results_FR.values())).mean()
-    return results_FR, volume_mean
+    return volumes
 
-    
-#### In progress below this point - commenting out for now ####
-
-"""
 window = 15 # desired window size (# of pixels)
 classes = classes # array of k-means cluster value assigned to each pixel
 nclusters = nclusters # number of clusters used in k-means
