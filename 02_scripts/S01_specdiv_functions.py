@@ -174,7 +174,7 @@ def progbar(curr, total, full_progbar = 100):
     print('\r', '#'*filled_progbar + '-'*(full_progbar-filled_progbar), '[{:>7.2%}]'.format(frac), end='')
     
 def calc_shannon(arr):
-    """ Calculate shannon index for an image.
+    """ Calculate shannon index for an image. Modified from sister-biodiversity to be faster for looping.
     
     Parameters:
     -----------
@@ -269,13 +269,28 @@ def calc_fun_rich(neon, window_sizes, x_mean, x_std, pca, comps):
                         continue
                     hull = ConvexHull(sub_arr) 
                     fric[i,j]= hull.volume
+                    bar1.next()
+                bar1.finish()
+                bar1.next()
+            bar1.finish()
             results_FR[window] = np.nanmean(fric)
+            bar2.next()
+        bar2.finish()
         volumes[iterator.current_line] = results_FR
     volume_mean = np.array(list(results_FR.values())).mean()
     return volumes
 
+from progress.bar import Bar
+bar1 = Bar('Processing', max=490)
+bar2 = Bar('Processing', max=3)
+
+
+#### In progress below this point - commenting out for now ####
+
+"""
+
 def calc_fun_rich(neon, window_sizes, x_mean, x_std, pca, comps):
-    """Calculate convex hull volume for an array at a variety of window sizes.
+    Calculate convex hull volume for an array at a variety of window sizes.
     
     Parameters:
     -----------
@@ -286,7 +301,7 @@ def calc_fun_rich(neon, window_sizes, x_mean, x_std, pca, comps):
     -----------
     volume_mean: functional richness for given window size and image.
     
-    """
+    
     volumes = {}
     results_FR = {}
     iterator = neon.iterate(by = 'chunk',chunk_size = (250,250))
@@ -315,10 +330,6 @@ def calc_fun_rich(neon, window_sizes, x_mean, x_std, pca, comps):
         volumes[window] = results_FR
     volume_mean = np.array(list(results_FR.values())).mean()
     return volumes
-#### In progress below this point - commenting out for now ####
-
-"""
-
 # Rewrite to improve averaging
 def calc_fun_rich(neon, window_sizes, x_mean, x_std, pca):
     Calculate convex hull volume for an array at a variety of window sizes.

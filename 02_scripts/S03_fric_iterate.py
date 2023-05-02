@@ -35,7 +35,7 @@ sample_size = 0.1 # proportion of pixels to subsample for fitting PCA
 comps = 4 # default component numbers for PCA 
 nclusters = 15 # default component numbers for K-means clustering
 nbCPU = 4 # computational parameters
-MaxRAM = 0.2 # computational parameters
+MaxRAM = 0.4 # computational parameters
 
 ## Set parameters for desired imagery & local output ##
 # Define path for master output directory where files produced during the process are saved
@@ -53,7 +53,6 @@ file_paths = find_neon_files(SITECODE,
                              YEAR)
 # Download files to temp OS location - WARNING: LARGE STORAGE REQUIREMENT
 files = retrieve_neon_files(file_paths)
-
 
 #####################  CALCULATE FRIC FOR THE SITE  #####################
 scale_fric = {} # dict for storing output
