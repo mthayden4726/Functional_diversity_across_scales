@@ -215,6 +215,36 @@ def calc_alpha(arr, windows):
         results[window] = shannon
     return results
 
+def calc_cv(neon, window_sizes):
+    volumes = {}
+    results_cv = {}
+    iterator = neon.iterate(by = 'chunk',chunk_size = (500,500))
+    while not iterator.complete:
+        chunk = iterator.read_next()
+        X_chunk_full = chunk[:,:,~neon.bad_bands].astype(np.float32)
+        #X_chunk = X_chunk.reshape((X_chunk.shape[0]*X_chunk.shape[1],X_chunk.shape[2]))
+        #X_chunk -=x_mean
+        #X_chunk /=x_std
+        #X_chunk[np.isnan(X_chunk) | np.isinf(X_chunk)] = 0
+        #X_chunk = X_chunk.reshape((X_chunk_full.shape[0],X_chunk_full.shape[1], X_chunk_full.shape[2]))
+        for window in window_sizes:
+            half_window = window // 2
+            cv = np.zeros(X_chunk_full.shape)
+            for i in range(half_window, X_chunk_full.shape[0]-half_window):
+                for j in range(half_window, X_chunk_full.shape[1]-half_window):
+                    sub_arr = X_chunk_full[i-half_window:i+half_window+1, j-half_window:j+half_window+1, :]
+                    x = sub_arr.reshape((sub_arr.shape[0]*sub_arr.shape[1],X_chunk_full.shape[2]))
+                    cv_output = np.zeros(shape = 335)
+                    for k in range(0, X_chunk_full.shape[2]-1):
+                        cube_hs = x[:, k]  # for each band
+                        #cube_hs_ma = cube_hs.reshape(-1, cube_hs.shape[-1])
+                        mean_spec = abs(np.nanmean(cube_hs))  # take the mean
+                        sd_spec = abs(np.nanstd(cube_hs))  # and sd across all pixels
+                        cv_output[k] = (sd_spec / mean_spec)
+                    cv[i,j]= cv_output
+            results_cv[window] = np.nanmean(cv)
+    return cv_output
+
 def calc_chv(arr):
     """ Calculate convex hull volume for an array.
     
