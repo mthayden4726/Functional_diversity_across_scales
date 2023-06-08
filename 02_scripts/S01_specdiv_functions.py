@@ -8,12 +8,16 @@ Script containing functions for calculating spectral diversity metrics.
 
 Additionally contains processing functions to:
     - plot an RGB map of multi-band raster.
-    - 
-    
+    - find and load NEON files
+    - subsample pixels and scale, center and fit PCA to subsample
+    - parallelize various functions
+
 
 Author: M. Hayden
-Date: 4/12/2023
+Last Updated: 6/08/2023
 """
+
+## Load necessary packages ##
 import hytools as ht
 import matplotlib.pyplot as plt
 import numpy as np
@@ -26,7 +30,12 @@ from kneed import KneeLocator
 from scipy.spatial import ConvexHull
 import subprocess
 from urllib.request import urlretrieve
+import parmap
 import os
+import tqdm 
+from progress.bar import Bar
+
+
 # 01_specdiv_functions>
 
 def find_neon_files(SITECODE, PRODUCTCODE, 
@@ -65,13 +74,15 @@ def find_neon_files(SITECODE, PRODUCTCODE,
             print(file['url'])
     return file_paths
 
-def retrieve_neon_files(file_paths):
+def retrieve_neon_files(file_paths, data_directory):
     """Function to download files from list of file paths.
     
     Parameters:
     -----------
     
     file_paths: list of strings
+    
+    data_directory: string of location on OS to save data
 
         
     Returns:
@@ -80,9 +91,11 @@ def retrieve_neon_files(file_paths):
     
     """
     files = []
-    for i in range(len(file_paths)):
-        loc, message = urlretrieve(file_paths[i])
-        files.insert(1, loc)
+    for file_path in file_paths:
+        base_name = os.path.basename(file_path)
+        save_path = os.path.join(data_directory, base_name)
+        loc, message = urlretrieve(file_path, save_path)
+        files.append(loc)
     return files
 
 def show_rgb(hy_obj,r=660,g=550,b=440, correct= []):
@@ -126,6 +139,23 @@ def show_rgb(hy_obj,r=660,g=550,b=440, correct= []):
     #plt.close()
 
 def subsample(hy_obj,sample_size,bad_bands):
+    """Function to subsample NEON file for fitting PCA.
+    
+    Parameters:
+    -----------
+    hy_obj:
+        Hytools object (e.g., NEON datafile)
+    sample size:
+        Numeric. Proportion of pixels from file to select (e.g., 0.1).
+    bad_bands:
+        List. List of bands to remove from product.
+        
+    Returns:
+    -----------
+    X:
+        Numpy array of subsampled pixels from HyTools object.
+    
+    """
 
     print("Sampling %s" % os.path.basename(hy_obj.file_name))
 
@@ -146,6 +176,26 @@ def subsample(hy_obj,sample_size,bad_bands):
     return  np.array(X).T
 
 def scale_transform(X, comps):
+    """Function to center, scale and fit PCA transform.
+    
+    Parameters:
+    -----------
+    X:
+        Numpy array. Subsampled pixels of HyTools object.
+    
+    comps:
+        Integer. Number of principle components to fit.
+        
+    Returns:
+    -----------
+    x_mean:
+        Numpy array. Mean reflectance across bands in subsampled pixels.
+    x_std:
+        Numpy array. Std reflectance across bands in subsampled pixels.
+    pca:
+        PCA transformation.
+    
+    """
     # Center, scale and fit PCA transform - scales based on mean reflectance at each band
     x_mean = X.mean(axis=0)[np.newaxis,:]
     X = X.astype('float32') # necessary to manually convert to float for next function to work
@@ -216,17 +266,27 @@ def calc_alpha(arr, windows):
     return results
 
 def calc_cv(neon, window_sizes):
-    volumes = {}
+    
+    """ Calculate coefficient of variation (CV) for different window sizes in an image.
+    
+    Parameters:
+    -----------
+    neon:
+        Hytools object. Here, NEON image.
+    
+    window_sizes: 
+        List. List of window sizes (or single value)
+    
+    Returns:
+    -----------
+    cv_output: dict of CV values per window size.
+    
+    """
     results_cv = {}
     iterator = neon.iterate(by = 'chunk',chunk_size = (500,500))
     while not iterator.complete:
         chunk = iterator.read_next()
         X_chunk_full = chunk[:,:,~neon.bad_bands].astype(np.float32)
-        #X_chunk = X_chunk.reshape((X_chunk.shape[0]*X_chunk.shape[1],X_chunk.shape[2]))
-        #X_chunk -=x_mean
-        #X_chunk /=x_std
-        #X_chunk[np.isnan(X_chunk) | np.isinf(X_chunk)] = 0
-        #X_chunk = X_chunk.reshape((X_chunk_full.shape[0],X_chunk_full.shape[1], X_chunk_full.shape[2]))
         for window in window_sizes:
             half_window = window // 2
             cv = np.zeros(X_chunk_full.shape)
@@ -243,7 +303,7 @@ def calc_cv(neon, window_sizes):
                         cv_output[k] = (sd_spec / mean_spec)
                     cv[i,j]= cv_output
             results_cv[window] = np.nanmean(cv)
-    return cv_output
+    return results_cv
 
 def calc_chv(arr):
     """ Calculate convex hull volume for an array.
@@ -262,7 +322,7 @@ def calc_chv(arr):
     volume = hull.volume
     return volume
 
-def calc_fun_rich(neon, window_sizes, x_mean, x_std, pca, comps):
+def calc_fun_rich(window_sizes, neon, x_mean, x_std, pca, comps):
     """ Calculate convex hull volume for an array at a variety of window sizes.
     
     Parameters:
@@ -275,6 +335,10 @@ def calc_fun_rich(neon, window_sizes, x_mean, x_std, pca, comps):
     volume_mean: functional richness for given window size and image.
     
     """
+    
+    bar1 = Bar('Loading', fill='@', suffix='%(percent)d%%')
+    bar2 = Bar('Processing', max=4)
+    
     volumes = {}
     results_FR = {}
     iterator = neon.iterate(by = 'chunk',chunk_size = (500,500))
@@ -288,6 +352,10 @@ def calc_fun_rich(neon, window_sizes, x_mean, x_std, pca, comps):
         pca_chunk=  pca.transform(X_chunk)
         pca_chunk = pca_chunk.reshape((chunk.shape[0],chunk.shape[1],comps))
         pca_chunk[chunk[:,:,0] == neon.no_data] =0
+        # paralellize calcs for different window sizes
+        pool = mp.Pool(mp.cpu_count())
+        results = [pool.apply(window_calcs, args = (i/2)) for i in window_sizes]
+        pool.close() 
         for window in window_sizes:
             half_window = window // 2
             fric = np.zeros(pca_chunk.shape)
@@ -299,21 +367,104 @@ def calc_fun_rich(neon, window_sizes, x_mean, x_std, pca, comps):
                         continue
                     hull = ConvexHull(sub_arr) 
                     fric[i,j]= hull.volume
-                    bar1.next()
-                bar1.finish()
                 bar1.next()
             bar1.finish()
             results_FR[window] = np.nanmean(fric)
-            bar2.next()
-        bar2.finish()
         volumes[iterator.current_line] = results_FR
+        bar2.next()
+    bar2.finish()    
     volume_mean = np.array(list(results_FR.values())).mean()
     return volumes
+    
+def window_calcs(window_size, pca_chunk, comps):
+    
+    """ Calculate convex hull volume for a single PCA chunk and window size.
+    FOR USE IN PARALLEL PROCESSING OF FUNCTIONAL RICHNESS.
+    
+    Parameters:
+    -----------
+    pca_chunk: PCA chunk from NEON image.
+    window_sizes: list/array of integers
+    comps: Number of PCs. Here, set to 4. 
+    
+    Returns:
+    -----------
+    volume_mean: functional richness for given window size and image.
+    
+    """
+    half_window = window_size//2
+    results_FR = []
+    fric = np.zeros(pca_chunk.shape)
+    for i in range(half_window, pca_chunk.shape[0]-half_window):
+        for j in range(half_window, pca_chunk.shape[1]-half_window):
+            sub_arr = pca_chunk[i-half_window:i+half_window+1, j-half_window:j+half_window+1, :]
+            sub_arr = sub_arr.reshape((sub_arr.shape[0]*sub_arr.shape[1],comps))
+            if np.nanmean(sub_arr) == 0.0:
+                continue
+            hull = ConvexHull(sub_arr) 
+            fric[i,j]= hull.volume
+    results_FR.append(np.nanmean(fric))        
+    return results_FR
 
-from progress.bar import Bar
-bar1 = Bar('Processing', max=490)
-bar2 = Bar('Processing', max=3)
-
+def calc_fun_rich_parallel(neon, window_sizes, x_mean, x_std, pca, comps):
+    """ Calculate convex hull volume for an array at a variety of window sizes
+    using parallel processing from parmap. Requires loading separate function 
+    "window_calcs" for parallelization.
+    
+    Parameters:
+    -----------
+    neon: hytools image
+    window_sizes: list/array of integers
+    x_mean: Mean reflectance for subsample of image. For centering.
+    x_std: Std reflectance for subsample of image. For centering.
+    pca: PCA transform fit on subsample.
+    comps: Number of PCs.
+    
+    Returns:
+    -----------
+    volume_mean: functional richness for given window size and image.
+    
+    """
+    volumes = {}
+    results_FR = []
+    iterator = neon.iterate(by = 'chunk',chunk_size = (500,500))
+    while not iterator.complete:
+        chunk = iterator.read_next()
+        X_chunk = chunk[:,:,~neon.bad_bands].astype(np.float32)
+        X_chunk = X_chunk.reshape((X_chunk.shape[0]*X_chunk.shape[1],X_chunk.shape[2]))
+        X_chunk -=x_mean
+        X_chunk /=x_std
+        X_chunk[np.isnan(X_chunk) | np.isinf(X_chunk)] = 0
+        pca_chunk=  pca.transform(X_chunk)
+        pca_chunk = pca_chunk.reshape((chunk.shape[0],chunk.shape[1],comps))
+        pca_chunk[chunk[:,:,0] == neon.no_data] =0
+        # paralellize calcs for different window sizes
+        results_FR = parmap.map(window_calcs, window_sizes, pca_chunk, comps,
+                                             pm_processes = 6)
+        volumes[iterator.current_line] = results_FR
+    return volumes
+    
+def calc_fun_rich_parallel_no_iter(neon, window_sizes, x_mean, x_std, pca, comps):
+    """ C
+    *Trying this function without chunking the images - DOES NOT WORK YET *
+    
+    """
+    volumes = {}
+    results_FR = []
+    chunk = neon.get_chunk(0,1000,0,1000)
+    X_chunk = chunk[:,:,~neon.bad_bands].astype(np.float32)
+    X_chunk = X_chunk.reshape((X_chunk.shape[0]*X_chunk.shape[1],X_chunk.shape[2]))
+    X_chunk -=x_mean
+    X_chunk /=x_std
+    X_chunk[np.isnan(X_chunk) | np.isinf(X_chunk)] = 0
+    pca_chunk=  pca.transform(X_chunk)
+    pca_chunk = pca_chunk.reshape((neon.lines,neon.columns,comps))
+    pca_chunk[chunk[:,:,0] == neon.no_data] =0
+    # paralellize calcs for different window sizes
+    fric = np.zeros(pca_chunk.shape)
+    volumes = parmap.map(window_calcs, window_sizes, pca_chunk, fric,
+                            pm_processes = 6)
+    return volumes
 
 #### In progress below this point - commenting out for now ####
 
