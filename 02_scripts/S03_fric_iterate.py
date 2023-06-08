@@ -1,12 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Apr 20 12:19:30 2023
+Script for iterating through each file per site to calculate
+spectral diversity metrics.
+- Alpha diversity
+- Functional richness
 
-@author: meha3816
+Uses functions written in 'S01_specdiv_functions.py'
+
+
+Author: M. Hayden
+Last Updated: 6/8/2023
 """
-
-#################################  SET-UP  #################################
+#################################  SET-UP  ###################################
 
 ## Import packages ##
 import hytools as ht
@@ -21,12 +27,13 @@ from kneed import KneeLocator
 from scipy.spatial import ConvexHull
 import subprocess
 from urllib.request import urlretrieve
+import multiprocessing as mp
 import os
 # Import functions defined in S01_specdiv_functions.py
 from S01_specdiv_functions import * # add scripts folder to python path manager
 
 ## Set global parameters ##
-window_sizes = [10, 50, 100]  # list of window sizes to test
+window_sizes = [10, 25, 50, 75, 100, 150, 200, 300, 400, 500]   # list of window sizes to test
 ndvi_threshold = 0.4 # ndvi threshold for radiometric filtering
 # shade_threshold = 500 # should be low threshold across NIR region (15%)
 # cloud_threshold = 1500 # should be high threshold in blue band
@@ -34,32 +41,40 @@ bad_bands = [[300,400],[1300,1450],[1780,2000],[2450,2600]] # bands to be masked
 sample_size = 0.1 # proportion of pixels to subsample for fitting PCA
 comps = 4 # default component numbers for PCA 
 nclusters = 15 # default component numbers for K-means clustering
-nbCPU = 4 # computational parameters
+nbCPU = 6 # computational parameters
 MaxRAM = 0.4 # computational parameters
 
 ## Set parameters for desired imagery & local output ##
 # Define path for master output directory where files produced during the process are saved
+Data_Dir = '/Users/meha3816/Desktop/BioSCape_across_scales/01_data/01_rawdata'
 Output_Dir = 'Users/meha3816/Desktop/BioSCape_across_scales/01_data/02_processed'
-Temp_Dir = 'Users/meha3816/Desktop/BioSCape_across_scales/01_data/temp_neon' # for files downloaded from NEON API
 
-# Set parameters for data import
+## Set parameters for data import ##
 SITECODE = 'TEAK' # NEON site of interest
 PRODUCTCODE = 'DP3.30006.001' # NEON product of interest (DP3.30006.001 is orthorectified mosaic)
 YEAR = '2021-07' # Timeframe of desired imagery
 
-## Create list of data files to process in remainder of script ##
-file_paths = find_neon_files(SITECODE,
-                             PRODUCTCODE,
-                             YEAR)
-# Download files to temp OS location - WARNING: LARGE STORAGE REQUIREMENT
-files = retrieve_neon_files(file_paths)
+# If files are already downloaded:
+files = os.listdir(Data_Dir)
 
-#####################  CALCULATE FRIC FOR THE SITE  #####################
-scale_fric = {} # dict for storing output
-scale_list = []
-for i in range(len(files)):
+## Otherwise...
+## Create list of data files to process in remainder of script ##
+# file_paths = find_neon_files(SITECODE,
+#                             PRODUCTCODE,
+#                             YEAR)
+# Download files to data directory on OS - WARNING: LARGE STORAGE REQUIREMENT
+# files = retrieve_neon_files(file_paths, Data_Dir)
+ 
+#####################  CALCULATE FRIC FOR SELECTED SITE  ##########################
+
+## Create dicts for storing scale-FRic and scale-CV output for each file ##
+scale_fric = {} 
+scale_cv = {}
+
+# Loop through all files for the site
+for i in files:
     # Read image
-    neon_image = files[i]
+    neon_image = Data_Dir + '/' + files[i]
     neon = ht.HyTools()
     neon.read_file(neon_image,'neon')
     # Mask out bad bands and non-vegetation (eventually it's own function)
@@ -69,11 +84,13 @@ for i in range(len(files)):
     # Scale, center and PCA transform
     X = subsample(neon,sample_size,bad_bands)
     x_mean, x_std, pca = scale_transform(X, comps)
+    # Calculate alpha diversity based on CV
+    # adiv = calc_cv_parallel()
     # Calculate functional richness based on PCA components
-    volumes = calc_fun_rich(neon, window_sizes, 
+    volumes = calc_fun_rich_parallel(neon, window_sizes,
                             x_mean, x_std, pca, comps)
     scale_fric[i] = volumes
-    scale_list.append(volumes)
+    # scale_cv[i] = adiv
     
 ## Plot results ##
 names = list(scale_fric.keys())
