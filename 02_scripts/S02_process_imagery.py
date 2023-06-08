@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Script for processing NEON imagery.
+Script for processing NEON imagery. Step-by-step, not for iterating through
+large number of images.
 
 Goal: compute alpha diversity and functional richness for an array of
 window sizes.
@@ -31,8 +32,12 @@ import subprocess
 from S01_specdiv_functions import * # add scripts folder to python path manager
 
 
+results_FR = parmap.map(window_calcs, window_sizes, pca_chunk, fric,
+                                     pm_processes = 6, pm_pbar = True)
+
 # Set global parameters
-window_sizes = [10, 15, 20, 30, 40, 50, 75, 100, 150]  # list of window sizes to test
+window_sizes = [10, 15, 20, 30, 40, 50, 75, 100, 150, 200, 250
+                300, 350, 400, 450, 500]  # list of window sizes to test
 
 # Set radiometric thresholds
 ndvi_threshold = 0.4
