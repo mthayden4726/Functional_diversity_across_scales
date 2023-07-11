@@ -1,0 +1,64 @@
+name: bioscape-gra
+channels:
+  - conda-forge
+  - defaults
+
+dependencies:
+  - python=3.8
+  - pip
+  # Core scientific python
+  - numpy
+  - pyqt
+  - tqdm
+  - kiwisolver
+  
+  # Plotting
+  - matplotlib
+  - plotly
+  - seaborn
+
+  # Spatial packages
+  - pysal
+  - pyproj>=3.0
+  - rasterstats
+  - geopy
+  - cartopy
+  - descartes
+  - contextily
+  - earthpy
+  - folium
+  - geojson
+  - mapboxgl
+  - hydrofunctions
+  - geocoder
+  - tweepy
+  - xarray
+  - rioxarray>=0.3.0
+  - scikit-learn
+  - scipy
+  - netcdf4
+  - nc-time-axis
+  - regionmask
+
+  # Natural language processing
+  - nltk
+  - textblob
+
+  # Hytools dependencies
+  - h5py
+  - pandas
+  - ray
+
+  # Jupyter Environment
+  - papermill
+  - autopep8
+  - jupyterlab
+  - notebook
+  - ipython
+  - jupyter_contrib_nbextensions
+  - nbclean
+  - nbresuse
+  
+  # Autograding
+  - matplotcheck>=0.1.3
+  - nbgrader
