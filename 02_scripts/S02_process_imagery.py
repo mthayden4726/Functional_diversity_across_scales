@@ -118,6 +118,8 @@ plt.matshow(neon.mask['sample'])
 # Choose percent of unmasked pixels to sample
 sample_size = 0.1
 
+sample_size = 1
+
 # Subsample a set of pixels for PCA
 sub_samples = np.zeros((neon.lines,neon.columns)).astype(bool)
 idx = np.array(np.where(neon.mask['sample'])).T

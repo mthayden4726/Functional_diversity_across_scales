@@ -34,6 +34,8 @@ import parmap
 import os
 import tqdm 
 from progress.bar import Bar
+from window_calcs import * # add scripts folder to python path manager
+
 
 
 # 01_specdiv_functions>
@@ -283,7 +285,7 @@ def calc_cv(neon, window_sizes):
     
     """
     results_cv = {}
-    iterator = neon.iterate(by = 'chunk',chunk_size = (500,500))
+    iterator = neon.iterate(by = 'chunk',chunk_size = (500,1000))
     while not iterator.complete:
         chunk = iterator.read_next()
         X_chunk_full = chunk[:,:,~neon.bad_bands].astype(np.float32)
@@ -304,6 +306,14 @@ def calc_cv(neon, window_sizes):
                     cv[i,j]= cv_output
             results_cv[window] = np.nanmean(cv)
     return results_cv
+
+#chunk = neon.get_chunk(0,1000,0,1000)
+#chunk = np.copy(chunk)
+#veg_chunk = chunk[mask:mask]
+#X_chunk_full = veg_chunk[:,~neon.bad_bands].astype(np.float32)
+#subset = chunk[mask[0] == "True"]
+#plt.matshow(band)
+#subset = np.where(chunk, mask, 0)
 
 def calc_chv(arr):
     """ Calculate convex hull volume for an array.
@@ -375,36 +385,6 @@ def calc_fun_rich(window_sizes, neon, x_mean, x_std, pca, comps):
     bar2.finish()    
     volume_mean = np.array(list(results_FR.values())).mean()
     return volumes
-    
-def window_calcs(window_size, pca_chunk, comps):
-    
-    """ Calculate convex hull volume for a single PCA chunk and window size.
-    FOR USE IN PARALLEL PROCESSING OF FUNCTIONAL RICHNESS.
-    
-    Parameters:
-    -----------
-    pca_chunk: PCA chunk from NEON image.
-    window_sizes: list/array of integers
-    comps: Number of PCs. Here, set to 4. 
-    
-    Returns:
-    -----------
-    volume_mean: functional richness for given window size and image.
-    
-    """
-    half_window = window_size//2
-    results_FR = []
-    fric = np.zeros(pca_chunk.shape)
-    for i in range(half_window, pca_chunk.shape[0]-half_window):
-        for j in range(half_window, pca_chunk.shape[1]-half_window):
-            sub_arr = pca_chunk[i-half_window:i+half_window+1, j-half_window:j+half_window+1, :]
-            sub_arr = sub_arr.reshape((sub_arr.shape[0]*sub_arr.shape[1],comps))
-            if np.nanmean(sub_arr) == 0.0:
-                continue
-            hull = ConvexHull(sub_arr) 
-            fric[i,j]= hull.volume
-    results_FR.append(np.nanmean(fric))        
-    return results_FR
 
 def calc_fun_rich_parallel(neon, window_sizes, x_mean, x_std, pca, comps):
     """ Calculate convex hull volume for an array at a variety of window sizes
