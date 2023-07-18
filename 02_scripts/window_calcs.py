@@ -22,7 +22,7 @@ import parmap
 import os
 import tqdm 
 
-def window_calcs(window_size, pca_chunk, comps):
+def window_calcs(args):
     
     """ Calculate convex hull volume for a single PCA chunk and window size.
     FOR USE IN PARALLEL PROCESSING OF FUNCTIONAL RICHNESS.
@@ -38,16 +38,20 @@ def window_calcs(window_size, pca_chunk, comps):
     volume_mean: functional richness for given window size and image.
     
     """
-    half_window = window_size//2
-    results_FR = []
+    window, pca_chunk, results_FR = args
+    comps = 4
+    half_window = window // 2
     fric = np.zeros(pca_chunk.shape)
-    for i in range(half_window, pca_chunk.shape[0]-half_window):
-        for j in range(half_window, pca_chunk.shape[1]-half_window):
-            sub_arr = pca_chunk[i-half_window:i+half_window+1, j-half_window:j+half_window+1, :]
-            sub_arr = sub_arr.reshape((sub_arr.shape[0]*sub_arr.shape[1],comps))
-            if np.nanmean(sub_arr) == 0.0:
-                continue
-            hull = ConvexHull(sub_arr) 
-            fric[i,j]= hull.volume
+    hull = None
+    for i in range(half_window, pca_chunk.shape[0] - half_window):
+        for j in range(half_window, pca_chunk.shape[1] - half_window):
+            sub_arr = pca_chunk[i - half_window:i + half_window + 1, j - half_window:j + half_window + 1, :]
+            sub_arr = sub_arr.reshape((-1, comps))
+            mean_arr = np.nanmean(sub_arr, axis=0)
+            non_zero_indices = np.nonzero(mean_arr)[0]
+            if len(non_zero_indices) >= 4:
+                if hull is None:
+                    hull = ConvexHull(sub_arr[:, non_zero_indices])
+                fric[i, j] = hull.volume 
     results_FR.append(np.nanmean(fric))        
     return results_FR

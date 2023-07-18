@@ -34,6 +34,7 @@ import parmap
 import os
 import tqdm 
 from progress.bar import Bar
+from multiprocessing import Pool
 from window_calcs import * # add scripts folder to python path manager
 
 
@@ -345,10 +346,7 @@ def calc_fun_rich(window_sizes, neon, x_mean, x_std, pca, comps):
     volume_mean: functional richness for given window size and image.
     
     """
-    
-    bar1 = Bar('Loading', fill='@', suffix='%(percent)d%%')
-    bar2 = Bar('Processing', max=4)
-    
+        
     volumes = {}
     results_FR = {}
     iterator = neon.iterate(by = 'chunk',chunk_size = (500,500))
@@ -377,12 +375,8 @@ def calc_fun_rich(window_sizes, neon, x_mean, x_std, pca, comps):
                         continue
                     hull = ConvexHull(sub_arr) 
                     fric[i,j]= hull.volume
-                bar1.next()
-            bar1.finish()
             results_FR[window] = np.nanmean(fric)
-        volumes[iterator.current_line] = results_FR
-        bar2.next()
-    bar2.finish()    
+        volumes[iterator.current_line] = results_FR  
     volume_mean = np.array(list(results_FR.values())).mean()
     return volumes
 
@@ -418,33 +412,64 @@ def calc_fun_rich_parallel(neon, window_sizes, x_mean, x_std, pca, comps):
         pca_chunk=  pca.transform(X_chunk)
         pca_chunk = pca_chunk.reshape((chunk.shape[0],chunk.shape[1],comps))
         pca_chunk[chunk[:,:,0] == neon.no_data] =0
-        # paralellize calcs for different window sizes
-        results_FR = parmap.map(window_calcs, window_sizes, pca_chunk, comps,
-                                             pm_processes = 6)
+        for window in window_sizes:
+            half_window = window // 2
+            fric = np.zeros(pca_chunk.shape)
+            for i in range(half_window, pca_chunk.shape[0]-half_window):
+                for j in range(half_window, pca_chunk.shape[1]-half_window):
+                    sub_arr = pca_chunk[i-half_window:i+half_window+1, j-half_window:j+half_window+1, :]
+                    sub_arr = sub_arr.reshape((sub_arr.shape[0]*sub_arr.shape[1],comps))
+                    if np.nanmean(sub_arr) == 0.0:
+                        continue
+                    hull = ConvexHull(sub_arr) 
+                    fric[i,j]= hull.volume
+            results_FR.append(np.nanmean(fric))   
         volumes[iterator.current_line] = results_FR
     return volumes
     
-def calc_fun_rich_parallel_no_iter(neon, window_sizes, x_mean, x_std, pca, comps):
+def calc_fun_rich_no_iter(neon, window_sizes, x_mean, x_std, pca, comps):
     """ C
     *Trying this function without chunking the images - DOES NOT WORK YET *
     
     """
+    with Pool() as pool:
+        volumes = {}
+        chunk = neon.get_chunk(0,1000,0,1000)
+        X_chunk = chunk[:,:,~neon.bad_bands].astype(np.float32)
+        X_chunk = X_chunk.reshape((X_chunk.shape[0]*X_chunk.shape[1],X_chunk.shape[2]))
+        X_chunk -=x_mean
+        X_chunk /=x_std
+        X_chunk[np.isnan(X_chunk) | np.isinf(X_chunk)] = 0
+        pca_chunk=  pca.transform(X_chunk)
+        pca_chunk = pca_chunk.reshape((neon.lines,neon.columns,comps))
+        pca_chunk[chunk[:,:,0] == neon.no_data] =0
+        # paralellize calcs for different window sizes
+        fric = np.zeros(pca_chunk.shape)
+        results_FR = []
+        volumes = pool.map(window_calcs, [(window, pca_chunk, results_FR) for window in window_sizes])
+    return volumes
+
+def calc_fun_rich_ai(neon, window_sizes, x_mean, x_std, pca, comps):
     volumes = {}
     results_FR = []
-    chunk = neon.get_chunk(0,1000,0,1000)
-    X_chunk = chunk[:,:,~neon.bad_bands].astype(np.float32)
-    X_chunk = X_chunk.reshape((X_chunk.shape[0]*X_chunk.shape[1],X_chunk.shape[2]))
-    X_chunk -=x_mean
-    X_chunk /=x_std
-    X_chunk[np.isnan(X_chunk) | np.isinf(X_chunk)] = 0
-    pca_chunk=  pca.transform(X_chunk)
-    pca_chunk = pca_chunk.reshape((neon.lines,neon.columns,comps))
-    pca_chunk[chunk[:,:,0] == neon.no_data] =0
-    # paralellize calcs for different window sizes
-    fric = np.zeros(pca_chunk.shape)
-    volumes = parmap.map(window_calcs, window_sizes, pca_chunk, fric,
-                            pm_processes = 6)
+    iterator = neon.iterate(by='chunk', chunk_size=(500, 500))
+    with Pool() as pool:
+        while not iterator.complete:
+            chunk = iterator.read_next()
+            X_chunk = chunk[:, :, ~neon.bad_bands].astype(np.float32)
+            X_chunk = X_chunk.reshape((X_chunk.shape[0] * X_chunk.shape[1], X_chunk.shape[2]))
+            X_chunk -= x_mean
+            X_chunk /= x_std
+            X_chunk[np.isnan(X_chunk) | np.isinf(X_chunk)] = 0
+            pca_chunk = pca.transform(X_chunk)
+            pca_chunk = pca_chunk.reshape((chunk.shape[0], chunk.shape[1], comps))
+            pca_chunk[chunk[:, :, 0] == neon.no_data] = 0
+
+            results_FR = pool.map(window_calcs, window_sizes, pca_chunk)
+            volumes[iterator.current_line] = results_FR
+
     return volumes
+
 
 #### In progress below this point - commenting out for now ####
 

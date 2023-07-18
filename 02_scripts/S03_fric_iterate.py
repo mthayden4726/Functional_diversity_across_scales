@@ -47,13 +47,13 @@ MaxRAM = 0.6 # computational parameters
 
 ## Set parameters for desired imagery & local output ##
 # Define path for master output directory where files produced during the process are saved
-Data_Dir = '/BioSCape_across_scales/01_data/01_rawdata'
+Data_Dir = 'Desktop/BioSCape_across_scales/01_data/01_rawdata'
 Output_Dir = '/BioSCape_across_scales/01_data/02_processed'
 
 ## Set parameters for data import ##
 SITECODE = 'TEAK' # NEON site of interest
 PRODUCTCODE = 'DP3.30006.001' # NEON product of interest (DP3.30006.001 is orthorectified mosaic)
-YEAR = '2021-07' # Timeframe of desired imagery
+YEAR = '2019-06' # Timeframe of desired imagery
 
 # If files are already downloaded:
 # files = os.listdir(Data_Dir)
@@ -78,6 +78,7 @@ for index, i in enumerate(files):
     
     # Read image
     neon_image = Data_Dir + '/' + files[index]
+    #neon_image = files[index]
     neon = ht.HyTools()
     neon.read_file(neon_image,'neon')
     
@@ -85,7 +86,6 @@ for index, i in enumerate(files):
     neon.create_bad_bands(bad_bands)
     ndvi = neon.ndi()
     neon.mask['sample'] = (neon.mask['no_data']) & (ndvi > ndvi_threshold)
-    
     # Calculate alpha diversity based on CV
     #adiv = calc_cv(neon, window_sizes)
     #scale_cv[i] = adiv
@@ -95,7 +95,7 @@ for index, i in enumerate(files):
     x_mean, x_std, pca = scale_transform(X, comps)
     
     # Calculate functional richness based on PCA components
-    volumes = calc_fun_rich_parallel(neon, window_sizes,
+    volumes = calc_fun_rich_no_iter(neon, window_sizes,
                             x_mean, x_std, pca, comps)
     scale_fric[index] = volumes
     index += 1
@@ -104,7 +104,7 @@ for index, i in enumerate(files):
 # open file for writing
 f = open("TEAK_FRic.txt","w")
 # write file
-f.write( str(dict) )
+f.write(str(scale_fric))
 # close file
 f.close()
 
