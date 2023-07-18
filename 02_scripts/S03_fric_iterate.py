@@ -47,8 +47,8 @@ MaxRAM = 0.6 # computational parameters
 
 ## Set parameters for desired imagery & local output ##
 # Define path for master output directory where files produced during the process are saved
-Data_Dir = 'Desktop/BioSCape_across_scales/01_data/01_rawdata'
-Output_Dir = '/BioSCape_across_scales/01_data/02_processed'
+Data_Dir = '01_data/01_rawdata'
+Output_Dir = '01_data/02_processed'
 
 ## Set parameters for data import ##
 SITECODE = 'TEAK' # NEON site of interest
@@ -102,7 +102,7 @@ for index, i in enumerate(files):
     
 # Save to .txt
 # open file for writing
-f = open("TEAK_FRic.txt","w")
+f = open("01_data/02_processed/TEAK_FRic.txt","w")
 # write file
 f.write(str(scale_fric))
 # close file
