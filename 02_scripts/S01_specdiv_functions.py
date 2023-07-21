@@ -448,11 +448,17 @@ def calc_fun_rich_no_iter(neon, window_sizes, x_mean, x_std, pca, comps):
 
     window_batches = [(a, pca_chunk, results_FR) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
 
+    # sequential processing for debugging
+    for batch in window_batches:
+        window_calcs(batch)
+
     volumes = process_map(
         window_calcs,
         window_batches,
         max_workers=cpu_count() - 1
     )
+
+
 
     return volumes
 
