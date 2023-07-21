@@ -39,13 +39,13 @@ def window_calcs(args):
     
     """
     windows, pca_chunk, results_FR = args
-    for window in windows:
+    for window in tqdm(windows, desc='Processing window for batch'):
         comps = 4
         half_window = window // 2
         fric = np.zeros(pca_chunk.shape)
         hull = None
-        for i in tqdm(range(half_window, pca_chunk.shape[0] - half_window)):
-            for j in tqdm(range(half_window, pca_chunk.shape[1] - half_window)):
+        for i in tqdm(range(half_window, pca_chunk.shape[0] - half_window), desc='Processing window index'):
+            for j in range(half_window, pca_chunk.shape[1] - half_window):
                 sub_arr = pca_chunk[i - half_window:i + half_window + 1, j - half_window:j + half_window + 1, :]
                 sub_arr = sub_arr.reshape((-1, comps))
                 mean_arr = np.nanmean(sub_arr, axis=0)
