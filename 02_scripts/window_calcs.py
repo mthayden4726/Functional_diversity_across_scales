@@ -20,7 +20,7 @@ import subprocess
 from urllib.request import urlretrieve
 import parmap
 import os
-from tdqm import tqdm
+from tqdm import tqdm
 
 def window_calcs(args):
     
@@ -38,20 +38,21 @@ def window_calcs(args):
     volume_mean: functional richness for given window size and image.
     
     """
-    window, pca_chunk, results_FR = args
-    comps = 4
-    half_window = window // 2
-    fric = np.zeros(pca_chunk.shape)
-    hull = None
-    for i in tqdm(range(half_window, pca_chunk.shape[0] - half_window)):
-        for j in tqdm(range(half_window, pca_chunk.shape[1] - half_window)):
-            sub_arr = pca_chunk[i - half_window:i + half_window + 1, j - half_window:j + half_window + 1, :]
-            sub_arr = sub_arr.reshape((-1, comps))
-            mean_arr = np.nanmean(sub_arr, axis=0)
-            non_zero_indices = np.nonzero(mean_arr)[0]
-            if len(non_zero_indices) >= 4:
-                if hull is None:
-                    hull = ConvexHull(sub_arr[:, non_zero_indices])
-                fric[i, j] = hull.volume 
-    results_FR.append(np.nanmean(fric))        
+    windows, pca_chunk, results_FR = args
+    for window in windows:
+        comps = 4
+        half_window = window // 2
+        fric = np.zeros(pca_chunk.shape)
+        hull = None
+        for i in tqdm(range(half_window, pca_chunk.shape[0] - half_window)):
+            for j in tqdm(range(half_window, pca_chunk.shape[1] - half_window)):
+                sub_arr = pca_chunk[i - half_window:i + half_window + 1, j - half_window:j + half_window + 1, :]
+                sub_arr = sub_arr.reshape((-1, comps))
+                mean_arr = np.nanmean(sub_arr, axis=0)
+                non_zero_indices = np.nonzero(mean_arr)[0]
+                if len(non_zero_indices) >= 4:
+                    if hull is None:
+                        hull = ConvexHull(sub_arr[:, non_zero_indices])
+                    fric[i, j] = hull.volume
+        results_FR.append(np.nanmean(fric))
     return results_FR
