@@ -20,7 +20,7 @@ import subprocess
 from urllib.request import urlretrieve
 import parmap
 import os
-import tqdm 
+from tdqm import tqdm
 
 def window_calcs(args):
     
