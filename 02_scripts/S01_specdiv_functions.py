@@ -429,10 +429,7 @@ def calc_fun_rich_parallel(neon, window_sizes, x_mean, x_std, pca, comps):
     return volumes
     
 def calc_fun_rich_no_iter(neon, window_sizes, x_mean, x_std, pca, comps):
-    """ C
-    *Trying this function without chunking the images - DOES NOT WORK YET *
-    
-    """
+    # parallelized in window batches for nCPU - 1 (code from Erick)
     chunk = neon.get_chunk(0,1000,0,1000)
     X_chunk = chunk[:,:,~neon.bad_bands].astype(np.float32)
     X_chunk = X_chunk.reshape((X_chunk.shape[0]*X_chunk.shape[1],X_chunk.shape[2]))
