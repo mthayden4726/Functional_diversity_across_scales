@@ -10,6 +10,8 @@
 
 **S03:** Workflow for looping through many images; user can choose site, NEON product and year in global parameters and produce FRic and CV values for a range of defined window sizes.
 
+**S04:** Testing workflow on single image with AWS - parallelization in progress.
+
 **Authors:** M. Hayden, C. Amaral, M. Rossi, N. Stavros
 
 Updated: Thurs. June 8, 2023

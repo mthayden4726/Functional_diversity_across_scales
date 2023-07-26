@@ -34,7 +34,8 @@ import parmap
 import os
 import tqdm 
 from progress.bar import Bar
-from multiprocessing import Pool
+from tqdm.contrib.concurrent import process_map
+from multiprocessing import Pool, cpu_count
 from window_calcs import * # add scripts folder to python path manager
 
 
@@ -428,25 +429,32 @@ def calc_fun_rich_parallel(neon, window_sizes, x_mean, x_std, pca, comps):
     return volumes
     
 def calc_fun_rich_no_iter(neon, window_sizes, x_mean, x_std, pca, comps):
-    """ C
-    *Trying this function without chunking the images - DOES NOT WORK YET *
-    
-    """
-    with Pool() as pool:
-        volumes = {}
-        chunk = neon.get_chunk(0,1000,0,1000)
-        X_chunk = chunk[:,:,~neon.bad_bands].astype(np.float32)
-        X_chunk = X_chunk.reshape((X_chunk.shape[0]*X_chunk.shape[1],X_chunk.shape[2]))
-        X_chunk -=x_mean
-        X_chunk /=x_std
-        X_chunk[np.isnan(X_chunk) | np.isinf(X_chunk)] = 0
-        pca_chunk=  pca.transform(X_chunk)
-        pca_chunk = pca_chunk.reshape((neon.lines,neon.columns,comps))
-        pca_chunk[chunk[:,:,0] == neon.no_data] =0
-        # paralellize calcs for different window sizes
-        fric = np.zeros(pca_chunk.shape)
-        results_FR = []
-        volumes = pool.map(window_calcs, [(window, pca_chunk, results_FR) for window in window_sizes])
+    # parallelized in window batches for nCPU - 1 (code from Erick)
+    chunk = neon.get_chunk(0,1000,0,1000)
+    X_chunk = chunk[:,:,~neon.bad_bands].astype(np.float32)
+    X_chunk = X_chunk.reshape((X_chunk.shape[0]*X_chunk.shape[1],X_chunk.shape[2]))
+    X_chunk -=x_mean
+    X_chunk /=x_std
+    X_chunk[np.isnan(X_chunk) | np.isinf(X_chunk)] = 0
+    pca_chunk=  pca.transform(X_chunk)
+    pca_chunk = pca_chunk.reshape((neon.lines,neon.columns,comps))
+    pca_chunk[chunk[:,:,0] == neon.no_data] =0
+    # paralellize calcs for different window sizes
+    fric = np.zeros(pca_chunk.shape)
+    results_FR = []
+
+    window_batches = [(a, pca_chunk, results_FR) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
+
+    # sequential processing for debugging
+    # for batch in window_batches:
+    #     window_calcs(batch)
+
+    volumes = process_map(
+        window_calcs,
+        window_batches,
+        max_workers=cpu_count() - 1
+    )
+
     return volumes
 
 def calc_fun_rich_ai(neon, window_sizes, x_mean, x_std, pca, comps):
