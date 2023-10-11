@@ -12,6 +12,13 @@
 
 **S04:** Testing workflow on single image with AWS - parallelization in progress.
 
+Processing scripts should be implemented as:
+1. Correct (BRDF/Topo) and export flightlines as tiffs (mosaic_flightlines.py)
+2. Clip flightlines to larger field site boundary (clip_flightlines.py)
+3. Mosaic clipped flightlines together (merge_clipped.py)
+4. Clip mosaic down to individual rasters for each field site (~1x1km) (clip_mosaic.py)
+5. Implement workflow for functional richness (S03) using the raster around each field site.
+
 **Authors:** M. Hayden, C. Amaral, M. Rossi, N. Stavros
 
-Updated: Thurs. June 8, 2023
+Updated: Oct 11. 2023
