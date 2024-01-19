@@ -11,6 +11,7 @@ import geopandas as gpd
 from fiona.crs import from_epsg
 import pycrs
 from osgeo import gdal
+import numpy as np
 
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
 Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
@@ -35,28 +36,49 @@ def upload_to_s3(bucket_name, file_path, s3_key):
     except Exception as e:
         print(f"Error uploading file: {e}")
 
+def fix_no_data_value(input_file, output_file, no_data_value=0):
+    with rasterio.open(input_file, "r+") as src:
+        src.nodata = no_data_value
+        with rasterio.open(output_file, 'w',  **src.profile) as dst:
+            for i in range(1, src.count + 1):
+                band = src.read(i)
+                band = np.where(band==no_data_value,no_data_value,band)
+                dst.write(band,i)
+
 # List clipped files in S3
-files = ['TEAK_flightlines/Clipped_file_0.tif',
-         'TEAK_flightlines/Clipped_file_1.tif',
-         'TEAK_flightlines/Clipped_file_2.tif',
-         'TEAK_flightlines/Clipped_file_3.tif',
-         'TEAK_flightlines/Clipped_file_4.tif',
-         'TEAK_flightlines/Clipped_file_5.tif',
-         'TEAK_flightlines/Clipped_file_6.tif',
-         'TEAK_flightlines/Clipped_file_7.tif']
+files = ['TEAK_flightlines/Clipped_file_update_0.tif',
+         'TEAK_flightlines/Clipped_file_update_1.tif',
+         'TEAK_flightlines/Clipped_file_update_2.tif',
+         'TEAK_flightlines/Clipped_file_update_3.tif',
+         'TEAK_flightlines/Clipped_file_update_4.tif',
+         'TEAK_flightlines/Clipped_file_update_5.tif',
+         'TEAK_flightlines/Clipped_file_update_6.tif',
+         'TEAK_flightlines/Clipped_file_update_7.tif']
 
 src_files_to_mosaic = []
 for i,file in enumerate(files):
     print("Loading file from S3")
-    s3.download_file(bucket_name, file, Out_Dir + '/file_' + str(i) + '.tif')
+    #s3.download_file(bucket_name, file, Out_Dir + '/file_' + str(i) + '.tif')
     flight  = Out_Dir + '/file_' + str(i) + '.tif'
     print(flight)
-    src = rasterio.open(flight)
+    #flight_update = Out_Dir + '/update_' + str(i) + '.tif'
+    #no_data_value = 0
+    #fix_no_data_value(flight, flight_update,no_data_value) 
+    #with rasterio.open(flight, 'r') as src:
+    src = rasterio.open(flight, 'r') 
     src_files_to_mosaic.append(src)
+    print(src.nodata)
+    print(src.meta)
 
 print(src_files_to_mosaic)
 
-mosaic, out_trans = rasterio.merge.merge(src_files_to_mosaic)
+#def pre121_max(old_data, new_data, old_nodata, new_nodata, **kwargs):
+#    mask = np.logical_and(~old_nodata, ~new_nodata)
+#    old_data[mask] = np.maximum(old_data[mask], new_data[mask])
+#    mask = np.logical_and(old_nodata, ~new_nodata)
+#    old_data[mask] = new_data[mask]
+
+mosaic, out_trans = rasterio.merge.merge(src_files_to_mosaic, method = "max")
 print('Merge complete')
 
 out_meta = src.meta.copy()
@@ -74,7 +96,7 @@ with rasterio.open(local_file_path, "w", **out_meta) as dest:
     print("File written")
 
 # Push to S3 bucket
-destination_s3_key = 'TEAK_flightlines/Mosaic_0-3.tif'
+destination_s3_key = 'TEAK_flightlines/Mosaic_TEAK.tif'
 local_file_path = Out_Dir + '/mosaic.tif'
 upload_to_s3(bucket_name, local_file_path, destination_s3_key)
 print("File uploaded to S3")
