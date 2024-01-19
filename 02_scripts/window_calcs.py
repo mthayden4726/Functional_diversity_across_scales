@@ -87,3 +87,9 @@ def window_calcs(args):
                 csvwriter.writerow(data_point)
         #results_FR.append(np.nanmean(fric))
     return results_FR
+
+def wave_calcs(args):
+    wave, neon = args
+    arrays = neon.get_wave(wave, corrections= ['topo','brdf'])
+    return arrays
+        
