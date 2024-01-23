@@ -40,7 +40,7 @@ Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
-flights_TEAK = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/D17/2019_TEAK_4/L1/Spectrometer/ReflectanceH5/2019061515/NEON_D17_TEAK_DP1_20190615_171251_reflectance.h5',
+flights_D17_TEAK = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/D17/2019_TEAK_4/L1/Spectrometer/ReflectanceH5/2019061515/NEON_D17_TEAK_DP1_20190615_171251_reflectance.h5',
              'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D17/2019_TEAK_4/L1/Spectrometer/ReflectanceH5/2019061515/NEON_D17_TEAK_DP1_20190615_173632_reflectance.h5',
              'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D17/2019_TEAK_4/L1/Spectrometer/ReflectanceH5/2019061515/NEON_D17_TEAK_DP1_20190615_173103_reflectance.h5',
              'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D17/2019_TEAK_4/L1/Spectrometer/ReflectanceH5/2019061515/NEON_D17_TEAK_DP1_20190615_172405_reflectance.h5',
@@ -48,7 +48,7 @@ flights_TEAK = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/
              'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D17/2019_TEAK_4/L1/Spectrometer/ReflectanceH5/2019061515/NEON_D17_TEAK_DP1_20190615_174859_reflectance.h5',
              'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D17/2019_TEAK_4/L1/Spectrometer/ReflectanceH5/2019061515/NEON_D17_TEAK_DP1_20190615_174242_reflectance.h5']
 
-flights_SERC = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/D02/2019_SERC_4/L1/Spectrometer/ReflectanceH5/2019051512/NEON_D02_SERC_DP1_20190515_145907_reflectance.h5',
+flights_D02_SERC = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/D02/2019_SERC_4/L1/Spectrometer/ReflectanceH5/2019051512/NEON_D02_SERC_DP1_20190515_145907_reflectance.h5',
                 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D02/2019_SERC_4/L1/Spectrometer/ReflectanceH5/2019051512/NEON_D02_SERC_DP1_20190515_150424_reflectance.h5',
                 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D02/2019_SERC_4/L1/Spectrometer/ReflectanceH5/2019051512/NEON_D02_SERC_DP1_20190515_150934_reflectance.h5',
                 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D02/2019_SERC_4/L1/Spectrometer/ReflectanceH5/2019051512/NEON_D02_SERC_DP1_20190515_151446_reflectance.h5',
@@ -62,7 +62,7 @@ flights_SERC = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/
                 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D02/2019_SERC_4/L1/Spectrometer/ReflectanceH5/2019051512/NEON_D02_SERC_DP1_20190515_155853_reflectance.h5',                'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D02/2019_SERC_4/L1/Spectrometer/ReflectanceH5/2019051512/NEON_D02_SERC_DP1_20190515_160426_reflectance.h5',
                 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D02/2019_SERC_4/L1/Spectrometer/ReflectanceH5/2019051512/NEON_D02_SERC_DP1_20190515_161116_reflectance.h5']
 
-flights_SRER = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090114/NEON_D14_SRER_DP1_20190901_164806_reflectance.h5',
+flights_D14_SRER = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090114/NEON_D14_SRER_DP1_20190901_164806_reflectance.h5',
                'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090114/NEON_D14_SRER_DP1_20190901_165553_reflectance.h5',
                'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090114/NEON_D14_SRER_DP1_20190901_183556_reflectance.h5',
                'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090114/NEON_D14_SRER_DP1_20190901_175509_reflectance.h5',
@@ -93,6 +93,9 @@ flights_SRER = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/
                                       'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090314/NEON_D14_SRER_DP1_20190903_172901_reflectance.h5',
                                        'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090314/NEON_D14_SRER_DP1_20190903_163624_reflectance.h5']
 
+# Combine into list of lists
+all_flights = [flights_D17_TEAK, flights_D02_SERC, flights_D14_SRER]
+
 # Loop through all SERC files
 for m, site in enumerate(all_flights):
   match = re.search(r'flights_(.*?)', site)
@@ -109,13 +112,13 @@ for m, site in enumerate(all_flights):
       files = []
       files.append(file)
       retrieve_neon_files(files, Data_Dir)
-      img = Data_Dir + "/NEON_D02_SERC_DP1_" + file_name + '_reflectance.h5'
+      img = Data_Dir + "/NEON_" + site_name + "_DP1_" + file_name + '_reflectance.h5'
       neon = ht.HyTools() 
       neon.read_file(img,'neon')
       print("file loaded")
-      topo_file = "NEON BRDF-TOPO Corrections/2019_SERC/NEON_D02_SERC_DP1_" + file_name + "_reflectance_topo_coeffs_topo.json"
+      topo_file = "NEON BRDF-TOPO Corrections/2019_" + site_name + "/NEON_" + site_name + "_DP1_" + file_name + "_reflectance_topo_coeffs_topo.json"
       print(topo_file)
-      brdf_file = "NEON BRDF-TOPO Corrections/2019_SERC/NEON_D02_SERC_DP1_" + file_name + "_reflectance_brdf_coeffs_topo_brdf.json"
+      brdf_file = "NEON BRDF-TOPO Corrections/2019_" + site_name + "/NEON_" + site_name + "_DP1_" + file_name + "_reflectance_brdf_coeffs_topo_brdf.json"
       try:
       # Attempt to download the file
           s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
@@ -150,7 +153,7 @@ for m, site in enumerate(all_flights):
       arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
       print("stacking arrays")
       fullarraystack = np.dstack(arrays)
-      destination_s3_key = 'SERC_flightlines/'+ str(file_name)+'_output_' + '.tif'
+      destination_s3_key = site_name + '_flightlines/'+ str(file_name)+'_output_' + '.tif'
       local_file_path = Out_Dir + '/output_fullarray_' + file_name + '.tif'
       print(local_file_path)
       array2rastermb(local_file_path, fullarraystack, refl_md, Out_Dir, epsg = refl_md['epsg'], bands = fullarraystack.shape[2])
