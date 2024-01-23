@@ -1,5 +1,6 @@
 # Import functions
 from S01_Functions import * 
+import csv
 
 # Set working directories
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
@@ -16,21 +17,24 @@ comps = 3 # default component numbers for PCA
 NEON_sites = ['TEAK', 'SERC', 'SRER']
 
 # Pull flightlines for each site
-# Write code here to pull in a table and subset to sites of interest - called 'all_flights'
-# all_flights = 
+# download from S3
+# Load list into array
+with open('NEON_flightlines.csv', newline='') as csvfile:
+    all_flights = list(csv.reader(csvfile))
+my_flights = all_flights[all_flights["Site"].isin(NEON_sites)]
 
 ## PROCESSING WORKFLOW ##
 
 # 1. Topo/BRDF corrections
-topo_brdf_correct(all_flights)
+topo_brdf_correct(my_flights)
 print("Corrections complete")
 
 # 2. Clip to regions of interest
-clip_flightline(all_lines)
+clip_flightline(corrected_flightlines)
 print("Flightlines Clipped")
 
 # 3. Mosaic flightlines
-mosaic_flightlines(clipped_lines)
+mosaic_flightlines(clipped_flightlines)
 print("Flightlines mosaicked")
 
 # 4. Compute Functional Richness
