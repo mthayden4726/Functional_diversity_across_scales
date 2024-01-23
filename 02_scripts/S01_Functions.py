@@ -35,6 +35,8 @@ import parmap
 import os
 import tqdm 
 from progress.bar import Bar
+import boto3
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
 from tqdm.contrib.concurrent import process_map
 from multiprocessing import Pool, cpu_count
 from S01_Moving_Window_FRIC import * # add scripts folder to python path manager
