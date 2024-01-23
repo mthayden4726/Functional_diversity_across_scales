@@ -24,8 +24,8 @@ import tqdm
 from progress.bar import Bar
 from tqdm.contrib.concurrent import process_map
 from multiprocessing import Pool, cpu_count
-from window_calcs import * # add scripts folder to python path manager
-from S01_specdiv_functions import * # add scripts folder to python path manager
+from S01_Moving_Window_FRIC.py import * # add scripts folder to python path manager
+from S01_Functions import * # add scripts folder to python path manager
 from osgeo import gdal, osr
 from matplotlib.pyplot import subplots, show
 import h5py
@@ -35,112 +35,11 @@ import boto3
 import re
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
 
+# Set specifications 
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
 Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
-
-# Array to raster
-def array2raster(newRaster, reflBandArray, reflArray_metadata, Out_Dir, epsg):
-    NP2GDAL_CONVERSION = {
-        "uint8": 1,
-        "int8": 1,
-        "uint16": 2,
-        "int16": 3,
-        "uint32": 4,
-        "int32": 5,
-        "float32": 6,
-        "float64": 7,
-        "complex64": 10,
-        "complex128": 11,
-    }
-    pwd = os.getcwd()
-    os.chdir(Out_Dir)
-    cols = reflBandArray.shape[1]
-    rows = reflBandArray.shape[0]
-    bands = 1
-    pixelWidth = float(refl_md['res']['pixelWidth'])
-    pixelHeight = -float(refl_md['res']['pixelHeight'])
-    originX = refl_md['ext_dict']['xMin']
-    originY = refl_md['ext_dict']['yMax']
-    driver = gdal.GetDriverByName('GTiff')
-    gdaltype = NP2GDAL_CONVERSION[reflBandArray.dtype.name]
-    outRaster = driver.Create(newRaster, cols, rows, bands, gdaltype)
-    outRaster.SetGeoTransform((originX, pixelWidth, 0, originY, 0, pixelHeight))
-    # outband = outRaster.GetRasterBand(1)
-    # outband.WriteArray(reflBandArray[:,:,x])
-    #for band in range(bands):
-    #    outRaster.GetRasterBand(band + 1).WriteArray(array[:, :, band])
-    outRaster.WriteArray(reflBandArray[:, :])
-    outRasterSRS = osr.SpatialReference()
-    #outRasterSRS.ImportFromEPSG(reflArray_metadata['epsg'])
-    #outRasterSRS.ExportToWkt()
-    outRasterSRS.ImportFromEPSG(epsg)
-    outRaster.SetProjection(outRasterSRS.ExportToWkt())
-    outRaster.FlushCache()
-    os.chdir(pwd)
-
-def array2rastermb(newRaster, reflBandArray, reflArray_metadata, Out_Dir, epsg, bands):
-    NP2GDAL_CONVERSION = {
-        "uint8": 1,
-        "int8": 1,
-        "uint16": 2,
-        "int16": 3,
-        "uint32": 4,
-        "int32": 5,
-        "float32": 6,
-        "float64": 7,
-        "complex64": 10,
-        "complex128": 11,
-    }
-    pwd = os.getcwd()
-    print(pwd)
-    os.chdir(Out_Dir)
-    cols = reflBandArray.shape[1]
-    rows = reflBandArray.shape[0]
-    print(cols,rows)
-    pixelWidth = float(refl_md['res']['pixelWidth'])
-    pixelHeight = -float(refl_md['res']['pixelHeight'])
-    originX = refl_md['ext_dict']['xMin']
-    originY = refl_md['ext_dict']['yMax']
-    driver = gdal.GetDriverByName('GTiff')
-    gdaltype = NP2GDAL_CONVERSION[reflBandArray.dtype.name]
-    outRaster = driver.Create(newRaster, cols, rows, bands, gdaltype)
-    print(outRaster)
-    outRaster.SetGeoTransform((originX, pixelWidth, 0, originY, 0, pixelHeight))
-    #outband = outRaster.GetRasterBand(1)
-    #outband.WriteArray(reflBandArray[:,:,x])
-    for band in range(bands):
-        print(band)
-        outRaster.GetRasterBand(band + 1).WriteArray(reflBandArray[:, :, band])
-    #outRaster.WriteArray(reflBandArray[:, :, :])
-    outRasterSRS = osr.SpatialReference()
-    #outRasterSRS.ImportFromEPSG(reflArray_metadata['epsg'])
-    #outRasterSRS.ExportToWkt()
-    outRasterSRS.ImportFromEPSG(epsg)
-    outRaster.SetProjection(outRasterSRS.ExportToWkt())
-    outRaster.FlushCache()
-    os.chdir(pwd)
-    
-def upload_to_s3(bucket_name, file_path, s3_key):
-    """
-    Upload a file from an EC2 instance to Amazon S3.
-
-    :param bucket_name: Name of the S3 bucket
-    :param file_path: Local path to the file on the EC2 instance
-    :param s3_key: Destination key in the S3 bucket (e.g., folder/file_name.ext)
-    """
-    # Initialize the S3 client
-    s3 = boto3.client('s3')
-
-    try:
-    # Upload the file
-        s3.upload_file(file_path, bucket_name, s3_key)
-        print(f'Successfully uploaded {file_path} to {bucket_name}/{s3_key}')
-    except Exception as e:
-        print(f"Error uploading file: {e}")
-
-# Select files to pull from NEON
 
 # Select files to pull from NEON
 #SITECODE = 'SERC' # NEON site of interest
