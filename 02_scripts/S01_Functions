@@ -271,6 +271,51 @@ def scale_transform(X, comps):
     pca.fit(X)
     return x_mean, x_std, pca
 
+# Full steps surrounding PCA transformation in FRic computation script
+def pca_steps(raster, comps):
+    """Function to center, scale and fit PCA transform.
+    
+    Parameters:
+    -----------
+    raster:
+        Data Array. 
+    
+    comps:
+        Integer. Number of principle components to fit.
+        
+    Returns:
+    -----------
+    pca_x: PCA transformed raster.
+    
+    """
+
+    # Convert data array to numpy array
+    veg_np = raster.to_numpy()
+    shape = veg_np.shape
+    print(shape)
+    # Flatten features into one dimesnion
+    dim1 = shape[1]
+    dim2 = shape[2]
+    bands = shape[0]
+    X = veg_np.reshape(bands,dim1*dim2).T
+    print(X.shape)
+    X = X.astype('float32')
+    X[np.isnan(X)] = np.nan
+    x_mean = np.nanmean(X, axis=0)[np.newaxis, :]
+    X_no_nan = np.nan_to_num(X, nan=0)
+    #x_mean = X_no_nan.mean(axis=0)[np.newaxis, :]
+    X -=x_mean
+    x_std = np.nanstd(X,axis=0)[np.newaxis, :]
+    X /=x_std
+    # Perform initial PCA fit
+    pca = PCA(n_components=comps) # set max number of components
+    pca.fit(X_no_nan)
+    X_no_nan[np.isnan(X_no_nan) | np.isinf(X_no_nan)] = 0
+    pca_x =  pca.transform(X_no_nan)
+    print(pca_x)
+    pca_x = pca_x.reshape((dim1, dim2,comps))
+    print(pca_x.shape)
+
 # Store map info for raster
 def store_metadata(neon):
     """Store metadata to create corrected raster with same metadata as original.
