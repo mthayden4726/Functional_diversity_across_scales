@@ -1,0 +1,317 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Script containing functions for processing imagery and calculating spectral diversity metrics.
+- Functional richness
+- Functional evenness (in progress)
+- Functional divergence (in progress)
+
+Additionally contains processing functions to:
+    - plot an RGB map of multi-band raster.
+    - find and load NEON files
+    - subsample pixels and scale, center and fit PCA to subsample
+    - parallelize various functions
+    - pull from and upload to AWS S3 Bucket
+
+
+Author: M. Hayden
+Last Updated: 1/23/24
+"""
+
+## Load necessary packages ##
+import hytools as ht
+import matplotlib.pyplot as plt
+import numpy as np
+import requests
+import sklearn
+from sklearn.cluster import KMeans
+from sklearn.decomposition import PCA
+import kneed
+from kneed import KneeLocator
+from scipy.spatial import ConvexHull
+import subprocess
+from urllib.request import urlretrieve
+import parmap
+import os
+import tqdm 
+from progress.bar import Bar
+from tqdm.contrib.concurrent import process_map
+from multiprocessing import Pool, cpu_count
+from S01_Moving_Window_FRIC.py import * # add scripts folder to python path manager
+
+## 1. Interacting with NEON Database ####
+
+# Find NEON files with specifications
+def find_neon_files(SITECODE, PRODUCTCODE, 
+                    YEAR):
+    """Function to create API URLs for NEON images of interest.
+    
+    Parameters:
+    -----------
+    site: 
+        String...
+    product: 
+        String...
+    year:
+        String...
+        
+    Returns:
+    -----------
+    file_paths: list of file paths for desired NEON images.
+        URL for API where image is located.
+    
+    
+    """
+    # Server's URL will remain the same
+    SERVER = 'http://data.neonscience.org/api/v0/'
+    # Build so that we can loop through reading files in
+    url = SERVER+'data/'+PRODUCTCODE+'/'+SITECODE+'/'+YEAR
+    # Request the url
+    data_request = requests.get(url)
+    # Convert the request to Python JSON object
+    data_json = data_request.json()
+    # Create list of file paths of interest for given site, product, year
+    file_paths = []
+    for file in data_json['data']['files'][:20]:
+      if 'reflectance.h5' in file['name']:
+            file_paths.insert(1, file['url'])
+            print(file['url'])
+    return file_paths
+
+# Retrieve NEON files from API
+def retrieve_neon_files(file_paths, data_directory):
+    """Function to download files from list of file paths.
+    
+    Parameters:
+    -----------
+    
+    file_paths: list of strings
+    
+    data_directory: string of location on OS to save data
+
+        
+    Returns:
+    -----------
+    files: list of locations of downloaded files on OS
+    
+    """
+    files = []
+    for file_path in file_paths:
+        base_name = os.path.basename(file_path)
+        save_path = os.path.join(data_directory, base_name)
+        loc, message = urlretrieve(file_path, save_path)
+        files.append(loc)
+    return files
+
+## 2. Interacting with AWS S3 ####
+
+# Download shapefile from S3 Bucket
+def download_shapefile(bucket, prefix, output_dir):
+    # List all files with the given prefix
+    files = s3.list_objects(Bucket=bucket, Prefix=prefix)['Contents']
+
+    # Create the output directory if it doesn't exist
+    os.makedirs(output_dir, exist_ok=True)
+    downloaded_files = []
+    
+    # Download all files
+    for file in files:
+        key = file['Key']
+        local_path = os.path.join(output_dir, os.path.basename(key))
+        s3.download_file(bucket, key, local_path)
+        downloaded_files.append(local_path)
+
+    return downloaded_files
+
+# Upload file to S3 Bucket
+def upload_to_s3(bucket_name, file_path, s3_key):
+    """
+    Upload a file from an EC2 instance to Amazon S3.
+
+    :param bucket_name: Name of the S3 bucket
+    :param file_path: Local path to the file on the EC2 instance
+    :param s3_key: Destination key in the S3 bucket (e.g., folder/file_name.ext)
+    """
+    # Initialize the S3 client
+    s3 = boto3.client('s3')
+
+    try:
+    # Upload the file
+        s3.upload_file(file_path, bucket_name, s3_key)
+        print(f'Successfully uploaded {file_path} to {bucket_name}/{s3_key}')
+    except Exception as e:
+        print(f"Error uploading file: {e}")
+## 3. Processing Images ####
+
+# Convert array to raster (single band)
+def array2raster(newRaster, reflBandArray, reflArray_metadata, Out_Dir, epsg):
+    NP2GDAL_CONVERSION = {
+        "uint8": 1,
+        "int8": 1,
+        "uint16": 2,
+        "int16": 3,
+        "uint32": 4,
+        "int32": 5,
+        "float32": 6,
+        "float64": 7,
+        "complex64": 10,
+        "complex128": 11,
+    }
+    pwd = os.getcwd()
+    os.chdir(Out_Dir)
+    cols = reflBandArray.shape[1]
+    rows = reflBandArray.shape[0]
+    bands = 1
+    pixelWidth = float(refl_md['res']['pixelWidth'])
+    pixelHeight = -float(refl_md['res']['pixelHeight'])
+    originX = refl_md['ext_dict']['xMin']
+    originY = refl_md['ext_dict']['yMax']
+    driver = gdal.GetDriverByName('GTiff')
+    gdaltype = NP2GDAL_CONVERSION[reflBandArray.dtype.name]
+    outRaster = driver.Create(newRaster, cols, rows, bands, gdaltype)
+    outRaster.SetGeoTransform((originX, pixelWidth, 0, originY, 0, pixelHeight))
+    # outband = outRaster.GetRasterBand(1)
+    # outband.WriteArray(reflBandArray[:,:,x])
+    #for band in range(bands):
+    #    outRaster.GetRasterBand(band + 1).WriteArray(array[:, :, band])
+    outRaster.WriteArray(reflBandArray[:, :])
+    outRasterSRS = osr.SpatialReference()
+    #outRasterSRS.ImportFromEPSG(reflArray_metadata['epsg'])
+    #outRasterSRS.ExportToWkt()
+    outRasterSRS.ImportFromEPSG(epsg)
+    outRaster.SetProjection(outRasterSRS.ExportToWkt())
+    outRaster.FlushCache()
+    os.chdir(pwd)
+
+# Convert array to raster (multi-band)
+def array2rastermb(newRaster, reflBandArray, reflArray_metadata, Out_Dir, epsg, bands):
+    NP2GDAL_CONVERSION = {
+        "uint8": 1,
+        "int8": 1,
+        "uint16": 2,
+        "int16": 3,
+        "uint32": 4,
+        "int32": 5,
+        "float32": 6,
+        "float64": 7,
+        "complex64": 10,
+        "complex128": 11,
+    }
+    pwd = os.getcwd()
+    print(pwd)
+    os.chdir(Out_Dir)
+    cols = reflBandArray.shape[1]
+    rows = reflBandArray.shape[0]
+    print(cols,rows)
+    pixelWidth = float(refl_md['res']['pixelWidth'])
+    pixelHeight = -float(refl_md['res']['pixelHeight'])
+    originX = refl_md['ext_dict']['xMin']
+    originY = refl_md['ext_dict']['yMax']
+    driver = gdal.GetDriverByName('GTiff')
+    gdaltype = NP2GDAL_CONVERSION[reflBandArray.dtype.name]
+    outRaster = driver.Create(newRaster, cols, rows, bands, gdaltype)
+    print(outRaster)
+    outRaster.SetGeoTransform((originX, pixelWidth, 0, originY, 0, pixelHeight))
+    #outband = outRaster.GetRasterBand(1)
+    #outband.WriteArray(reflBandArray[:,:,x])
+    for band in range(bands):
+        print(band)
+        outRaster.GetRasterBand(band + 1).WriteArray(reflBandArray[:, :, band])
+    #outRaster.WriteArray(reflBandArray[:, :, :])
+    outRasterSRS = osr.SpatialReference()
+    #outRasterSRS.ImportFromEPSG(reflArray_metadata['epsg'])
+    #outRasterSRS.ExportToWkt()
+    outRasterSRS.ImportFromEPSG(epsg)
+    outRaster.SetProjection(outRasterSRS.ExportToWkt())
+    outRaster.FlushCache()
+    os.chdir(pwd)
+
+# Clip raster to set bounds
+def clip_raster(src, minx, miny, maxx, maxy):
+    geom = box(minx, miny, maxx, maxy)
+    out_image, out_transform = rasterio.mask(src, [geom], crop=True)
+    out_meta = src.meta.copy()
+    out_meta.update({"driver": "GTiff", 
+        "height": out_image.shape[1],
+        "width": out_image.shape[2],
+        "transform": out_transform})
+    return out_image, out_meta
+
+# Scale and transform array with Principal Component Analysis 
+def scale_transform(X, comps):
+    """Function to center, scale and fit PCA transform.
+    
+    Parameters:
+    -----------
+    X:
+        Numpy array. Subsampled pixels of HyTools object.
+    
+    comps:
+        Integer. Number of principle components to fit.
+        
+    Returns:
+    -----------
+    x_mean:
+        Numpy array. Mean reflectance across bands in subsampled pixels.
+    x_std:
+        Numpy array. Std reflectance across bands in subsampled pixels.
+    pca:
+        PCA transformation.
+    
+    """
+    # Center, scale and fit PCA transform - scales based on mean reflectance at each band
+    x_mean = X.mean(axis=0)[np.newaxis,:]
+    X = X.astype('float32') # necessary to manually convert to float for next function to work
+    X -=x_mean
+    x_std = X.std(axis=0,ddof=1)[np.newaxis,:]
+    X /=x_std
+    X = X[~np.isnan(X.sum(axis=1)) & ~np.isinf(X.sum(axis=1)),:]
+    # Perform initial PCA fit
+    pca = PCA(n_components=comps) # set max number of components
+    pca.fit(X)
+    return x_mean, x_std, pca
+
+# Compute CHV --> In progress
+
+## 4. Visualization Tools ####
+
+# Show RGB representation of hytools object.
+def show_rgb(hy_obj,r=660,g=550,b=440, correct= []):
+    """Display raster in RGB.
+    
+    Parameters:
+    -----------
+    x: hytools object
+        Hytools object of image of interest.
+    r: int
+        Wavelength/band corresponding to red.
+    g: int
+        Wavelength/band corresponding to green.
+    b: int
+        Wavelength/band corresponding to blue.
+    Returns:
+    -----------
+    rgb : raster
+        RGB raster for display in plot viewer.
+    
+    Plots rgb raster.
+    
+    """
+    rgb=  np.stack([hy_obj.get_wave(r,corrections= correct),
+                    hy_obj.get_wave(g,corrections= correct),
+                    hy_obj.get_wave(b,corrections= correct)])
+    rgb = np.moveaxis(rgb,0,-1).astype(float)
+    rgb[rgb ==hy_obj.no_data] = np.nan
+
+    bottom = np.nanpercentile(rgb,5,axis = (0,1))
+    top = np.nanpercentile(rgb,95,axis = (0,1))
+    rgb = np.clip(rgb,bottom,top)
+
+    rgb = (rgb-np.nanmin(rgb,axis=(0,1)))/(np.nanmax(rgb,axis= (0,1))-np.nanmin(rgb,axis= (0,1)))
+
+   # height = int(hy_obj.lines/hy_obj.columns)
+
+    # fig  = plt.figure(figsize = (7,7) )
+    plt.imshow(rgb)
+    plt.show()
+    #plt.close()
