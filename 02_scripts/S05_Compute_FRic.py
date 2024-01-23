@@ -34,9 +34,9 @@ from fiona.crs import from_epsg
 import pycrs
 import csv
 from csv import writer
-# Import functions defined in S01_specdiv_functions.py
-from S01_specdiv_functions import * # add scripts folder to python path manager
-from window_calcs import *
+# Import functions defined in other scripts
+from S01_Moving_Window_FRIC.py import * # add scripts folder to python path manager
+from S01_Functions.py import * # add scripts folder to python path manager
 
 # Set directories
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
@@ -44,36 +44,16 @@ Out_Dir = '/home/ec2-user/BioSCape_across_scales/03_output'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
-# Define S3 function
-def upload_to_s3(bucket_name, file_path, s3_key):
-    """
-    Upload a file from an EC2 instance to Amazon S3.
-
-    :param bucket_name: Name of the S3 bucket
-    :param file_path: Local path to the file on the EC2 instance
-    :param s3_key: Destination key in the S3 bucket (e.g., folder/file_name.ext)
-    """
-    # Initialize the S3 client
-    s3 = boto3.client('s3')
-
-    try:
-    # Upload the file
-        s3.upload_file(file_path, bucket_name, s3_key)
-        print(f'Successfully uploaded {file_path} to {bucket_name}/{s3_key}')
-    except Exception as e:
-        print(f"Error uploading file: {e}")
-
 ## Set global parameters ##
-#window_sizes = [10, 30, 60, 120, 240, 480]   # list of window sizes to test
 window_sizes = [60, 120, 240, 480, 700, 960, 1200, 1500, 2000, 2200]
-#window_sizes = [10, 50, 100, 150, 200, 300, 400]   # list of window sizes to test
 ndvi_threshold = 0.4 # ndvi threshold for radiometric filtering
+comps = 3 # default component numbers for PCA
+# Other potential options (not currently included in this script):
 # shade_threshold = 500 # should be low threshold across NIR region (15%)
 # cloud_threshold = 1500 # should be high threshold in blue band
-#bad_bands = [[300,400],[1300,1450],[1780,2000],[2450,2600]] # bands to be masked out
-#sample_size = 0.1 # proportion of pixels to subsample for fitting PCA
-comps = 3 # default component numbers for PCA
-#nclusters = 15 # default component numbers for K-means clustering
+# bad_bands = [[300,400],[1300,1450],[1780,2000],[2450,2600]] # bands to be masked out
+# sample_size = 0.1 # proportion of pixels to subsample for fitting PCA
+# nclusters = 15 # default component numbers for K-means clustering
 
 # Loop through clipped files
 file_stem = 'SRER_flightlines/Mosaic_SRER_shape_'
@@ -85,33 +65,9 @@ for i in sites:
     file = Data_Dir + '/mosaic.tif'
     raster = rxr.open_rasterio(file, masked=True)
     print(raster)
-    # Convert data array to numpy array
-    veg_np = raster.to_numpy()
-    shape = veg_np.shape
-    print(shape)
-    # Flatten features into one dimesnion
-    dim1 = shape[1]
-    dim2 = shape[2]
-    bands = shape[0]
-    X = veg_np.reshape(bands,dim1*dim2).T
-    print(X.shape)
-    X = X.astype('float32')
-    X[np.isnan(X)] = np.nan
-    x_mean = np.nanmean(X, axis=0)[np.newaxis, :]
-    X_no_nan = np.nan_to_num(X, nan=0)
-    #x_mean = X_no_nan.mean(axis=0)[np.newaxis, :]
-    X -=x_mean
-    x_std = np.nanstd(X,axis=0)[np.newaxis, :]
-    X /=x_std
-    # Perform initial PCA fit
-    pca = PCA(n_components=comps) # set max number of components
-    pca.fit(X_no_nan)
-    X_no_nan[np.isnan(X_no_nan) | np.isinf(X_no_nan)] = 0
-    pca_x =  pca.transform(X_no_nan)
-    print(pca_x)
-    pca_x = pca_x.reshape((dim1, dim2,comps))
-    print(pca_x.shape)
-    # paralellize calcs for different window sizes
+    # Array-ize, transform with PCA
+    pca_x = pca_steps(raster)
+    # Paralellize calcs for different window sizes
     results_FR = {}
     local_file_path = Out_Dir + "/SRER_fric_" + str(i) + ".csv"
     window_batches = [(a, pca_x, results_FR, local_file_path) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
