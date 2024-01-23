@@ -94,8 +94,8 @@ for i,ID in enumerate(file_ID):
     # Filter objects based on the search criteria
     files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (search_criteria in obj['Key'])]
     print(files)
-    for i,file in enumerate(files):
-        flight  = Out_Dir + '/file_' + str(i) + '.tif'
+    for j,file in enumerate(files):
+        flight  = Out_Dir + '/file_' + str(j) + '.tif'
         try:
             s3.download_file(bucket_name, file, flight)
             print(f"The file '{file}' exists.")
