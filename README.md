@@ -27,4 +27,4 @@ Processing scripts should be implemented as:
 
 Updated: Jan. 23rd, 2024
 
-Next: Combining scripts into workflow based on FUNCTIONS.
+Next: Combining scripts into workflow based on FUNCTIONS --> script in progress: Workflow.py
