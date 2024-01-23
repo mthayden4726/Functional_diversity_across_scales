@@ -139,33 +139,7 @@ for i,file in enumerate(flights_SERC):
     neon.load_coeffs(brdf_coeffs, 'brdf')
     print("corrections loaded")
     # Store map info for raster
-    mapInfo= neon.map_info
-    header_dict = neon.get_header()
-    refl_md = {}
-    refl_md['mapInfo'] = header_dict['map info']
-    refl_md['wavelength'] = header_dict['wavelength']
-    refl_md['shape'] = [neon.lines, neon.columns, neon.bands]
-    #Extract no data value & scale factor
-    refl_md['noDataVal'] = float(header_dict['data ignore value'])
-    refl_md['scaleFactor'] = float(0.996)
-    refl_md['bad_band_window1'] = np.array([1340, 1445])
-    refl_md['bad_band_window2'] = np.array([1790, 1955])
-    refl_md['epsg'] = 32618 # for wgs 84, UTM 11N --> note that this changed by site!! 12N for SRER
-    refl_md['res'] = {}
-    refl_md['res']['pixelWidth'] = float(mapInfo[5])
-    refl_md['res']['pixelHeight'] = float(mapInfo[6])
-    # Extract the upper left-hand corner coordinates from mapInfo
-    xMin = float(mapInfo[3])  # convert from string to floating point number
-    yMax = float(mapInfo[4])
-    # Calculate the xMax and yMin values from the dimensions
-    xMax = xMin + (refl_md['shape'][1] * refl_md['res']['pixelWidth'])  # xMax = left edge + (# of columns * resolution)",
-    yMin = yMax - (refl_md['shape'][0] * refl_md['res']['pixelHeight'])  # yMin = top edge - (# of rows * resolution)",
-    refl_md['extent'] = (xMin, xMax, yMin, yMax)  # useful format for plotting
-    refl_md['ext_dict'] = {}
-    refl_md['ext_dict']['xMin'] = xMin
-    refl_md['ext_dict']['xMax'] = xMax
-    refl_md['ext_dict']['yMin'] = yMin
-    refl_md['ext_dict']['yMax'] = yMax
+    refl_md, header_dict = store_metadata(neon)
     # Export with corrections
     wavelength = header_dict['wavelength']
     good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
