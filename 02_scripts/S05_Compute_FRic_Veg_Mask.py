@@ -36,7 +36,7 @@ import csv
 from csv import writer
 # Import functions defined in S01_specdiv_functions.py
 from S01_Functions import * # add scripts folder to python path manager
-from S01_Compute_FRic import *
+from S01_Moving_Window_FRIC import *
 
 # Set directories
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
@@ -44,28 +44,9 @@ Out_Dir = '/home/ec2-user/BioSCape_across_scales/03_output'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
-# Define S3 function
-def upload_to_s3(bucket_name, file_path, s3_key):
-    """
-    Upload a file from an EC2 instance to Amazon S3.
-
-    :param bucket_name: Name of the S3 bucket
-    :param file_path: Local path to the file on the EC2 instance
-    :param s3_key: Destination key in the S3 bucket (e.g., folder/file_name.ext)
-    """
-    # Initialize the S3 client
-    s3 = boto3.client('s3')
-
-    try:
-    # Upload the file
-        s3.upload_file(file_path, bucket_name, s3_key)
-        print(f'Successfully uploaded {file_path} to {bucket_name}/{s3_key}')
-    except Exception as e:
-        print(f"Error uploading file: {e}")
-
 ## Set global parameters ##
-#window_sizes = [10, 30, 60, 120, 240, 480]   # list of window sizes to test
-window_sizes = [60, 120, 240, 480, 960, 1200, 1500, 2000, 2200]
+window_sizes = [10, 30, 60, 120]   # list of window sizes to test
+# window_sizes = [60, 120, 240, 480, 960, 1200, 1500, 2000, 2200]
 #window_sizes = [10, 50, 100, 150, 200, 300, 400]   # list of window sizes to test
 red_band = 58
 nir_band = 90
@@ -79,7 +60,7 @@ comps = 3 # default component numbers for PCA
 
 # Loop through clipped files
 file_stem = 'SERC_flightlines/Mosaic_SERC_'
-sites = [8,11]
+sites = [0]
 for i in sites:
     clip_file = file_stem + str(i) + '.tif'
     print(clip_file)
@@ -132,7 +113,7 @@ for i in sites:
     #print(volumes)
     # open file for writing
     # local_file_path = Out_Dir + "/TEAK_fric_" + str(i) + ".csv"
-    destination_s3_key = "/SERC_fric_" + str(i) + ".csv"
+    destination_s3_key = "/SERC_fric_veg_mask" + str(i) + ".csv"
     #f = open(local_file_path,"w")
     # write file
     #f.write(str(volumes))
