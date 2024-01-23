@@ -66,7 +66,7 @@ for i in sites:
     raster = rxr.open_rasterio(file, masked=True)
     print(raster)
     # Array-ize, transform with PCA
-    pca_x = pca_steps(raster)
+    pca_x = pca_steps(raster, comps)
     # Paralellize calcs for different window sizes
     results_FR = {}
     local_file_path = Out_Dir + "/SRER_fric_" + str(i) + ".csv"
