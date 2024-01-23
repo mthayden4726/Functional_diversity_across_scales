@@ -1,5 +1,11 @@
+## Workflow for going from original NEON flightline to output of functional metrics ##
+# Pulls functions from multiple other scripts.
+
+# Last updated on January 23rd, 2024
+
 # Import functions
 from S01_Functions import * 
+from S02_Topo_BRDF_Corrections_All import *
 import csv
 
 # Set working directories
@@ -16,10 +22,13 @@ comps = 3 # default component numbers for PCA
 # Define NEON sites of interest
 NEON_sites = ['TEAK', 'SERC', 'SRER']
 
-# Pull flightlines for each site
-# download from S3
-# Load list into array
-with open('NEON_flightlines.csv', newline='') as csvfile:
+# Pull list of flightlines for each site from S3
+flightlines_file = "NEON_flightlines.csv"
+s3.download_file(bucket_name, flightlines_file, Data_Dir + '/NEON_flightlines.csv')
+print("File downloaded successfully.")
+
+# Load list into array and filter for sites of interest
+with open(Data_Dir + '/NEON_flightlines.csv', newline='') as csvfile:
     all_flights = list(csv.reader(csvfile))
 my_flights = all_flights[all_flights["Site"].isin(NEON_sites)]
 
