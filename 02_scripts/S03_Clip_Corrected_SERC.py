@@ -17,46 +17,12 @@ import geopandas as gpd
 from fiona.crs import from_epsg
 import pycrs
 from osgeo import gdal
+from S01_Functions.py import * # add scripts folder to python path manager
 
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
 Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
-
-def upload_to_s3(bucket_name, file_path, s3_key):
-    """
-    Upload a file from an EC2 instance to Amazon S3.
-
-    :param bucket_name: Name of the S3 bucket
-    :param file_path: Local path to the file on the EC2 instance
-    :param s3_key: Destination key in the S3 bucket (e.g., folder/file_name.ext)
-    """
-    # Initialize the S3 client
-    s3 = boto3.client('s3')
-
-    try:
-    # Upload the file
-        s3.upload_file(file_path, bucket_name, s3_key)
-        print(f'Successfully uploaded {file_path} to {bucket_name}/{s3_key}')
-    except Exception as e:
-        print(f"Error uploading file: {e}")
-
-def download_shapefile(bucket, prefix, output_dir):
-    # List all files with the given prefix
-    files = s3.list_objects(Bucket=bucket, Prefix=prefix)['Contents']
-
-    # Create the output directory if it doesn't exist
-    os.makedirs(output_dir, exist_ok=True)
-    downloaded_files = []
-    
-    # Download all files
-    for file in files:
-        key = file['Key']
-        local_path = os.path.join(output_dir, os.path.basename(key))
-        s3.download_file(bucket, key, local_path)
-        downloaded_files.append(local_path)
-
-    return downloaded_files
 
 #files = ['TEAK_flightlines/20190615_171251_output_0.tif', 
 #         'TEAK_flightlines/20190615_171251_output_1.tif',
@@ -79,6 +45,7 @@ files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (searc
 print(files)
 # Or select files based on QGIS identification
 #files = ['TEAK_flightlines/20190901_164806_output_.tif']
+
 # List shapefile prefices
 shapefiles = ['Site_boundaries/SERC/SERC_010_EPSG',
                             'Site_boundaries/SERC/SERC_009_EPSG',
