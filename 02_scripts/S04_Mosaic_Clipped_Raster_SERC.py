@@ -82,7 +82,7 @@ src_files_to_mosaic = []
 #    #minx, miny, maxx, maxy = gdf.total_bounds
 #    #print(minx, miny, maxx, maxy)
 #
-file_ID = ['5', '6']
+file_ID = ['0', '1', '2', '3', '4','5', '6']
 for i,ID in enumerate(file_ID):
     
     # List files associated with a single buffer shape
