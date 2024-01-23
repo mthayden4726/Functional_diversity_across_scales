@@ -8,6 +8,7 @@ NEON_sites = ['TEAK', 'SERC', 'SRER']
 
 # Pull flightlines for each site
 # Write code here to pull in a table and subset to sites of interest - called 'all_flights'
+# all_flights = 
 
 ## PROCESSING WORKFLOW ##
 
