@@ -19,7 +19,7 @@
 Processing scripts should be implemented as:
 1. Correct (BRDF/Topo) and export flightlines as tiffs (S02 scripts)
 2. Clip flightlines to larger field site boundary (S03 scripts)
-3. Mosaic clipped flightlines together (S04 scripts)
+3. Mosaic clipped flightlines together (S04 scripts) - time to run: SERC started 12:07 pm. 
 4. Compute functional metrics for each field site's raster (S05 scripts)
 5. Analyze the output to assess scaling of functional metrics with area (S06 scripts)
 
