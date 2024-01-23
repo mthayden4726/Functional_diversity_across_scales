@@ -94,69 +94,70 @@ flights_D14_SRER = ['https://storage.googleapis.com/neon-aop-products/2019/FullS
                                        'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090314/NEON_D14_SRER_DP1_20190903_163624_reflectance.h5']
 
 # Combine into list of lists
-all_flights = [flights_D17_TEAK, flights_D02_SERC, flights_D14_SRER]
+#all_flights = [flights_D17_TEAK, flights_D02_SERC, flights_D14_SRER]
 
-# Loop through all SERC files
-for m, site in enumerate(all_flights):
-  match = re.search(r'flights_(.*?)', site)
-  if match:
-      site_name = match.group(1)
-      print(site_name)
-  for i,file in enumerate(flights_SERC):
-      match = re.search(r'DP1_(.*?)_reflectance', file)
-      if match:
-          file_name = match.group(1)
-          print(file_name)
-      else:
-          print("Pattern not found in the URL.")
-      files = []
-      files.append(file)
-      retrieve_neon_files(files, Data_Dir)
-      img = Data_Dir + "/NEON_" + site_name + "_DP1_" + file_name + '_reflectance.h5'
-      neon = ht.HyTools() 
-      neon.read_file(img,'neon')
-      print("file loaded")
-      topo_file = "NEON BRDF-TOPO Corrections/2019_" + site_name + "/NEON_" + site_name + "_DP1_" + file_name + "_reflectance_topo_coeffs_topo.json"
-      print(topo_file)
-      brdf_file = "NEON BRDF-TOPO Corrections/2019_" + site_name + "/NEON_" + site_name + "_DP1_" + file_name + "_reflectance_brdf_coeffs_topo_brdf.json"
-      try:
-      # Attempt to download the file
+def topo_brdf_correct(all_flights):
+  # Loop through all SERC files
+  for m, site in enumerate(all_flights):
+    match = re.search(r'flights_(.*?)', site)
+    if match:
+        site_name = match.group(1)
+        print(site_name)
+    for i,file in enumerate(flights_SERC):
+        match = re.search(r'DP1_(.*?)_reflectance', file)
+        if match:
+            file_name = match.group(1)
+            print(file_name)
+        else:
+            print("Pattern not found in the URL.")
+        files = []
+        files.append(file)
+        retrieve_neon_files(files, Data_Dir)
+        img = Data_Dir + "/NEON_" + site_name + "_DP1_" + file_name + '_reflectance.h5'
+        neon = ht.HyTools() 
+        neon.read_file(img,'neon')
+        print("file loaded")
+        topo_file = "NEON BRDF-TOPO Corrections/2019_" + site_name + "/NEON_" + site_name + "_DP1_" + file_name + "_reflectance_topo_coeffs_topo.json"
+        print(topo_file)
+        brdf_file = "NEON BRDF-TOPO Corrections/2019_" + site_name + "/NEON_" + site_name + "_DP1_" + file_name + "_reflectance_brdf_coeffs_topo_brdf.json"
+        try:
+        # Attempt to download the file
           s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
           print("File downloaded successfully.")
-      except FileNotFoundError:
+        except FileNotFoundError:
           print("The file does not exist in the specified S3 bucket.")
-      except NoCredentialsError:
+        except NoCredentialsError:
           print("AWS credentials could not be found.")
-      except PartialCredentialsError:
+        except PartialCredentialsError:
           print("AWS credentials are incomplete.")
-      except ClientError as e:
+        except ClientError as e:
           if e.response['Error']['Code'] == '404':
               print("The object does not exist in the S3 bucket.")
           else:
               print("An error occurred:", e)
-      except Exception as e:
+        except Exception as e:
           print("An unexpected error occurred:", e)
-      #s3.meta.client.download_file(bucket_name,topo_file, Data_Dir + 'topo.json')
-      s3.download_file(bucket_name,brdf_file, Data_Dir + '/brdf.json')
-      topo_coeffs = Data_Dir + "/topo.json"
-      brdf_coeffs = Data_Dir + "/brdf.json"
-      neon.load_coeffs(topo_coeffs,'topo')
-      neon.load_coeffs(brdf_coeffs, 'brdf')
-      print("corrections loaded")
-      # Store map info for raster
-      refl_md, header_dict = store_metadata(neon)
-      # Export with corrections
-      wavelength = header_dict['wavelength']
-      good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
-      good_wl_list = good_wl[~np.isnan(good_wl)]
-      print("creating arrays")
-      arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
-      print("stacking arrays")
-      fullarraystack = np.dstack(arrays)
-      destination_s3_key = site_name + '_flightlines/'+ str(file_name)+'_output_' + '.tif'
-      local_file_path = Out_Dir + '/output_fullarray_' + file_name + '.tif'
-      print(local_file_path)
-      array2rastermb(local_file_path, fullarraystack, refl_md, Out_Dir, epsg = refl_md['epsg'], bands = fullarraystack.shape[2])
-      upload_to_s3(bucket_name, local_file_path, destination_s3_key)
-      os.remove(local_file_path)
-      print("flightline complete")
+        #s3.meta.client.download_file(bucket_name,topo_file, Data_Dir + 'topo.json')
+        s3.download_file(bucket_name,brdf_file, Data_Dir + '/brdf.json')
+        topo_coeffs = Data_Dir + "/topo.json"
+        brdf_coeffs = Data_Dir + "/brdf.json"
+        neon.load_coeffs(topo_coeffs,'topo')
+        neon.load_coeffs(brdf_coeffs, 'brdf')
+        print("corrections loaded")
+        # Store map info for raster
+        refl_md, header_dict = store_metadata(neon)
+        # Export with corrections
+        wavelength = header_dict['wavelength']
+        good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
+        good_wl_list = good_wl[~np.isnan(good_wl)]
+        print("creating arrays")
+        arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
+        print("stacking arrays")
+        fullarraystack = np.dstack(arrays)
+        destination_s3_key = site_name + '_flightlines/'+ str(file_name)+'_output_' + '.tif'
+        local_file_path = Out_Dir + '/output_fullarray_' + file_name + '.tif'
+        print(local_file_path)
+        array2rastermb(local_file_path, fullarraystack, refl_md, Out_Dir, epsg = refl_md['epsg'], bands = fullarraystack.shape[2])
+        upload_to_s3(bucket_name, local_file_path, destination_s3_key)
+        os.remove(local_file_path)
+        print("flightline complete")
