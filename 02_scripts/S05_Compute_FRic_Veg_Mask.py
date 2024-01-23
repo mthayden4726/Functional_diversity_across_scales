@@ -35,8 +35,8 @@ import pycrs
 import csv
 from csv import writer
 # Import functions defined in S01_specdiv_functions.py
-from S01_specdiv_functions import * # add scripts folder to python path manager
-from window_calcs import *
+from S01_Functions import * # add scripts folder to python path manager
+from S01_Compute_FRic import *
 
 # Set directories
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
