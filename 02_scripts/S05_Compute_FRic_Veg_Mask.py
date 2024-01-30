@@ -34,6 +34,8 @@ from fiona.crs import from_epsg
 import pycrs
 import csv
 from csv import writer
+import cProfiler
+import re
 # Import functions defined in S01_specdiv_functions.py
 from S01_Functions import * # add scripts folder to python path manager
 from S01_Moving_Window_FRIC import *
@@ -61,7 +63,7 @@ comps = 3 # default component numbers for PCA
 # Loop through clipped files
 file_stem = 'SERC_flightlines/Mosaic_SERC_'
 sites = [0]
-for i in sites:
+cProfile.run(for i in sites:
     clip_file = file_stem + str(i) + '.tif'
     print(clip_file)
     s3.download_file(bucket_name, clip_file, Data_Dir + '/mosaic.tif')
@@ -125,3 +127,4 @@ for i in sites:
     print("File uploaded to S3")
     os.remove(file)
     print("Mosaic Complete - Next...")
+    )
