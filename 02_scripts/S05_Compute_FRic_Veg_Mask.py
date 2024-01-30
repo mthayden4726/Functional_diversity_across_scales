@@ -34,8 +34,6 @@ from fiona.crs import from_epsg
 import pycrs
 import csv
 from csv import writer
-import cProfiler
-import re
 # Import functions defined in S01_specdiv_functions.py
 from S01_Functions import * # add scripts folder to python path manager
 from S01_Moving_Window_FRIC import *
