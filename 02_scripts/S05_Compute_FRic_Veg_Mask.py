@@ -82,14 +82,16 @@ for i in sites:
     X[np.isnan(X)] = np.nan
     #x_mean = np.nanmean(X, axis=0)[np.newaxis, :]
     #X_no_nan = np.nan_to_num(X, nan=0)
-    # Calculate and mask by NDVI
-    ndvi = (X[:,nir_band] - X[:,red_band]) / (X[:,nir_band] + X[:,red_band])
-    mean_ndvi = np.nanmean(ndvi)
-    print(mean_ndvi)
+    # Calculate NDVI
+    ndvi = np.divide((X[:, nir_band] - X[:, red_band]), (X[:, nir_band] + X[:, red_band]), where=(X[:, nir_band] + X[:, red_band]) != 0)
+    # Apply NDVI threshold mask
     mask = ndvi < ndvi_threshold
-    X[mask] = np.nan
+    X[mask, :] = np.nan
+    # Change nan to 0 
     X_no_nan = np.nan_to_num(X, nan=0)
+    # Take mean 
     x_mean = X_no_nan.mean(axis=0)[np.newaxis, :]
+    # Scale & Standardize array
     X -=x_mean
     x_std = np.nanstd(X,axis=0)[np.newaxis, :]
     X /=x_std
