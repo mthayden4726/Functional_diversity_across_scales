@@ -47,12 +47,12 @@ bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
 ## Set global parameters ##
-window_sizes = [10, 30, 60, 120]   # list of window sizes to test
-# window_sizes = [60, 120, 240, 480, 960, 1200, 1500, 2000, 2200]
+# window_sizes = [10, 30, 60, 120]   # list of window sizes to test
+window_sizes = [60, 120, 240, 480, 960, 1200, 1500, 2000, 2200]
 #window_sizes = [10, 50, 100, 150, 200, 300, 400]   # list of window sizes to test
 red_band = 58
 nir_band = 90
-ndvi_threshold = 0.4 # ndvi threshold for radiometric filtering
+ndvi_threshold = 0.5 # ndvi threshold for radiometric filtering
 # shade_threshold = 500 # should be low threshold across NIR region (15%)
 # cloud_threshold = 1500 # should be high threshold in blue band
 #bad_bands = [[300,400],[1300,1450],[1780,2000],[2450,2600]] # bands to be masked out
@@ -62,7 +62,7 @@ comps = 3 # default component numbers for PCA
 
 # Loop through clipped files
 file_stem = 'SERC_flightlines/Mosaic_SERC_'
-sites = [0]
+sites = [0,8,9]
 cProfile.run(for i in sites:
     clip_file = file_stem + str(i) + '.tif'
     print(clip_file)
