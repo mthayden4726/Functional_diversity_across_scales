@@ -63,7 +63,7 @@ comps = 3 # default component numbers for PCA
 # Loop through clipped files
 file_stem = 'SERC_flightlines/Mosaic_SERC_'
 sites = [0,8,9]
-cProfile.run(for i in sites:
+for i in sites:
     clip_file = file_stem + str(i) + '.tif'
     print(clip_file)
     s3.download_file(bucket_name, clip_file, Data_Dir + '/mosaic.tif')
@@ -127,4 +127,3 @@ cProfile.run(for i in sites:
     print("File uploaded to S3")
     os.remove(file)
     print("Mosaic Complete - Next...")
-    )
