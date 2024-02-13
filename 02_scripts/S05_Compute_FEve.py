@@ -45,7 +45,8 @@ bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
 ## Set global parameters ##
-window_sizes = [60, 120, 240, 480, 700, 960, 1200, 1500, 2000, 2200]
+#window_sizes = [60, 120, 240, 480, 700, 960, 1200, 1500, 2000, 2200]
+window_sizes = [60, 120]
 ndvi_threshold = 0.4 # ndvi threshold for radiometric filtering
 comps = 3 # default component numbers for PCA
 # Other potential options (not currently included in this script):
