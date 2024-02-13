@@ -317,6 +317,7 @@ def pca_steps(raster, comps):
     print(pca_x)
     pca_x = pca_x.reshape((dim1, dim2,comps))
     print(pca_x.shape)
+    return pca_x
 
 # Store map info for raster
 def store_metadata(neon):
