@@ -4,6 +4,27 @@ from scipy.spatial.distance import pdist, squareform
 import csv
 from tqdm import tqdm
 
+import numpy as np
+from scipy.spatial.distance import pdist, squareform
+from scipy.sparse.csgraph import minimum_spanning_tree
+
+# Calculate functional divergence from PCA
+def calculate_FDiv_from_PCA(pca):
+    # Calculate mean of PCA data along the first axis
+    mean_pca = np.mean(pca, axis=0)
+    # Euclidean distances to mean along the first axis
+    dist_to_mean = np.linalg.norm(pca - mean_pca, axis=1)
+    # Mean of distances
+    meandB = np.mean(dist_to_mean)
+    # Deviations to mean
+    devdB = dist_to_mean - meandB
+    # Computation of FDiv
+    FDiv = (np.sum(devdB) / len(dist_to_mean) + meandB) / (np.sum(np.abs(devdB)) / len(dist_to_mean) + meandB)
+    return FDiv
+
+
+## OLD CODE FOR FEVE - NEED TO UPDATE BELOW ##
+
 def calculate_FEve(mstvect, dist_matrix, nb):
     EW = np.zeros(nb - 1)
     flag = 0
