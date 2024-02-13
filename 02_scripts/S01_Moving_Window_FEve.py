@@ -36,6 +36,10 @@ def window_calcs_feve(args):
         for i in tqdm(range(half_window, pca_chunk.shape[0] - half_window, 15), desc='Processing window index'):
             for j in range(half_window, pca_chunk.shape[1] - half_window, 15):
                 sub_arr = pca_chunk[i - half_window:i + half_window + 1, j - half_window:j + half_window + 1, :]
+                if sub_arr is None:
+                    print(f"sub_arr is None at position ({i}, {j})")
+                    continue  # Skip this iteration if sub_arr is None
+                print(f"sub_arr shape: {sub_arr.shape}")
                 nbSpecies = sub_arr.shape[0] * sub_arr.shape[1]
                 distances = pdist(sub_arr.reshape(nbSpecies, -1))
                 dist_matrix = squareform(distances)
