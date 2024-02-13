@@ -67,6 +67,8 @@ for i in sites:
     print(raster)
     # Array-ize, transform with PCA
     pca_x = pca_steps(raster, comps)
+    print(pca_x)
+    print(pca_x.shape[0])
     # Paralellize calcs for different window sizes
     results_FE = {}
     local_file_path = Out_Dir + "/SRER_feve_" + str(i) + ".csv"
