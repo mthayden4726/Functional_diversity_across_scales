@@ -4,12 +4,16 @@ from scipy.spatial.distance import pdist, squareform
 import csv
 from tqdm import tqdm
 
-def calculate_FEve(mstvect, dist_matrix, nb):
+def calculate_FEve(mstvect, dist_matrix, nbSpecies):
     EW = np.zeros(nb - 1)
     flag = 0
-    for m in range((nb - 1) * nb // 2):
-        if mstvect[m] != 0:
-            EW[flag] = dist_matrix[m]
+    for i in range(1, nb):  # Skip the first node (index 0) as it has no incoming edges
+        # Find the parent node in the minimum spanning tree
+        parent = (mstvect[:i] == i).nonzero()[0]
+        if len(parent) > 0:  # Ensure there's a parent node
+            parent = parent[0]
+            # Calculate the edge weight as the distance between the node and its parent
+            EW[flag] = dist_matrix[i, parent]
             flag += 1
     return EW
   
@@ -41,6 +45,7 @@ def window_calcs_feve(args):
                     continue  # Skip this iteration if sub_arr is None
                 print(f"sub_arr shape: {sub_arr.shape}")
                 nbSpecies = sub_arr.shape[0] * sub_arr.shape[1]
+                print(f"nbSpecies: {nbSpecies}")
                 distances = pdist(sub_arr.reshape(nbSpecies, -1))
                 dist_matrix = squareform(distances)
                 mst = minimum_spanning_tree(dist_matrix)
