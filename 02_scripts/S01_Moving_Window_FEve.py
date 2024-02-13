@@ -28,14 +28,14 @@ def window_calcs_feve(args):
     FEve: functional evenness for given window size and image.
     
     """
-    windows, pca_chunk, results_FE, local_file_path  = args
+    windows, pca_x, results_FE, local_file_path  = args
     for window in tqdm(windows, desc='Processing window for batch'):
         print(window)
         half_window = window // 2
         FEve_values = []
-        for i in tqdm(range(half_window, pca_chunk.shape[0] - half_window, 15), desc='Processing window index'):
-            for j in range(half_window, pca_chunk.shape[1] - half_window, 15):
-                sub_arr = pca_chunk[i - half_window:i + half_window + 1, j - half_window:j + half_window + 1, :]
+        for i in tqdm(range(half_window, pca_x.shape[0] - half_window, 15), desc='Processing window index'):
+            for j in range(half_window, pca_x.shape[1] - half_window, 15):
+                sub_arr = pca_x[i - half_window:i + half_window + 1, j - half_window:j + half_window + 1, :]
                 if sub_arr is None:
                     print(f"sub_arr is None at position ({i}, {j})")
                     continue  # Skip this iteration if sub_arr is None
