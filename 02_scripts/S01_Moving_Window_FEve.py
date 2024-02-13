@@ -5,9 +5,9 @@ import csv
 from tqdm import tqdm
 
 def calculate_FEve(mstvect, dist_matrix, nbSpecies):
-    EW = np.zeros(nb - 1)
+    EW = np.zeros(nbSpecies - 1)
     flag = 0
-    for i in range(1, nb):  # Skip the first node (index 0) as it has no incoming edges
+    for i in range(1, nbSpecies):  # Skip the first node (index 0) as it has no incoming edges
         # Find the parent node in the minimum spanning tree
         parent = (mstvect[:i] == i).nonzero()[0]
         if len(parent) > 0:  # Ensure there's a parent node
