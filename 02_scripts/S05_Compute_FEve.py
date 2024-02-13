@@ -60,9 +60,9 @@ comps = 3 # default component numbers for PCA
 file_stem = 'SRER_flightlines/Mosaic_SRER_shape_'
 sites = [3,4]
 for i in sites:
-    clip_file = file_stem + str(i) + '.tif'
-    print(clip_file)
-    s3.download_file(bucket_name, clip_file, Data_Dir + '/mosaic.tif')
+    #clip_file = file_stem + str(i) + '.tif'
+    #print(clip_file)
+    #s3.download_file(bucket_name, clip_file, Data_Dir + '/mosaic.tif')
     file = Data_Dir + '/mosaic.tif'
     raster = rxr.open_rasterio(file, masked=True)
     print(raster)
