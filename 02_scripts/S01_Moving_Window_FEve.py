@@ -28,8 +28,9 @@ def window_calcs_feve(args):
     FEve: functional evenness for given window size and image.
     
     """
-    windows, pca_chunk, results_FR, local_file_path  = args
+    windows, pca_chunk, results_FE, local_file_path  = args
     for window in tqdm(windows, desc='Processing window for batch'):
+        print(window)
         half_window = window // 2
         FEve_values = []
         for i in tqdm(range(half_window, pca_chunk.shape[0] - half_window, 15), desc='Processing window index'):
@@ -41,6 +42,7 @@ def window_calcs_feve(args):
                 mst = minimum_spanning_tree(dist_matrix)
                 mstvect = mst.toarray().flatten()
                 FEve = calculate_FEve(mstvect, dist_matrix, nbSpecies)
+                print(FEve)
                 FEve_values.extend(FEve)
                 
         with open(local_file_path, 'a', newline='') as csvfile:
