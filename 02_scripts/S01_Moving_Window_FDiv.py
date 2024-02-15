@@ -9,7 +9,7 @@ from scipy.spatial.distance import pdist, squareform
 from scipy.sparse.csgraph import minimum_spanning_tree
 
 # Calculate functional divergence from PCA
-def calculate_FDiv_from_PCA(pca):
+def calculate_FDiv(pca):
     # Calculate mean of PCA data along the first axis
     mean_pca = np.mean(pca, axis=0)
     # Euclidean distances to mean along the first axis
