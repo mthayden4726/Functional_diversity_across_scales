@@ -49,7 +49,7 @@ def window_calcs_fdiv(args):
                 if sub_arr is None:
                     print(f"sub_arr is None at position ({i}, {j})")
                     continue  # Skip this iteration if sub_arr is None
-                print(f"sub_arr shape: {sub_arr.shape}")
+                #print(f"sub_arr shape: {sub_arr.shape}")
                 FDiv = calculate_FDiv(sub_arr)
                 print(FDiv)
                 FDiv_values.extend(FDiv)
@@ -57,6 +57,6 @@ def window_calcs_fdiv(args):
         with open(local_file_path, 'a', newline='') as csvfile:
             csvwriter = csv.writer(csvfile)
             if csvfile.tell() == 0:
-                csvwriter.writerow(['Window_Size', 'FEve'])  # Write header
-            for FEve_value in FEve_values:
-                csvwriter.writerow([window, FEve_value])
+                csvwriter.writerow(['Window_Size', 'FDiv'])  # Write header
+            for FDiv_value in FDiv_values:
+                csvwriter.writerow([window, FDiv_value])
