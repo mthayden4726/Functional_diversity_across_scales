@@ -52,7 +52,10 @@ def window_calcs_fdiv(args):
                 #print(f"sub_arr shape: {sub_arr.shape}")
                 FDiv = calculate_FDiv(sub_arr)
                 print(FDiv)
-                FDiv_values.extend(FDiv)
+                if isinstance(FDiv, (int, float)):  # Check if FDiv is a single value
+                    FDiv_values.append(FDiv)  # Append the single value to FDiv_values
+                else:
+                    FDiv_values.extend(FDiv)  # Append multiple values if FDiv is iterable
                 
         with open(local_file_path, 'a', newline='') as csvfile:
             csvwriter = csv.writer(csvfile)
