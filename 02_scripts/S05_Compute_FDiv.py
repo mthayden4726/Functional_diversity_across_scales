@@ -57,8 +57,8 @@ comps = 3 # default component numbers for PCA
 # nclusters = 15 # default component numbers for K-means clustering
 
 # Loop through clipped files
-file_stem = 'TEAK_flightlines/Mosaic_clip_site_'
-sites = [0,1,3,4,5,7]
+file_stem = 'SERC_flightlines/Mosaic_SERC_'
+sites = [0,8,9]
 for i in sites:
     clip_file = file_stem + str(i) + '.tif'
     print(clip_file)
@@ -72,7 +72,7 @@ for i in sites:
     print(pca_x.shape[0])
     # Paralellize calcs for different window sizes
     results_FD = {}
-    local_file_path = Out_Dir + "/TEAK_fdiv_" + str(i) + ".csv"
+    local_file_path = Out_Dir + "/SERC_fdiv_" + str(i) + ".csv"
     window_batches = [(a, pca_x, results_FD, local_file_path) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
     volumes = process_map(
         window_calcs_fdiv,
@@ -82,7 +82,7 @@ for i in sites:
     #print(volumes)
     # open file for writing
     # local_file_path = Out_Dir + "/TEAK_fric_" + str(i) + ".csv"
-    destination_s3_key = "/TEAK_fdiv_" + str(i) + ".csv"
+    destination_s3_key = "/SERC_fdiv_" + str(i) + ".csv"
     #f = open(local_file_path,"w")
     # write file
     #f.write(str(volumes))
