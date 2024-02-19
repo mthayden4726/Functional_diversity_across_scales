@@ -49,8 +49,8 @@ window_sizes = [60, 120, 240, 480, 700, 960, 1200, 1500, 2000, 2200]
 #window_sizes = [60, 120]
 ndvi_threshold = 0.4 # ndvi threshold for radiometric filtering
 comps = 3 # default component numbers for PCA
-nir_band = 
-red_band = 
+red_band = 58
+nir_band = 90 
 # Other potential options (not currently included in this script):
 # shade_threshold = 500 # should be low threshold across NIR region (15%)
 # cloud_threshold = 1500 # should be high threshold in blue band
@@ -59,8 +59,8 @@ red_band =
 # nclusters = 15 # default component numbers for K-means clustering
 
 # Loop through clipped files
-file_stem = 'SERC_flightlines/Mosaic_SERC_'
-sites = [0,8,9]
+file_stem = 'TEAK_flightlines/Mosaic_TEAK_'
+sites = [0]
 for i in sites:
     clip_file = file_stem + str(i) + '.tif'
     print(clip_file)
@@ -83,13 +83,24 @@ for i in sites:
     X[mask, :] = np.nan
     # Change nan to 0 
     X_no_nan = np.nan_to_num(X, nan=0)
-    # Array-ize, transform with PCA
-    pca_x = pca_steps(X_no_nan, comps)
+    # Transform with PCA
+    # Take mean 
+    x_mean = X_no_nan.mean(axis=0)[np.newaxis, :]
+    # Scale & Standardize array
+    X_no_nan -=x_mean
+    x_std = np.nanstd(X_no_nan,axis=0)[np.newaxis, :]
+    X_no_nan /=x_std
+    # Perform initial PCA fit
+    pca = PCA(n_components=comps) # set max number of components
+    pca.fit(X_no_nan)
+    X_no_nan[np.isnan(X_no_nan) | np.isinf(X_no_nan)] = 0
+    pca_x =  pca.transform(X_no_nan)
     print(pca_x)
-    print(pca_x.shape[0])
+    pca_x = pca_x.reshape((shape[1], shape[2],comps))
+    print(pca_x.shape)
     # Paralellize calcs for different window sizes
     results_FD = {}
-    local_file_path = Out_Dir + "/SERC_fdiv_" + str(i) + ".csv"
+    local_file_path = Out_Dir + "/TEAK_fdiv_veg_" + str(i) + ".csv"
     window_batches = [(a, pca_x, results_FD, local_file_path) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
     volumes = process_map(
         window_calcs_fdiv,
@@ -99,7 +110,7 @@ for i in sites:
     #print(volumes)
     # open file for writing
     # local_file_path = Out_Dir + "/TEAK_fric_" + str(i) + ".csv"
-    destination_s3_key = "/SERC_fdiv_" + str(i) + ".csv"
+    destination_s3_key = "/TEAK_fdiv_veg_" + str(i) + ".csv"
     #f = open(local_file_path,"w")
     # write file
     #f.write(str(volumes))
