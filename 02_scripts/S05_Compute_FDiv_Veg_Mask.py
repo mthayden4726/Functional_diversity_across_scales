@@ -59,7 +59,7 @@ nir_band = 90
 # nclusters = 15 # default component numbers for K-means clustering
 
 # Loop through clipped files
-file_stem = 'TEAK_flightlines/Mosaic_TEAK_'
+file_stem = 'TEAK_flightlines/Mosaic_clip_site_'
 sites = [0]
 for i in sites:
     clip_file = file_stem + str(i) + '.tif'
