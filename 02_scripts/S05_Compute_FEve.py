@@ -46,7 +46,7 @@ s3 = boto3.client('s3')
 
 ## Set global parameters ##
 #window_sizes = [60, 120, 240, 480, 700, 960, 1200, 1500, 2000, 2200]
-window_sizes = [60, 120]
+window_sizes = [60]
 ndvi_threshold = 0.4 # ndvi threshold for radiometric filtering
 comps = 3 # default component numbers for PCA
 # Other potential options (not currently included in this script):
@@ -57,8 +57,8 @@ comps = 3 # default component numbers for PCA
 # nclusters = 15 # default component numbers for K-means clustering
 
 # Loop through clipped files
-file_stem = 'SRER_flightlines/Mosaic_SRER_shape_'
-sites = [3,4]
+file_stem = 'TEAK_flightlines/Mosaic_clip_site_'
+sites = [0]
 for i in sites:
     #clip_file = file_stem + str(i) + '.tif'
     #print(clip_file)
@@ -72,7 +72,7 @@ for i in sites:
     print(pca_x.shape[0])
     # Paralellize calcs for different window sizes
     results_FE = {}
-    local_file_path = Out_Dir + "/SRER_feve_" + str(i) + ".csv"
+    local_file_path = Out_Dir + "/TEAK_feve_" + str(i) + ".csv"
     window_batches = [(a, pca_x, results_FE, local_file_path) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
     volumes = process_map(
         window_calcs_feve,
@@ -82,7 +82,7 @@ for i in sites:
     #print(volumes)
     # open file for writing
     # local_file_path = Out_Dir + "/TEAK_fric_" + str(i) + ".csv"
-    destination_s3_key = "/SRER_feve_" + str(i) + ".csv"
+    destination_s3_key = "/TEAK_feve_" + str(i) + ".csv"
     #f = open(local_file_path,"w")
     # write file
     #f.write(str(volumes))
