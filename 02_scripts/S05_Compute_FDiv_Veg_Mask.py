@@ -59,8 +59,8 @@ nir_band = 90
 # nclusters = 15 # default component numbers for K-means clustering
 
 # Loop through clipped files
-file_stem = 'TEAK_flightlines/Mosaic_clip_site_'
-sites = [1,3,4,5,7]
+file_stem = 'SRER_flightlines/Mosaic_SRER_shape_'
+sites = [1,2,3,4]
 for i in sites:
     clip_file = file_stem + str(i) + '.tif'
     print(clip_file)
@@ -100,7 +100,7 @@ for i in sites:
     print(pca_x.shape)
     # Paralellize calcs for different window sizes
     results_FD = {}
-    local_file_path = Out_Dir + "/TEAK_fdiv_veg_" + str(i) + ".csv"
+    local_file_path = Out_Dir + "/SRER_fdiv_veg_" + str(i) + ".csv"
     window_batches = [(a, pca_x, results_FD, local_file_path) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
     volumes = process_map(
         window_calcs_fdiv,
@@ -110,7 +110,7 @@ for i in sites:
     #print(volumes)
     # open file for writing
     # local_file_path = Out_Dir + "/TEAK_fric_" + str(i) + ".csv"
-    destination_s3_key = "/TEAK_fdiv_veg_" + str(i) + ".csv"
+    destination_s3_key = "/SRER_fdiv_veg_" + str(i) + ".csv"
     #f = open(local_file_path,"w")
     # write file
     #f.write(str(volumes))
