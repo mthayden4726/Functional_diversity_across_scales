@@ -60,7 +60,7 @@ nir_band = 90
 
 # Loop through clipped files
 file_stem = 'TEAK_flightlines/Mosaic_clip_site_'
-sites = [0]
+sites = [1,3,4,5,7]
 for i in sites:
     clip_file = file_stem + str(i) + '.tif'
     print(clip_file)
