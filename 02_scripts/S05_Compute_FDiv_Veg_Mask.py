@@ -60,7 +60,7 @@ nir_band = 90
 
 # Loop through clipped files
 file_stem = 'SERC_flightlines/Mosaic_SERC_'
-sites = [0,8,9]
+sites = [8,9]
 for i in sites:
     clip_file = file_stem + str(i) + '.tif'
     print(clip_file)
