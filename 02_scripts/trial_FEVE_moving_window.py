@@ -39,6 +39,12 @@ import pycrs
 import csv
 from csv import writer
 
+# Set directories
+Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
+Out_Dir = '/home/ec2-user/BioSCape_across_scales/03_output'
+bucket_name = 'bioscape.gra'
+s3 = boto3.client('s3')
+
 def calculate_metrics(starting_point, raster, window_size):
     # Calculate metrics for a given starting point and window size
     # This function should include the logic for calculating Primm's evenness,
