@@ -93,6 +93,7 @@ flights_D14_SRER = ['https://storage.googleapis.com/neon-aop-products/2019/FullS
                                       'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090314/NEON_D14_SRER_DP1_20190903_172901_reflectance.h5',
                                        'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090314/NEON_D14_SRER_DP1_20190903_163624_reflectance.h5']
 
+flights_D19_HEAL = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_2/L1/Spectrometer/ReflectanceH5/20190626##/NEON_D19_HEAL_DP1_20190626_202759_reflectance.h5']
 # Combine into list of lists
 #all_flights = [flights_D17_TEAK, flights_D02_SERC, flights_D14_SRER]
 
