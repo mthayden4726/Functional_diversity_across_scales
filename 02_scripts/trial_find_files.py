@@ -17,4 +17,5 @@ for file in data_json['data']['files'][:20]:
   if 'reflectance.h5' in file['name']:
     file_paths.insert(1, file['url'])
     print(file['url'])
-  return file_paths
+    
+print(file_paths)
