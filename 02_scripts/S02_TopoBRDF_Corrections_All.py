@@ -93,7 +93,38 @@ flights_D14_SRER = ['https://storage.googleapis.com/neon-aop-products/2019/FullS
                                       'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090314/NEON_D14_SRER_DP1_20190903_172901_reflectance.h5',
                                        'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090314/NEON_D14_SRER_DP1_20190903_163624_reflectance.h5']
 
-flights_D19_HEAL = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_2/L1/Spectrometer/ReflectanceH5/20190626##/NEON_D19_HEAL_DP1_20190626_202759_reflectance.h5']
+flights_D19_HEAL = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_202759_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_223544_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_222709_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_222054_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_221439_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_220801_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_220134_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_215503_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_214808_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_214138_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_213445_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_212815_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_212119_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_211430_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_210758_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_210138_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_205506_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_204851_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_204220_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_203553_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_202906_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_202234_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_201535_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_200910_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_200156_reflectance.h5',
+                    'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_195508_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_213520_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_212633_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_211857_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_211126_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_210409_reflectance.h5',
+                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_205654_reflectance.h5'] # still need to add a few more
 # Combine into list of lists
 #all_flights = [flights_D17_TEAK, flights_D02_SERC, flights_D14_SRER]
 
