@@ -85,7 +85,7 @@ for i,file in enumerate(flights_D19_HEAL):
     print("file loaded")
     topo_file = "NEON BRDF-TOPO Corrections/2019_HEAL/NEON_D19_HEAL_DP1_" + file_name + "_reflectance_topo_coeffs_topo.json"
     print(topo_file)
-    brdf_file = "NEON BRDF-TOPO Corrections/2019_HEAL/NEON_D19_HEAL_DP1_" + file_name + "_reflectance_brdf_coeffs_topo_brdf.json"
+    brdf_file = "NEON BRDF-TOPO Corrections/2019_HEAL/NEON_D19_HEAL_DP1_" + file_name + "_reflectance_brdf_coeffs_brdf.json"
     try:
     # Attempt to download the file
         s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
