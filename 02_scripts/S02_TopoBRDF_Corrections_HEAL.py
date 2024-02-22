@@ -41,8 +41,7 @@ Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
-flights_D19_HEAL = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_202759_reflectance.h5',
-                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_223544_reflectance.h5',
+flights_D19_HEAL = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_223544_reflectance.h5',
                    'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_222709_reflectance.h5',
                    'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_222054_reflectance.h5',
                    'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_221439_reflectance.h5',
@@ -89,7 +88,8 @@ for i,file in enumerate(flights_D19_HEAL):
     try:
     # Attempt to download the file
         s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
-        print("File downloaded successfully.")
+        s3.download_file(bucket_name,brdf_file, Data_Dir + '/brdf.json')
+        print("Files downloaded successfully.")
     except FileNotFoundError:
         print("The file does not exist in the specified S3 bucket.")
     except NoCredentialsError:
@@ -103,8 +103,6 @@ for i,file in enumerate(flights_D19_HEAL):
             print("An error occurred:", e)
     except Exception as e:
         print("An unexpected error occurred:", e)
-    #s3.meta.client.download_file(bucket_name,topo_file, Data_Dir + 'topo.json')
-    s3.download_file(bucket_name,brdf_file, Data_Dir + '/brdf.json')
     topo_coeffs = Data_Dir + "/topo.json"
     brdf_coeffs = Data_Dir + "/brdf.json"
     neon.load_coeffs(topo_coeffs,'topo')
