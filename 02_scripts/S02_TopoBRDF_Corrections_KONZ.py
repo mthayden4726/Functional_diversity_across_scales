@@ -49,18 +49,16 @@ dirpath = "NEON BRDF-TOPO Corrections/2019_KONZ/"
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
 # Filter objects based on the search criteria
 files = [obj['Key'] for obj in objects if obj['Key'].endswith('.json') and (search_criteria1 in obj['Key'])]
-print(files)
+file_names = set()
 for i,file in enumerate(files):
     match = re.search(r'DP1_(.*?)_reflectance', file)
     if match:
         file_name = match.group(1)
         print(file_name)
+        file_names.add(file_name)
     else:
         print("Pattern not found in the URL.")
-    file_names = []
-    file_names.append(file_name)
-
-file_names = file_names[1:]
+file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
 # Loop through all KONZ files
 for i,file in enumerate(file_names):
