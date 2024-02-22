@@ -53,6 +53,12 @@ import boto3
 import re
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
 
+# Add global parameters for use of s3
+Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
+Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
+bucket_name = 'bioscape.gra'
+s3 = boto3.client('s3')
+
 ## 1. Interacting with NEON Database ####
 
 # Find NEON files with specifications
