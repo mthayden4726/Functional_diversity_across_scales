@@ -205,10 +205,10 @@ def array2rastermb(newRaster, reflBandArray, reflArray_metadata, Out_Dir, epsg, 
     cols = reflBandArray.shape[1]
     rows = reflBandArray.shape[0]
     print(cols,rows)
-    pixelWidth = float(refl_md['res']['pixelWidth'])
-    pixelHeight = -float(refl_md['res']['pixelHeight'])
-    originX = refl_md['ext_dict']['xMin']
-    originY = refl_md['ext_dict']['yMax']
+    pixelWidth = float(reflArray_metadata['res']['pixelWidth'])
+    pixelHeight = -float(reflArray_metadata['res']['pixelHeight'])
+    originX = reflArray_metadata['ext_dict']['xMin']
+    originY = reflArray_metadata['ext_dict']['yMax']
     driver = gdal.GetDriverByName('GTiff')
     gdaltype = NP2GDAL_CONVERSION[reflBandArray.dtype.name]
     outRaster = driver.Create(newRaster, cols, rows, bands, gdaltype)
