@@ -60,23 +60,25 @@ for i,file in enumerate(files):
     file_names = []
     file_names.append(file_name)
 
+file_names = file_names[1:]
+print(file_names)
 # Loop through all KONZ files
 for i,file in enumerate(file_names):
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_4/L1/Spectrometer/ReflectanceH5/2019051614/NEON_D06_KONZ_DP1_' + str(file) +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_4/L1/Spectrometer/ReflectanceH5/2019051614/NEON_D06_KONZ_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     retrieve_neon_files(files, Data_Dir)
-    img = Data_Dir + "/NEON_D06_KONZ_DP1_" + file_name + '_reflectance.h5'
+    img = Data_Dir + "/NEON_D06_KONZ_DP1_" + file + '_reflectance.h5'
     neon = ht.HyTools() 
     neon.read_file(img,'neon')
     print("file loaded")
-    topo_file = "NEON BRDF-TOPO Corrections/2019_KONZ/NEON_D06_KONZ_DP1_" + file_name + "_reflectance_topo_coeffs_topo.json"
+    topo_file = "NEON BRDF-TOPO Corrections/2019_KONZ/NEON_D06_KONZ_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
     print(topo_file)
-    brdf_file = "NEON BRDF-TOPO Corrections/2019_KONZ/NEON_D06_KONZ_DP1_" + file_name + "_reflectance_brdf_coeffs_topo_brdf.json"
+    brdf_file = "NEON BRDF-TOPO Corrections/2019_KONZ/NEON_D06_KONZ_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
     try:
     # Attempt to download the file
         s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
-        s3.download_file(bucket_name,brdf_file, Data_Dir + '/brdf.json')
+        s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
         print("Files downloaded successfully.")
     except FileNotFoundError:
         print("The file does not exist in the specified S3 bucket.")
@@ -106,8 +108,8 @@ for i,file in enumerate(file_names):
     arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
     print("stacking arrays")
     fullarraystack = np.dstack(arrays)
-    destination_s3_key = 'KONZ_flightlines/'+ str(file_name)+'_output_' + '.tif'
-    local_file_path = Out_Dir + '/output_fullarray_' + file_name + '.tif'
+    destination_s3_key = 'KONZ_flightlines/'+ str(file)+'_output_' + '.tif'
+    local_file_path = Out_Dir + '/output_fullarray_' + file + '.tif'
     print(local_file_path)
     array2rastermb(local_file_path, fullarraystack, refl_md, Out_Dir, epsg = refl_md['epsg'], bands = fullarraystack.shape[2])
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
