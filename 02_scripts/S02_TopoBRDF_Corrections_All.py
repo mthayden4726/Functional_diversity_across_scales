@@ -118,15 +118,9 @@ flights_D19_HEAL = ['https://storage.googleapis.com/neon-aop-products/2019/FullS
                    'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_201535_reflectance.h5',
                    'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_200910_reflectance.h5',
                    'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_200156_reflectance.h5',
-                    'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_195508_reflectance.h5',
-                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_213520_reflectance.h5',
-                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_212633_reflectance.h5',
-                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_211857_reflectance.h5',
-                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_211126_reflectance.h5',
-                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_210409_reflectance.h5',
-                   'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019062617/NEON_D19_HEAL_DP1_20190626_205654_reflectance.h5'] # still need to add a few more
+                    'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_195508_reflectance.h5'] # only 08 ones for now, not 06
 # Combine into list of lists
-#all_flights = [flights_D17_TEAK, flights_D02_SERC, flights_D14_SRER]
+all_flights = [flights_D19_HEAL]
 
 def topo_brdf_correct(all_flights):
   # Loop through all SERC files
@@ -135,7 +129,7 @@ def topo_brdf_correct(all_flights):
     if match:
         site_name = match.group(1)
         print(site_name)
-    for i,file in enumerate(flights_SERC):
+    for i,file in enumerate(all_flights):
         match = re.search(r'DP1_(.*?)_reflectance', file)
         if match:
             file_name = match.group(1)
