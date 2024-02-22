@@ -406,3 +406,67 @@ def show_rgb(hy_obj,r=660,g=550,b=440, correct= []):
     plt.imshow(rgb)
     plt.show()
     #plt.close()
+
+# For batch processing coefficients
+def coeff_process(args):
+    """ 
+    """
+    flights_D19_HEAL = args
+
+    for file in tqdm(flights_D19_HEAL, desc='Processing flight line for batch'):
+        match = re.search(r'DP1_(.*?)_reflectance', file)
+    	if match:
+        	file_name = match.group(1)
+        	print(file_name)
+    	else:
+        	print("Pattern not found in the URL.")
+    	files = []
+    	files.append(file)
+    	retrieve_neon_files(files, Data_Dir)
+    	img = Data_Dir + "/NEON_D19_HEAL_DP1_" + file_name + '_reflectance.h5'
+    	neon = ht.HyTools() 
+    	neon.read_file(img,'neon')
+    	print("file loaded")
+    	topo_file = "NEON BRDF-TOPO Corrections/2019_HEAL/NEON_D19_HEAL_DP1_" + file_name + "_reflectance_topo_coeffs_topo.json"
+        print(topo_file)
+        brdf_file = "NEON BRDF-TOPO Corrections/2019_HEAL/NEON_D19_HEAL_DP1_" + file_name + "_reflectance_brdf_coeffs_topo_brdf.json"
+        try:
+        # Attempt to download the file
+            s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
+            s3.download_file(bucket_name,brdf_file, Data_Dir + '/brdf.json')
+            print("Files downloaded successfully.")
+        except FileNotFoundError:
+            print("The file does not exist in the specified S3 bucket.")
+        except NoCredentialsError:
+            print("AWS credentials could not be found.")
+        except PartialCredentialsError:
+            print("AWS credentials are incomplete.")
+        except ClientError as e:
+            if e.response['Error']['Code'] == '404':
+                print("The object does not exist in the S3 bucket.")
+            else:
+                print("An error occurred:", e)
+        except Exception as e:
+            print("An unexpected error occurred:", e)
+        topo_coeffs = Data_Dir + "/topo.json"
+        brdf_coeffs = Data_Dir + "/brdf.json"
+        neon.load_coeffs(topo_coeffs,'topo')
+        neon.load_coeffs(brdf_coeffs, 'brdf')
+        print("corrections loaded")
+        # Store map info for raster
+        refl_md, header_dict = store_metadata(neon)
+        # Export with corrections
+        wavelength = header_dict['wavelength']
+        good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
+        good_wl_list = good_wl[~np.isnan(good_wl)]
+        print("creating arrays")
+        arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
+        print("stacking arrays")
+        fullarraystack = np.dstack(arrays)
+        destination_s3_key = 'HEAL_flightlines/'+ str(file_name)+'_output_' + '.tif'
+        local_file_path = Out_Dir + '/output_fullarray_' + file_name + '.tif'
+        print(local_file_path)
+        array2rastermb(local_file_path, fullarraystack, refl_md, Out_Dir, epsg = refl_md['epsg'], bands = fullarraystack.shape[2])
+        upload_to_s3(bucket_name, local_file_path, destination_s3_key)
+        os.remove(local_file_path)
+        print("flightline complete")
