@@ -417,10 +417,10 @@ def coeff_process(args):
     for file in tqdm(flights_D19_HEAL, desc='Processing flight line for batch'):
         match = re.search(r'DP1_(.*?)_reflectance', file)
     	if match:
-        	file_name = match.group(1)
-        	print(file_name)
+            file_name = match.group(1)
+            print(file_name)
     	else:
-        	print("Pattern not found in the URL.")
+            print("Pattern not found in the URL.")
     	files = []
     	files.append(file)
     	retrieve_neon_files(files, Data_Dir)
