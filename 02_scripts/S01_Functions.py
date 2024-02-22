@@ -53,11 +53,6 @@ import boto3
 import re
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
 
-Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
-Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
-bucket_name = 'bioscape.gra'
-s3 = boto3.client('s3')
-
 ## 1. Interacting with NEON Database ####
 
 # Find NEON files with specifications
@@ -361,7 +356,7 @@ def store_metadata(neon):
     refl_md['scaleFactor'] = float(0.996)
     refl_md['bad_band_window1'] = np.array([1340, 1445])
     refl_md['bad_band_window2'] = np.array([1790, 1955])
-    refl_md['epsg'] = 32618 # for wgs 84, UTM 11N --> note that this changed by site!! 12N for SRER
+    refl_md['epsg'] = 32606 # for wgs 84, UTM 6 --> note that this changed by site!!
     refl_md['res'] = {}
     refl_md['res']['pixelWidth'] = float(mapInfo[5])
     refl_md['res']['pixelHeight'] = float(mapInfo[6])
@@ -424,55 +419,3 @@ def show_rgb(hy_obj,r=660,g=550,b=440, correct= []):
     plt.imshow(rgb)
     plt.show()
     #plt.close()
-
-# For batch processing coefficients
-def coeff_process(args):
-    """ 
-    """
-    flights_D19_HEAL = args
-    for file in flights_D19_HEAL:
-        match = re.search(r'DP1_(.*?)_reflectance', file)
-        if match:
-            file_name = match.group(1)
-            print(file_name)
-        else:
-            print("Pattern not found in the URL.")
-        files = []
-        files.append(file)
-        retrieve_neon_files(files, Data_Dir)
-        img = Data_Dir + "/NEON_D19_HEAL_DP1_" + file_name + '_reflectance.h5'
-        neon = ht.HyTools()
-        neon.read_file(img,'neon')
-        print("file loaded")
-        topo_file = "NEON BRDF-TOPO Corrections/2019_HEAL/NEON_D19_HEAL_DP1_" + file_name + "_reflectance_topo_coeffs_topo.json"
-        print(topo_file)
-        brdf_file = "NEON BRDF-TOPO Corrections/2019_HEAL/NEON_D19_HEAL_DP1_" + file_name + "_reflectance_brdf_coeffs_topo_brdf.json"
-        try:
-        # Attempt to download the file
-            s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
-            s3.download_file(bucket_name,brdf_file, Data_Dir + '/brdf.json')
-            print("Files downloaded successfully.")
-        except FileNotFoundError:
-            print("The file does not exist in the specified S3 bucket.")
-        topo_coeffs = Data_Dir + "/topo.json"
-        brdf_coeffs = Data_Dir + "/brdf.json"
-        neon.load_coeffs(topo_coeffs,'topo')
-        neon.load_coeffs(brdf_coeffs, 'brdf')
-        print("corrections loaded")
-        # Store map info for raster
-        refl_md, header_dict = store_metadata(neon)
-        # Export with corrections
-        wavelength = header_dict['wavelength']
-        good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
-        good_wl_list = good_wl[~np.isnan(good_wl)]
-        print("creating arrays")
-        arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
-        print("stacking arrays")
-        fullarraystack = np.dstack(arrays)
-        destination_s3_key = 'HEAL_flightlines/'+ str(file_name)+'_output_' + '.tif'
-        local_file_path = Out_Dir + '/output_fullarray_' + file_name + '.tif'
-        print(local_file_path)
-        array2rastermb(local_file_path, fullarraystack, refl_md, Out_Dir, epsg = refl_md['epsg'], bands = fullarraystack.shape[2])
-        upload_to_s3(bucket_name, local_file_path, destination_s3_key)
-        os.remove(local_file_path)
-        print("flightline complete")
