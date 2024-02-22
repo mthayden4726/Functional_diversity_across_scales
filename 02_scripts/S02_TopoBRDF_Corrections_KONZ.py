@@ -25,7 +25,7 @@ from progress.bar import Bar
 from tqdm.contrib.concurrent import process_map
 from multiprocessing import Pool, cpu_count
 from S01_Moving_Window_FRIC import * # add scripts folder to python path manager
-from S01_Functions import * # add scripts folder to python path manager
+from S01_Functions_KONZ import * # add scripts folder to python path manager
 from osgeo import gdal, osr
 from matplotlib.pyplot import subplots, show
 import h5py
@@ -41,18 +41,30 @@ Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
-flights_D06_KONZ = ['https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_223544_reflectance.h5'] # only 08 ones for now, not 06
+# Find correction coefficients (define search terms)
+search_criteria1 = "NEON_D06_KONZ_DP1_20190516"
+dirpath = "NEON BRDF-TOPO Corrections/2019_KONZ/"
 
-# Loop through all KONZ files
-for i,file in enumerate(flights_D06_KONZ):
+# List objects in the S3 bucket in the matching directory
+objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
+# Filter objects based on the search criteria
+files = [obj['Key'] for obj in objects if obj['Key'].endswith('.json') and (search_criteria1 in obj['Key'])]
+print(files)
+for i,file in enumerate(files):
     match = re.search(r'DP1_(.*?)_reflectance', file)
     if match:
         file_name = match.group(1)
         print(file_name)
     else:
         print("Pattern not found in the URL.")
+    file_names = []
+    file_names.append(file_name)
+
+# Loop through all KONZ files
+for i,file in enumerate(file_names):
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_#/L1/Spectrometer/ReflectanceH5/20190516##/NEON_D06_KONZ_DP1_' + str(file) +'_reflectance.h5'
     files = []
-    files.append(file)
+    files.append(flight)
     retrieve_neon_files(files, Data_Dir)
     img = Data_Dir + "/NEON_D06_KONZ_DP1_" + file_name + '_reflectance.h5'
     neon = ht.HyTools() 
