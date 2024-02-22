@@ -334,6 +334,7 @@ def store_metadata(neon):
     """
     mapInfo= neon.map_info
     header_dict = neon.get_header()
+    print(header_dict)
     refl_md = {}
     refl_md['mapInfo'] = header_dict['map info']
     refl_md['wavelength'] = header_dict['wavelength']
@@ -359,7 +360,7 @@ def store_metadata(neon):
     refl_md['ext_dict']['xMax'] = xMax
     refl_md['ext_dict']['yMin'] = yMin
     refl_md['ext_dict']['yMax'] = yMax
-
+    print(refl_md)
     return refl_md, header_dict
 
 # Compute CHV --> In progress
