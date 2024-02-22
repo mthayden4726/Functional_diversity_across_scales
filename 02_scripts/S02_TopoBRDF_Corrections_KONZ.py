@@ -60,6 +60,7 @@ for i,file in enumerate(files):
         print("Pattern not found in the URL.")
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
+file_names = file_names[1:] # remove one I already did
 # Loop through all KONZ files
 for i,file in enumerate(file_names):
     flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_4/L1/Spectrometer/ReflectanceH5/2019051614/NEON_D06_KONZ_DP1_' + file +'_reflectance.h5'
