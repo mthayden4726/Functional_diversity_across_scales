@@ -413,16 +413,15 @@ def coeff_process(args):
     """ 
     """
     flights_D19_HEAL = args
-
     for file in tqdm(flights_D19_HEAL, desc='Processing flight line for batch'):
         match = re.search(r'DP1_(.*?)_reflectance', file)
-    	if match:
+        if match:
             file_name = match.group(1)
             print(file_name)
-    	else:
+        else:
             print("Pattern not found in the URL.")
-    	files = []
-    	files.append(file)
+        files = []
+        files.append(file)
     	retrieve_neon_files(files, Data_Dir)
     	img = Data_Dir + "/NEON_D19_HEAL_DP1_" + file_name + '_reflectance.h5'
     	neon = ht.HyTools() 
