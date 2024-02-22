@@ -67,6 +67,14 @@ flights_D19_HEAL = ['https://storage.googleapis.com/neon-aop-products/2019/FullS
                    'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_200156_reflectance.h5',
                     'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D19/2019_HEAL_3/L1/Spectrometer/ReflectanceH5/2019081918/NEON_D19_HEAL_DP1_20190819_195508_reflectance.h5'] # only 08 ones for now, not 06
 
+# Trying parallelization
+volumes = process_map(
+        coeff_process,
+        flights_D19_HEAL,
+        max_workers=cpu_count() - 1
+    )
+print("Finished parallel process")
+
 # Loop through all HEAL files
 for i,file in enumerate(flights_D19_HEAL):
     match = re.search(r'DP1_(.*?)_reflectance', file)
