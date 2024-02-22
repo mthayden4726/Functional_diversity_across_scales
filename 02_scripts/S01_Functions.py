@@ -425,7 +425,7 @@ def coeff_process(args):
     """ 
     """
     flights_D19_HEAL = args
-    for file in tqdm(flights_D19_HEAL, desc='Processing flight line for batch'):
+    for file in flights_D19_HEAL:
         match = re.search(r'DP1_(.*?)_reflectance', file)
         if match:
             file_name = match.group(1)
