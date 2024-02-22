@@ -60,7 +60,7 @@ for i,file in enumerate(files):
         print("Pattern not found in the URL.")
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
-file_names = file_names[1:] # remove one I already did
+
 # Loop through all KONZ files
 for i,file in enumerate(file_names):
     print(file)
