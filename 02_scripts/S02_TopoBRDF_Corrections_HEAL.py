@@ -24,7 +24,7 @@ import tqdm
 from progress.bar import Bar
 from tqdm.contrib.concurrent import process_map
 from multiprocessing import Pool, cpu_count
-from S01_Moving_Window_FRIC.py import * # add scripts folder to python path manager
+from S01_Moving_Window_FRIC import * # add scripts folder to python path manager
 from S01_Functions import * # add scripts folder to python path manager
 from osgeo import gdal, osr
 from matplotlib.pyplot import subplots, show
