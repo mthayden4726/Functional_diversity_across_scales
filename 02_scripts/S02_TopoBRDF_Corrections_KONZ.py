@@ -62,7 +62,7 @@ for i,file in enumerate(files):
 
 # Loop through all KONZ files
 for i,file in enumerate(file_names):
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_#/L1/Spectrometer/ReflectanceH5/20190516##/NEON_D06_KONZ_DP1_' + str(file) +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_4/L1/Spectrometer/ReflectanceH5/2019051614/NEON_D06_KONZ_DP1_' + str(file) +'_reflectance.h5'
     files = []
     files.append(flight)
     retrieve_neon_files(files, Data_Dir)
