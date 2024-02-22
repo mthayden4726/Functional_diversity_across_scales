@@ -356,7 +356,7 @@ def store_metadata(neon):
     refl_md['scaleFactor'] = float(0.996)
     refl_md['bad_band_window1'] = np.array([1340, 1445])
     refl_md['bad_band_window2'] = np.array([1790, 1955])
-    refl_md['epsg'] = 32618 # for wgs 84, UTM 11N --> note that this changed by site!! 12N for SRER
+    refl_md['epsg'] = 32606 # for wgs 84, UTM 6 --> note that this changed by site!!
     refl_md['res'] = {}
     refl_md['res']['pixelWidth'] = float(mapInfo[5])
     refl_md['res']['pixelHeight'] = float(mapInfo[6])
