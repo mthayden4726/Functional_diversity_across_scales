@@ -40,6 +40,18 @@ from botocore.exceptions import NoCredentialsError, PartialCredentialsError, Cli
 from tqdm.contrib.concurrent import process_map
 from multiprocessing import Pool, cpu_count
 from S01_Moving_Window_FRIC import * # add scripts folder to python path manager
+import tqdm 
+from progress.bar import Bar
+from tqdm.contrib.concurrent import process_map
+from multiprocessing import Pool, cpu_count
+from osgeo import gdal, osr
+from matplotlib.pyplot import subplots, show
+import h5py
+import sys
+import rasterio
+import boto3
+import re
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
 
 ## 1. Interacting with NEON Database ####
 
