@@ -422,12 +422,12 @@ def coeff_process(args):
             print("Pattern not found in the URL.")
         files = []
         files.append(file)
-    	retrieve_neon_files(files, Data_Dir)
-    	img = Data_Dir + "/NEON_D19_HEAL_DP1_" + file_name + '_reflectance.h5'
-    	neon = ht.HyTools() 
-    	neon.read_file(img,'neon')
-    	print("file loaded")
-    	topo_file = "NEON BRDF-TOPO Corrections/2019_HEAL/NEON_D19_HEAL_DP1_" + file_name + "_reflectance_topo_coeffs_topo.json"
+        retrieve_neon_files(files, Data_Dir)
+        img = Data_Dir + "/NEON_D19_HEAL_DP1_" + file_name + '_reflectance.h5'
+        neon = ht.HyTools()
+        neon.read_file(img,'neon')
+        print("file loaded")
+        topo_file = "NEON BRDF-TOPO Corrections/2019_HEAL/NEON_D19_HEAL_DP1_" + file_name + "_reflectance_topo_coeffs_topo.json"
         print(topo_file)
         brdf_file = "NEON BRDF-TOPO Corrections/2019_HEAL/NEON_D19_HEAL_DP1_" + file_name + "_reflectance_brdf_coeffs_topo_brdf.json"
         try:
@@ -437,17 +437,6 @@ def coeff_process(args):
             print("Files downloaded successfully.")
         except FileNotFoundError:
             print("The file does not exist in the specified S3 bucket.")
-        except NoCredentialsError:
-            print("AWS credentials could not be found.")
-        except PartialCredentialsError:
-            print("AWS credentials are incomplete.")
-        except ClientError as e:
-            if e.response['Error']['Code'] == '404':
-                print("The object does not exist in the S3 bucket.")
-            else:
-                print("An error occurred:", e)
-        except Exception as e:
-            print("An unexpected error occurred:", e)
         topo_coeffs = Data_Dir + "/topo.json"
         brdf_coeffs = Data_Dir + "/brdf.json"
         neon.load_coeffs(topo_coeffs,'topo')
