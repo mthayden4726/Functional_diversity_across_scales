@@ -42,7 +42,7 @@ bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
 # Find correction coefficients (define search terms)
-search_criteria1 = "NEON_D06_KONZ_DP1_20190516"
+search_criteria1 = "NEON_D06_KONZ_DP1_20190522"
 dirpath = "NEON BRDF-TOPO Corrections/2019_KONZ/"
 
 # List objects in the S3 bucket in the matching directory
@@ -64,7 +64,7 @@ print(file_names)
 # Loop through all KONZ files
 for i,file in enumerate(file_names):
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_4/L1/Spectrometer/ReflectanceH5/2019051614/NEON_D06_KONZ_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_4/L1/Spectrometer/ReflectanceH5/2019052213/NEON_D06_KONZ_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     retrieve_neon_files(files, Data_Dir)
