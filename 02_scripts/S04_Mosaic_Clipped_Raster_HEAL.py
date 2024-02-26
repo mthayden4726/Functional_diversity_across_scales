@@ -82,10 +82,11 @@ src_files_to_mosaic = []
 #    #minx, miny, maxx, maxy = gdf.total_bounds
 #    #print(minx, miny, maxx, maxy)
 #
-file_ID = ['002',
-           '004',
-           '005',
-           '013',
+file_ID = [
+           #'002', #done
+           #'004', #done
+           #'005', #done
+           #'013', # script was killed here
            '015',
            '018',
            '019',
