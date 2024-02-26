@@ -87,9 +87,9 @@ file_ID = [
            #'004', #done
            #'005', #done
            #'013', # script was killed here
-           '015',
-           '018',
-           '019',
+           '015', #done
+           '018', #done
+           '019', # script was killed here
            '024',
            '026']
 
