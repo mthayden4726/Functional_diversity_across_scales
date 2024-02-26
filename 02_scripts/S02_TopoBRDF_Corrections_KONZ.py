@@ -69,37 +69,37 @@ for i,file in enumerate(file_names):
     files.append(flight)
     try:
         retrieve_neon_files(files, Data_Dir)
-        img = Data_Dir + "/NEON_D06_KONZ_DP1_" + file + '_reflectance.h5'
-        neon = ht.HyTools() 
-        neon.read_file(img,'neon')
-        print("file loaded")
-        topo_file = "NEON BRDF-TOPO Corrections/2019_KONZ/NEON_D06_KONZ_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
-        print(topo_file)
-        brdf_file = "NEON BRDF-TOPO Corrections/2019_KONZ/NEON_D06_KONZ_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
-        try:
-        # Attempt to download the file
-            s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
-            s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
-            print("Files downloaded successfully.")
-        topo_coeffs = Data_Dir + "/topo.json"
-        brdf_coeffs = Data_Dir + "/brdf.json"
-        neon.load_coeffs(topo_coeffs,'topo')
-        neon.load_coeffs(brdf_coeffs, 'brdf')
-        print("corrections loaded")
-        # Store map info for raster
-        refl_md, header_dict = store_metadata(neon)
-        # Export with corrections
-        wavelength = header_dict['wavelength']
-        good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
-        good_wl_list = good_wl[~np.isnan(good_wl)]
-        print("creating arrays")
-        arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
-        print("stacking arrays")
-        fullarraystack = np.dstack(arrays)
-        destination_s3_key = 'KONZ_flightlines/'+ str(file)+'_output_' + '.tif'
-        local_file_path = Out_Dir + '/output_fullarray_' + file + '.tif'
-        print(local_file_path)
-        array2rastermb(local_file_path, fullarraystack, refl_md, Out_Dir, epsg = refl_md['epsg'], bands = fullarraystack.shape[2])
-        upload_to_s3(bucket_name, local_file_path, destination_s3_key)
-        os.remove(local_file_path)
-        print("flightline complete")
+    except Exception as e:
+        continue 
+    img = Data_Dir + "/NEON_D06_KONZ_DP1_" + file + '_reflectance.h5'
+    neon = ht.HyTools() 
+    neon.read_file(img,'neon')
+    print("file loaded")
+    topo_file = "NEON BRDF-TOPO Corrections/2019_KONZ/NEON_D06_KONZ_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
+    print(topo_file)
+    brdf_file = "NEON BRDF-TOPO Corrections/2019_KONZ/NEON_D06_KONZ_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
+    s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
+    s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
+    print("Files downloaded successfully.")
+    topo_coeffs = Data_Dir + "/topo.json"
+    brdf_coeffs = Data_Dir + "/brdf.json"
+    neon.load_coeffs(topo_coeffs,'topo')
+    neon.load_coeffs(brdf_coeffs, 'brdf')
+    print("corrections loaded")
+    # Store map info for raster
+    refl_md, header_dict = store_metadata(neon)
+    # Export with corrections
+    wavelength = header_dict['wavelength']
+    good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
+    good_wl_list = good_wl[~np.isnan(good_wl)]
+    print("creating arrays")
+    arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
+    print("stacking arrays")
+    fullarraystack = np.dstack(arrays)
+    destination_s3_key = 'KONZ_flightlines/'+ str(file)+'_output_' + '.tif'
+    local_file_path = Out_Dir + '/output_fullarray_' + file + '.tif'
+    print(local_file_path)
+    array2rastermb(local_file_path, fullarraystack, refl_md, Out_Dir, epsg = refl_md['epsg'], bands = fullarraystack.shape[2])
+    upload_to_s3(bucket_name, local_file_path, destination_s3_key)
+    os.remove(local_file_path)
+    print("flightline complete")
