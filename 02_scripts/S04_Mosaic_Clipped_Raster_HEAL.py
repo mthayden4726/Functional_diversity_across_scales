@@ -95,8 +95,8 @@ file_ID = ['002',
 for i,ID in enumerate(file_ID):
     
     # List files associated with a single buffer shape
-    search_criteria = str(ID) + '_Clipped_file_'
-    dirpath = "HEAL_flightlines/Site_boundaries/HEAL_"
+    search_criteria = str(ID)
+    dirpath = "HEAL_flightlines/Site_boundaries/"
 
     # List objects in the S3 bucket in the matching directory
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
