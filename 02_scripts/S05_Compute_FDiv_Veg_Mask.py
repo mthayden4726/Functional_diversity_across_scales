@@ -59,10 +59,10 @@ nir_band = 90
 # nclusters = 15 # default component numbers for K-means clustering
 
 # Loop through clipped files
-file_stem = 'SERC_flightlines/Mosaic_SERC_'
-sites = [8,9]
+file_stem = 'HEAL_flightlines/Mosaic_HEAL_'
+sites = ['002', '004', '005', '015']
 for i in sites:
-    clip_file = file_stem + str(i) + '.tif'
+    clip_file = file_stem + i + '.tif'
     print(clip_file)
     s3.download_file(bucket_name, clip_file, Data_Dir + '/mosaic.tif')
     file = Data_Dir + '/mosaic.tif'
@@ -100,7 +100,7 @@ for i in sites:
     print(pca_x.shape)
     # Paralellize calcs for different window sizes
     results_FD = {}
-    local_file_path = Out_Dir + "/SERC_fdiv_veg_" + str(i) + ".csv"
+    local_file_path = Out_Dir + "/HEAL_fdiv_veg_" + str(i) + ".csv"
     window_batches = [(a, pca_x, results_FD, local_file_path) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
     volumes = process_map(
         window_calcs_fdiv,
@@ -110,7 +110,7 @@ for i in sites:
     #print(volumes)
     # open file for writing
     # local_file_path = Out_Dir + "/TEAK_fric_" + str(i) + ".csv"
-    destination_s3_key = "/SERC_fdiv_veg_" + str(i) + ".csv"
+    destination_s3_key = "/HEAL_fdiv_veg_" + str(i) + ".csv"
     #f = open(local_file_path,"w")
     # write file
     #f.write(str(volumes))
