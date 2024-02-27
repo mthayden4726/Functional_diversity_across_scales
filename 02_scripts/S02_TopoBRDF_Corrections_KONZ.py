@@ -102,8 +102,8 @@ for i,file in enumerate(file_names):
     fullarraystack = np.dstack(arrays)
     print("Shape of fullarraystack:", fullarraystack.shape)
     print("calculating ndvi")
-    ndvi = np.divide((fullarraystack[:, nir_band] - fullarraystack[:, red_band]), (fullarraystack[:, nir_band] + fullarraystack[:, red_band]), 
-                     where=(fullarraystack[:, nir_band] + fullarraystack[:, red_band]) != 0)
+    ndvi = np.divide((fullarraystack[:, :, nir_band] - fullarraystack[:, :, red_band]), (fullarraystack[:, :, nir_band] + fullarraystack[:, :, red_band]), 
+                     where=(fullarraystack[:, :, nir_band] + fullarraystack[:, :, red_band]) != 0)
     print("Shape of ndvi array:", ndvi.shape)
     # Apply NDVI threshold mask
     mask = ndvi < ndvi_threshold
