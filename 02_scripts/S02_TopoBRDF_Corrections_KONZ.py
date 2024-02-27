@@ -100,15 +100,22 @@ for i,file in enumerate(file_names):
     arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
     print("stacking arrays")
     fullarraystack = np.dstack(arrays)
+    print("Shape of fullarraystack:", fullarraystack.shape)
+    print("calculating ndvi")
     ndvi = np.divide((fullarraystack[:, nir_band] - fullarraystack[:, red_band]), (fullarraystack[:, nir_band] + fullarraystack[:, red_band]), 
                      where=(fullarraystack[:, nir_band] + fullarraystack[:, red_band]) != 0)
+    print("Shape of ndvi array:", ndvi.shape)
     # Apply NDVI threshold mask
     mask = ndvi < ndvi_threshold
+    print("Shape of mask array:", mask.shape)
+    print("masking by ndvi")
     fullarraystack[mask, :] = np.nan
     destination_s3_key = 'KONZ_flightlines/'+ str(file)+'_output_' + '.tif'
     local_file_path = Out_Dir + '/output_fullarray_' + file + '.tif'
     print(local_file_path)
+    print("rasterizing array")
     array2rastermb(local_file_path, fullarraystack, refl_md, Out_Dir, epsg = refl_md['epsg'], bands = fullarraystack.shape[2])
+    print("uploading array")
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
-    os.remove(local_file_path)
+    os.remove(local_file_path, ndvi, fullarraystack, mask, arrays)
     print("flightline complete")
