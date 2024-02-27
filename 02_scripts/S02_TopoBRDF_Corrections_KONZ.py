@@ -41,8 +41,12 @@ Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
+nir_band = 90
+red_band = 58
+ndvi_threshold = 0.4
+
 # Find correction coefficients (define search terms)
-search_criteria1 = "NEON_D06_KONZ_DP1_20190522"
+search_criteria1 = "NEON_D06_KONZ_DP1_20190516"
 dirpath = "NEON BRDF-TOPO Corrections/2019_KONZ/"
 
 # List objects in the S3 bucket in the matching directory
@@ -64,7 +68,7 @@ print(file_names)
 # Loop through all KONZ files
 for i,file in enumerate(file_names):
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_4/L1/Spectrometer/ReflectanceH5/2019052213/NEON_D06_KONZ_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_4/L1/Spectrometer/ReflectanceH5/2019051614/NEON_D06_KONZ_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
@@ -96,6 +100,11 @@ for i,file in enumerate(file_names):
     arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
     print("stacking arrays")
     fullarraystack = np.dstack(arrays)
+    ndvi = np.divide((fullarraystack[:, nir_band] - fullarraystack[:, red_band]), (fullarraystack[:, nir_band] + fullarraystack[:, red_band]), 
+                     where=(fullarraystack[:, nir_band] + fullarraystack[:, red_band]) != 0)
+    # Apply NDVI threshold mask
+    mask = ndvi < ndvi_threshold
+    fullarraystack[mask, :] = np.nan
     destination_s3_key = 'KONZ_flightlines/'+ str(file)+'_output_' + '.tif'
     local_file_path = Out_Dir + '/output_fullarray_' + file + '.tif'
     print(local_file_path)
