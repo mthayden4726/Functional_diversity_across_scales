@@ -47,25 +47,25 @@ s3 = boto3.client('s3')
 ## Set global parameters ##
 # window_sizes = [10, 30, 60, 120]   # list of window sizes to test
 window_sizes = [60, 120, 240, 480, 960, 1200, 1500, 2000, 2200]
-#window_sizes = [10, 50, 100, 150, 200, 300, 400]   # list of window sizes to test
 red_band = 58
 nir_band = 90
 ndvi_threshold = 0.5 # ndvi threshold for radiometric filtering
-# shade_threshold = 500 # should be low threshold across NIR region (15%)
-# cloud_threshold = 1500 # should be high threshold in blue band
-#bad_bands = [[300,400],[1300,1450],[1780,2000],[2450,2600]] # bands to be masked out
-#sample_size = 0.1 # proportion of pixels to subsample for fitting PCA
 comps = 3 # default component numbers for PCA
-#nclusters = 15 # default component numbers for K-means clustering
 
 # Loop through clipped files
-file_stem = 'SERC_flightlines/Mosaic_SERC_'
-sites = [8,9]
-for i in sites:
+
+# Choose site and plots
+file_stem = 'HEAL_flightlines/Mosaic_HEAL_'
+plots = ['015', '018', '024', '026']
+# go back and do '005' for just fdiv
+# Loop through plots
+for i in plots:
     clip_file = file_stem + str(i) + '.tif'
     print(clip_file)
+    # Download plot mosaic
     s3.download_file(bucket_name, clip_file, Data_Dir + '/mosaic.tif')
     file = Data_Dir + '/mosaic.tif'
+    # Open as raster
     raster = rxr.open_rasterio(file, masked=True)
     print(raster)
     # Convert data array to numpy array
@@ -91,7 +91,7 @@ for i in sites:
     X_no_nan = np.nan_to_num(X, nan=0)
     # Take mean 
     x_mean = X_no_nan.mean(axis=0)[np.newaxis, :]
-    # Scale & Standardize array
+    # Scale & standardize array
     X -=x_mean
     x_std = np.nanstd(X,axis=0)[np.newaxis, :]
     X /=x_std
@@ -103,25 +103,35 @@ for i in sites:
     print(pca_x)
     pca_x = pca_x.reshape((dim1, dim2,comps))
     print(pca_x.shape)
-    # paralellize calcs for different window sizes
+    # Calculate FRic on PCA across window sizes
     results_FR = {}
-    local_file_path = Out_Dir + "/SERC_fric_" + str(i) + ".csv"
+    local_file_path_fric = Out_Dir + "/HEAL_fric_" + str(i) + ".csv"
     window_batches = [(a, pca_x, results_FR, local_file_path) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
     volumes = process_map(
         window_calcs,
         window_batches,
         max_workers=cpu_count() - 1
     )
-    #print(volumes)
-    # open file for writing
-    # local_file_path = Out_Dir + "/TEAK_fric_" + str(i) + ".csv"
-    destination_s3_key = "/SERC_fric_veg_mask" + str(i) + ".csv"
+    destination_s3_key_fric = "/HEAL_fric_veg_" + str(i) + ".csv"
     #f = open(local_file_path,"w")
     # write file
     #f.write(str(volumes))
     # close file
     #f.close()
-    upload_to_s3(bucket_name, local_file_path, destination_s3_key)
-    print("File uploaded to S3")
+    upload_to_s3(bucket_name, local_file_path_fric, destination_s3_key_fric)
+    print("FRic file uploaded to S3")
+    # Calculate FDiv on PCA across window sizes
+    results_FD = {}
+    local_file_path_fdiv = Out_Dir + "/HEAL_fdiv_veg_" + str(i) + ".csv"
+    window_batches = [(a, pca_x, results_FD, local_file_path_fdiv) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
+    volumes = process_map(
+        window_calcs_fdiv,
+        window_batches,
+        max_workers=cpu_count() - 1
+    )
+    # open file for writing
+    destination_s3_key_fdiv = "/HEAL_fdiv_veg_" + str(i) + ".csv"
+    upload_to_s3(bucket_name, local_file_path_fdiv, destination_s3_key_fdiv)
+    print("FDiv file uploaded to S3")
     os.remove(file)
     print("Mosaic Complete - Next...")
