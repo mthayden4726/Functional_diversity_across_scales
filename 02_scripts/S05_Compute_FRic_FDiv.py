@@ -55,7 +55,8 @@ comps = 3 # default component numbers for PCA
 # Loop through clipped files
 # Choose site and plots
 file_stem = 'HEAL_flightlines/Mosaic_HEAL_'
-plots = ['002', '004', '005', '015']
+plots = ['015', '018', '024', '026']
+# go back and do '005' for just fdiv
 # Loop through plots
 for i in plots:
     clip_file = file_stem + str(i) + '.tif'
@@ -110,7 +111,7 @@ for i in plots:
         window_batches,
         max_workers=cpu_count() - 1
     )
-    destination_s3_key_fric = "/HEAL_fric_veg_mask" + str(i) + ".csv"
+    destination_s3_key_fric = "/HEAL_fric_veg_" + str(i) + ".csv"
     #f = open(local_file_path,"w")
     # write file
     #f.write(str(volumes))
