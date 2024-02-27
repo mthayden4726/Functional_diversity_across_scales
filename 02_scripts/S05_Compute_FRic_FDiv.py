@@ -56,7 +56,7 @@ comps = 3 # default component numbers for PCA
 
 # Choose site and plots
 file_stem = 'HEAL_flightlines/Mosaic_HEAL_'
-plots = ['015', '018', '024', '026']
+plots = ['005','015', '018', '024', '026']
 # go back and do '005' for just fdiv
 # Loop through plots
 for i in plots:
