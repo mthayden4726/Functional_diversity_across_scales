@@ -162,8 +162,11 @@ for i,file in enumerate(file_names):
     print("Files downloaded successfully.")
     topo_coeffs = Data_Dir + "/topo.json"
     brdf_coeffs = Data_Dir + "/brdf.json"
-    neon.load_coeffs(topo_coeffs,'topo')
-    neon.load_coeffs(brdf_coeffs, 'brdf')
+    try:
+      neon.load_coeffs(topo_coeffs,'topo')
+      neon.load_coeffs(brdf_coeffs, 'brdf')
+    except Exception as e:
+        continue
     print("corrections loaded")
     # Store map info for raster
     refl_md, header_dict = store_metadata(neon)
