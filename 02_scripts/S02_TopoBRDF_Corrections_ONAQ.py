@@ -65,6 +65,8 @@ for i,file in enumerate(files):
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
 
+file_names = ['20190512_164116', '20190512_171354', '20190512_172109', '20190512_170348', '20190512_163328', '20190512_160940', '20190512_162601', '20190512_164812', '20190512_174939', '20190512_160144', '20190512_161828', '20190512_165459', '20190512_175628', '20190512_172838', '20190512_174232', '20190512_154533']
+
 # Loop through all ONAQ files
 for i,file in enumerate(file_names):
     print(file)
