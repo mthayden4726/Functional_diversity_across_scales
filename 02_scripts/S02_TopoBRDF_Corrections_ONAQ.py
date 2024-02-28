@@ -46,7 +46,7 @@ red_band = 58
 ndvi_threshold = 0.4
 
 # Find correction coefficients (define search terms)
-search_criteria1 = "NEON_D15_ONAQ_DP1_20190511"
+search_criteria1 = "NEON_D15_ONAQ_DP1_20190512"
 dirpath = "NEON BRDF-TOPO Corrections/2019_ONAQ/"
 
 # List objects in the S3 bucket in the matching directory
@@ -68,7 +68,7 @@ print(file_names)
 # Loop through all ONAQ files
 for i,file in enumerate(file_names):
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D15/2019_ONAQ_2/L1/Spectrometer/ReflectanceH5/2019051115/NEON_D15_ONAQ_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D15/2019_ONAQ_2/L1/Spectrometer/ReflectanceH5/2019051214/NEON_D15_ONAQ_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
