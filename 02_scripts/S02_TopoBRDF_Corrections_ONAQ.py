@@ -69,6 +69,22 @@ file_names = ['20190512_164116', '20190512_171354', '20190512_172109', '20190512
 
 # Loop through all ONAQ files
 for i,file in enumerate(file_names):
+
+    # Set to none to reduce memory use
+    img = None
+    neon = None
+    topo_coeffs = None
+    brdf_coeffs = None
+    refl_md = None
+    header_dict = None
+    wavelength = None
+    good_wl = None
+    good_wl_list = None
+    arrays = None
+    fullarraystack = None
+    ndvi = None
+    mask = None
+    
     print(file)
     flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D15/2019_ONAQ_2/L1/Spectrometer/ReflectanceH5/2019051214/NEON_D15_ONAQ_DP1_' + file +'_reflectance.h5'
     files = []
