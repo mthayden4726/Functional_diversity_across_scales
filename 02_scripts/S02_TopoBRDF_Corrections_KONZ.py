@@ -118,8 +118,4 @@ for i,file in enumerate(file_names):
     print("uploading array")
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
     os.remove(local_file_path)
-    os.remove(ndvi)
-    os.remove(fullarraystack)
-    os.remove(mask)
-    os.remove(arrays)
     print("flightline complete")
