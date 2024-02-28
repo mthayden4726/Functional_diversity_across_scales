@@ -155,18 +155,17 @@ for i,file in enumerate(file_names):
     neon.read_file(img,'neon')
     print("file loaded")
     topo_file = "NEON BRDF-TOPO Corrections/2019_" + site + "/NEON_" + domain + "_" + site + "_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
-    print(topo_file)
     brdf_file = "NEON BRDF-TOPO Corrections/2019_" + site + "/NEON_" + domain + "_" + site + "_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
-    s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
-    s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
+    try:
+      s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
+      s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
+    except Exception as e:
+        continue
     print("Files downloaded successfully.")
     topo_coeffs = Data_Dir + "/topo.json"
     brdf_coeffs = Data_Dir + "/brdf.json"
-    try:
-      neon.load_coeffs(topo_coeffs,'topo')
-      neon.load_coeffs(brdf_coeffs, 'brdf')
-    except Exception as e:
-        continue
+    neon.load_coeffs(topo_coeffs,'topo')
+    neon.load_coeffs(brdf_coeffs, 'brdf')
     print("corrections loaded")
     # Store map info for raster
     refl_md, header_dict = store_metadata(neon)
