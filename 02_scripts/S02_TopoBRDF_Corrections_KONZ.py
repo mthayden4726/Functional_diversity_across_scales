@@ -65,7 +65,7 @@ for i,file in enumerate(files):
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
 
-file_names = ['20190517_152611', '20190517_145744', '20190517_153244', '20190517_161513', '20190517_162325', '20190517_150737', '20190517_154044', '20190517_160703']
+file_names = ['20190517_153244', '20190517_161513', '20190517_162325', '20190517_150737', '20190517_154044', '20190517_160703']
 
 # Loop through all KONZ files
 for i,file in enumerate(file_names):
