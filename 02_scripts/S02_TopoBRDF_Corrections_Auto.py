@@ -150,7 +150,7 @@ for i,file in enumerate(file_names):
         retrieve_neon_files(files, Data_Dir)
     except Exception as e:
         continue 
-    img = Data_Dir + "/NEON_" + domain + "_" + site + "_DP1_" + file_name + '_reflectance.h5'
+    img = Data_Dir + "/NEON_" + domain + "_" + site + "_DP1_" + file + '_reflectance.h5'
     neon = ht.HyTools() 
     neon.read_file(img,'neon')
     print("file loaded")
@@ -195,4 +195,5 @@ for i,file in enumerate(file_names):
     print("uploading array")
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
     os.remove(local_file_path)
+    os.remove(img)
     print("flightline complete")
