@@ -55,11 +55,13 @@ if site == "HARV":
   date_id = '2019082013'
   site_id = '2019_HARV_6'
   domain = 'D01'
+  epsg = 32618
 elif site == "OSBS":
   search_criteria = 'NEON_D03_OSBS_DP1_20190415'
   date_id = '2019041512'
   site_id = '2019_OSBS_5'
   domain = 'D03'
+  # epsg = 
 elif site == "UNDE":
   search_criteria = 'NEON_D05_UNDE_DP1_20190606'
   date_id = '2019060617'
@@ -168,7 +170,7 @@ for i,file in enumerate(file_names):
     neon.load_coeffs(brdf_coeffs, 'brdf')
     print("corrections loaded")
     # Store map info for raster
-    refl_md, header_dict = store_metadata(neon)
+    refl_md, header_dict = store_metadata(neon, epsg)
     print("EPSG:", refl_md['epsg'])
     # Export with corrections
     wavelength = header_dict['wavelength']
