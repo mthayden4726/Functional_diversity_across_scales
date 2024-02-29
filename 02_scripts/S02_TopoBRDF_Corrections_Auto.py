@@ -51,8 +51,8 @@ ndvi_threshold = 0.4
 
 # Find correction coefficients (define search terms) - listing first dates for each for now
 if site == "HARV":
-  search_criteria = 'NEON_D01_HARV_DP1_20190811'
-  date_id = '2019081112'
+  search_criteria = 'NEON_D01_HARV_DP1_20190820'
+  date_id = '2019082013'
   site_id = '2019_HARV_6'
   domain = 'D01'
 elif site == "OSBS":
