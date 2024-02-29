@@ -29,7 +29,8 @@ gdal.SetConfigOption('CHECK_DISK_FREE_SPACE', 'FALSE')
 
 src_files_to_mosaic = []
 
-file_ID = ['002',
+file_ID = [
+           #'002',
            '005',
            '007',
            '008',
@@ -92,6 +93,5 @@ for i,ID in enumerate(file_ID):
     
     # Remove unneeded files (mosaic and shapefile)
     os.remove(local_file_path)
-    os.remove(mosaic)
+    mosaic = None
     src_files_to_mosaic = None 
-    #os.remove(shape)
