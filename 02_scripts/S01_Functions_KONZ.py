@@ -51,6 +51,7 @@ import sys
 import rasterio
 import boto3
 import re
+import pyproj
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
 
 # Add global parameters for use of s3
@@ -351,7 +352,6 @@ def store_metadata(neon):
     
     """
     mapInfo= neon.map_info
-    print(mapInfo)
     header_dict = neon.get_header()
     print(header_dict)
     refl_md = {}
@@ -364,7 +364,9 @@ def store_metadata(neon):
     refl_md['bad_band_window1'] = np.array([1340, 1445])
     refl_md['bad_band_window2'] = np.array([1790, 1955])
     #refl_md['epsg'] = 32614 # for wgs 84, UTM 14 for KONZ --> note that this changed by site!!
-    refl_md['epsg'] = int(neon['Metadata']['Coordinate_System']['EPSG Code'].value)
+    crs = header_dict['coordinate system string]
+    refl_md['epsg'] = crs.to_epsg()
+    print("EPSG:", refl_md['epsg'])
     refl_md['res'] = {}
     refl_md['res']['pixelWidth'] = float(mapInfo[5])
     refl_md['res']['pixelHeight'] = float(mapInfo[6])
