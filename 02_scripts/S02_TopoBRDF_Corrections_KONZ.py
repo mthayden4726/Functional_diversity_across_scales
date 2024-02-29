@@ -46,7 +46,7 @@ red_band = 58
 ndvi_threshold = 0.4
 
 # Find correction coefficients (define search terms)
-search_criteria1 = "NEON_D06_KONZ_DP1_20190517"
+search_criteria1 = "NEON_D06_KONZ_DP1_20190522"
 dirpath = "NEON BRDF-TOPO Corrections/2019_KONZ/"
 
 # List objects in the S3 bucket in the matching directory
@@ -64,8 +64,6 @@ for i,file in enumerate(files):
         print("Pattern not found in the URL.")
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
-
-file_names = ['20190517_153244', '20190517_161513', '20190517_162325', '20190517_150737', '20190517_154044', '20190517_160703']
 
 # Loop through all KONZ files
 for i,file in enumerate(file_names):
@@ -86,7 +84,7 @@ for i,file in enumerate(file_names):
     mask = None
     
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_4/L1/Spectrometer/ReflectanceH5/2019051713/NEON_D06_KONZ_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_4/L1/Spectrometer/ReflectanceH5/2019052218/NEON_D06_KONZ_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
