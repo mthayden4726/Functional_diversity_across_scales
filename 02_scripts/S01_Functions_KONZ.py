@@ -364,7 +364,7 @@ def store_metadata(neon):
     refl_md['bad_band_window1'] = np.array([1340, 1445])
     refl_md['bad_band_window2'] = np.array([1790, 1955])
     #refl_md['epsg'] = 32614 # for wgs 84, UTM 14 for KONZ --> note that this changed by site!!
-    crs = header_dict['coordinate system string]
+    crs = header_dict['coordinate system string']
     refl_md['epsg'] = crs.to_epsg()
     print("EPSG:", refl_md['epsg'])
     refl_md['res'] = {}
