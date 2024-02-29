@@ -92,5 +92,5 @@ for j,shape in enumerate(shapefiles):
             except ValueError as e:
                 # Handle the case where there is no overlap between the raster and the shapefiles
                 print(f"Skipping file {i} as it does not overlap with the shapefile.")
-          os.remove(flight)
+            os.remove(flight)
         print("Cleared data files")
