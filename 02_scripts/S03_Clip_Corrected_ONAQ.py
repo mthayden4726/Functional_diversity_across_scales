@@ -35,7 +35,7 @@ files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (searc
 print(files)
 
 # List shapefile prefices
-shapefiles = ['Site_boundaries/ONAQ/ONAQ_002,
+shapefiles = ['Site_boundaries/ONAQ/ONAQ_002',
               'Site_boundaries/ONAQ/ONAQ_005',
               'Site_boundaries/ONAQ/ONAQ_007',
               'Site_boundaries/ONAQ/ONAQ_008',
