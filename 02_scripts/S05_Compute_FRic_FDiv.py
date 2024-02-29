@@ -79,13 +79,7 @@ for i in plots:
     print(X.shape)
     X = X.astype('float32')
     X[np.isnan(X)] = np.nan
-    #x_mean = np.nanmean(X, axis=0)[np.newaxis, :]
-    #X_no_nan = np.nan_to_num(X, nan=0)
-    # Calculate NDVI
-    ndvi = np.divide((X[:, nir_band] - X[:, red_band]), (X[:, nir_band] + X[:, red_band]), where=(X[:, nir_band] + X[:, red_band]) != 0)
-    # Apply NDVI threshold mask
-    mask = ndvi < ndvi_threshold
-    X[mask, :] = np.nan
+    X = X/10000 # rescale data
     # Change nan to 0 
     X_no_nan = np.nan_to_num(X, nan=0)
     # Take mean 
