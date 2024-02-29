@@ -169,6 +169,7 @@ for i,file in enumerate(file_names):
     print("corrections loaded")
     # Store map info for raster
     refl_md, header_dict = store_metadata(neon)
+    print("EPSG:", refl_md['epsg'])
     # Export with corrections
     wavelength = header_dict['wavelength']
     good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
