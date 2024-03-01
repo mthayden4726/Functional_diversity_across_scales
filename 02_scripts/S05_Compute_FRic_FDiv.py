@@ -126,4 +126,8 @@ for i in plots:
     upload_to_s3(bucket_name, local_file_path_fdiv, destination_s3_key_fdiv)
     print("FDiv file uploaded to S3")
     os.remove(file)
+    X = None
+    X_no_nan = None
+    pca_x = None
+    veg_np = None
     print("Mosaic Complete - Next...")
