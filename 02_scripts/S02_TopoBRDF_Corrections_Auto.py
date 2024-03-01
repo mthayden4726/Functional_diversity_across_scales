@@ -42,7 +42,7 @@ bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
 # Select site
-site = "TALL"
+site = "HARV"
 
 # Set parameters for NDVI threshold
 nir_band = 90
