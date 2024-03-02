@@ -47,13 +47,7 @@ site = "HARV"
 # Set parameters for NDVI threshold
 nir_band = 90
 red_band = 58
-ndvi_threshold = 0.3
-
-def masker(hy_obj):
-    ir = hy_obj.get_band(90)
-    red = hy_obj.get_band(58)
-    ndvi = (ir-red)/(ir+red)
-    return ndvi > .3
+ndvi_threshold = 0.25
 
 # Find correction coefficients (define search terms) - listing first dates for each for now
 if site == "HARV":
@@ -175,8 +169,6 @@ for i,file in enumerate(file_names):
     brdf_coeffs = Data_Dir + "/brdf.json"
     neon.load_coeffs(topo_coeffs,'topo')
     neon.load_coeffs(brdf_coeffs, 'brdf')
-    # Generate mask
-    neon.gen_mask(masker)
     print("corrections loaded")
     # Store map info for raster
     refl_md, header_dict = store_metadata(neon, epsg)
