@@ -38,6 +38,7 @@ from csv import writer
 # Import functions defined in S01_specdiv_functions.py
 from S01_Functions import * # add scripts folder to python path manager
 from S01_Moving_Window_FRIC import *
+from S01_Moving_Window_FDiv import *
 
 # Set directories
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
@@ -53,7 +54,7 @@ comps = 3 # default component numbers for PCA
 # Loop through clipped files
 # Choose site and plots
 file_stem = 'ONAQ_flightlines/Mosaic_ONAQ_'
-plots = ['002']
+plots = ['005']
 
 # Loop through plots
 for i in plots:
