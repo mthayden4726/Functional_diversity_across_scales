@@ -43,7 +43,7 @@ s3 = boto3.client('s3')
 
 nir_band = 90
 red_band = 58
-ndvi_threshold = 0.4
+ndvi_threshold = 0.25
 
 # Find correction coefficients (define search terms)
 search_criteria1 = "NEON_D06_KONZ_DP1_20190522"
@@ -64,6 +64,13 @@ for i,file in enumerate(files):
         print("Pattern not found in the URL.")
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
+
+file_names = ['20190522_192447', '20190522_165048', '20190522_164100', 
+              '20190522_191449', '20190522_151933', '20190522_162451', 
+              '20190522_150931', '20190522_200407', '20190522_194440', '20190522_161021', 
+              '20190522_172506', '20190522_155042', '20190522_195412', '20190522_190434', 
+              '20190522_171232', '20190522_170151', '20190522_193502', '20190522_154030', 
+              '20190522_163201', '20190522_160001']
 
 # Loop through all KONZ files
 for i,file in enumerate(file_names):
@@ -98,8 +105,11 @@ for i,file in enumerate(file_names):
     topo_file = "NEON BRDF-TOPO Corrections/2019_KONZ/NEON_D06_KONZ_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
     print(topo_file)
     brdf_file = "NEON BRDF-TOPO Corrections/2019_KONZ/NEON_D06_KONZ_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
-    s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
-    s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
+    try:
+        s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
+        s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
+    except Exception as e:
+        continue 
     print("Files downloaded successfully.")
     topo_coeffs = Data_Dir + "/topo.json"
     brdf_coeffs = Data_Dir + "/brdf.json"
