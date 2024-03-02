@@ -7,6 +7,7 @@ import requests
 import sklearn
 from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
+from sklearn.impute import SimpleImputer
 import kneed
 from kneed import KneeLocator
 import scipy.spatial
@@ -78,20 +79,21 @@ for i in plots:
     X[np.isnan(X)] = np.nan
     X[X < 0] = np.nan
     X = X/10000 # rescale data
+    # Impute values for NAs
+    imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
+    X_transformed = imputer.fit_transform(X)
     # Change nan to 0 
     #X_no_nan = np.nan_to_num(X, nan=0)
     # Take mean 
-    X_no_nan = X
-    x_mean = X_no_nan.mean(axis=0)[np.newaxis, :]
+    x_mean = X_transformed.mean(axis=0)[np.newaxis, :]
     # Scale & standardize array
-    X -=x_mean
-    x_std = np.nanstd(X,axis=0)[np.newaxis, :]
-    X /=x_std
+    X_transformed -=x_mean
+    x_std = np.nanstd(X_transformed,axis=0)[np.newaxis, :]
+    X_transformed /=x_std
     # Perform initial PCA fit
     pca = PCA(n_components=comps) # set max number of components
-    pca.fit(X_no_nan)
-    X_no_nan[np.isnan(X_no_nan) | np.isinf(X_no_nan)] = 0
-    pca_x =  pca.transform(X_no_nan)
+    pca.fit(X_transformed)
+    pca_x =  pca.transform(X_transformed)
     print(pca_x)
     pca_x = pca_x.reshape((dim1, dim2,comps))
     print(pca_x.shape)
