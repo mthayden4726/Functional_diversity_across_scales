@@ -72,6 +72,8 @@ file_names = ['20190522_192447', '20190522_165048', '20190522_164100',
               '20190522_171232', '20190522_170151', '20190522_193502', '20190522_154030', 
               '20190522_163201', '20190522_160001']
 
+epsg = 32614
+
 # Loop through all KONZ files
 for i,file in enumerate(file_names):
 
@@ -117,7 +119,7 @@ for i,file in enumerate(file_names):
     neon.load_coeffs(brdf_coeffs, 'brdf')
     print("corrections loaded")
     # Store map info for raster
-    refl_md, header_dict = store_metadata(neon)
+    refl_md, header_dict = store_metadata(neon, epsg)
     # Export with corrections
     wavelength = header_dict['wavelength']
     good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
