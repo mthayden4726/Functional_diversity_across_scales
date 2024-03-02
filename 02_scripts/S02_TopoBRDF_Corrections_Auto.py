@@ -178,7 +178,7 @@ for i,file in enumerate(file_names):
     good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
     good_wl_list = good_wl[~np.isnan(good_wl)]
     print("creating arrays")
-    arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask_values = True) for wave in good_wl_list]
+    arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
     print("stacking arrays")
     fullarraystack = np.dstack(arrays)
     print("Shape of fullarraystack:", fullarraystack.shape)
