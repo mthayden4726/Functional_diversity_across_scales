@@ -47,13 +47,7 @@ site = "HARV"
 # Set parameters for NDVI threshold
 nir_band = 90
 red_band = 58
-ndvi_threshold = 0.3
-
-def masker(hy_obj):
-    ir = hy_obj.get_band(90)
-    red = hy_obj.get_band(58)
-    ndvi = (ir-red)/(ir+red)
-    return ndvi > .3
+ndvi_threshold = 0.25
 
 # Find correction coefficients (define search terms) - listing first dates for each for now
 if site == "HARV":
@@ -175,8 +169,6 @@ for i,file in enumerate(file_names):
     brdf_coeffs = Data_Dir + "/brdf.json"
     neon.load_coeffs(topo_coeffs,'topo')
     neon.load_coeffs(brdf_coeffs, 'brdf')
-    # Generate mask
-    neon.gen_mask(masker)
     print("corrections loaded")
     # Store map info for raster
     refl_md, header_dict = store_metadata(neon, epsg)
@@ -185,21 +177,20 @@ for i,file in enumerate(file_names):
     wavelength = header_dict['wavelength']
     good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
     good_wl_list = good_wl[~np.isnan(good_wl)]
-    reflClean[nodata_ind]=np.nan
     print("creating arrays")
-    arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask_values = True) for wave in good_wl_list]
+    arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
     print("stacking arrays")
     fullarraystack = np.dstack(arrays)
     print("Shape of fullarraystack:", fullarraystack.shape)
     print("calculating ndvi")
-    #ndvi = np.divide((fullarraystack[:, :, nir_band] - fullarraystack[:, :, red_band]), (fullarraystack[:, :, nir_band] + fullarraystack[:, :, red_band]), 
-    #                 where=(fullarraystack[:, :, nir_band] + fullarraystack[:, :, red_band]) != 0)
-    #print("Shape of ndvi array:", ndvi.shape)
+    ndvi = np.divide((fullarraystack[:, :, nir_band] - fullarraystack[:, :, red_band]), (fullarraystack[:, :, nir_band] + fullarraystack[:, :, red_band]), 
+                     where=(fullarraystack[:, :, nir_band] + fullarraystack[:, :, red_band]) != 0)
+    print("Shape of ndvi array:", ndvi.shape)
     # Apply NDVI threshold mask
-    #mask = ndvi < ndvi_threshold
-    #print("Shape of mask array:", mask.shape)
-    #print("masking by ndvi")
-    #fullarraystack[mask, :] = np.nan
+    mask = ndvi < ndvi_threshold
+    print("Shape of mask array:", mask.shape)
+    print("masking by ndvi")
+    fullarraystack[mask, :] = np.nan
     destination_s3_key = site + '_flightlines/'+ str(file)+'_output_' + '.tif'
     local_file_path = Out_Dir + '/output_fullarray_' + file + '.tif'
     print(local_file_path)

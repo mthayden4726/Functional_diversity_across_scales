@@ -49,8 +49,8 @@ def window_calcs(args):
         half_window = window // 2
         #print(pca_chunk.shape)
         fric = np.zeros((pca_chunk.shape[0], pca_chunk.shape[1]))
-        for i in tqdm(range(half_window, pca_chunk.shape[0] - half_window, 15), desc='Processing window index'):
-            for j in range(half_window, pca_chunk.shape[1] - half_window, 15):
+        for i in tqdm(range(half_window, pca_chunk.shape[0] - half_window, 25), desc='Processing window index'):
+            for j in range(half_window, pca_chunk.shape[1] - half_window, 25):
                 hull = None
                 sub_arr = pca_chunk[i - half_window:i + half_window + 1, j - half_window:j + half_window + 1, :]
                 #print(sub_arr.shape)

@@ -52,14 +52,9 @@ window_sizes = [60, 120, 240, 480, 960, 1200, 1500, 2000, 2200]
 comps = 3 # default component numbers for PCA
 
 # Loop through clipped files
-
 # Choose site and plots
-file_stem = 'HEAL_flightlines/Mosaic_HEAL_'
-plots = [
-        '015',
-        '026',
-        '024'
-        ]
+file_stem = 'ONAQ_flightlines/Mosaic_ONAQ_'
+plots = ['008', '010', '011', '018', '019', '021', '024', '030', '043', '073']
 
 # Loop through plots
 for i in plots:
@@ -105,14 +100,14 @@ for i in plots:
     print(pca_x.shape)
     # Calculate FRic on PCA across window sizes
     results_FR = {}
-    local_file_path_fric = Out_Dir + "/HEAL_fric_" + str(i) + ".csv"
+    local_file_path_fric = Out_Dir + "/ONAQ_fric_" + str(i) + ".csv"
     window_batches = [(a, pca_x, results_FR, local_file_path_fric) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
     volumes = process_map(
         window_calcs,
         window_batches,
         max_workers=cpu_count() - 1
     )
-    destination_s3_key_fric = "/HEAL_fric_veg_" + str(i) + ".csv"
+    destination_s3_key_fric = "/ONAQ_fric_veg_" + str(i) + ".csv"
     #f = open(local_file_path,"w")
     # write file
     #f.write(str(volumes))
@@ -122,7 +117,7 @@ for i in plots:
     print("FRic file uploaded to S3")
     # Calculate FDiv on PCA across window sizes
     results_FD = {}
-    local_file_path_fdiv = Out_Dir + "/HEAL_fdiv_veg_" + str(i) + ".csv"
+    local_file_path_fdiv = Out_Dir + "/ONAQ_fdiv_veg_" + str(i) + ".csv"
     window_batches = [(a, pca_x, results_FD, local_file_path_fdiv) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
     volumes = process_map(
         window_calcs_fdiv,
@@ -130,7 +125,7 @@ for i in plots:
         max_workers=cpu_count() - 1
     )
     # open file for writing
-    destination_s3_key_fdiv = "/HEAL_fdiv_veg_" + str(i) + ".csv"
+    destination_s3_key_fdiv = "/ONAQ_fdiv_veg_" + str(i) + ".csv"
     upload_to_s3(bucket_name, local_file_path_fdiv, destination_s3_key_fdiv)
     print("FDiv file uploaded to S3")
     os.remove(file)
