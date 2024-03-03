@@ -45,7 +45,7 @@ file_ID = [
            '073']
 
 for i,ID in enumerate(file_ID):
-    
+    src_files_to_mosaic = []
     # List files associated with a single buffer shape
     search_criteria = str(ID)
     dirpath = "ONAQ_flightlines/Site_boundaries/ONAQ/"
