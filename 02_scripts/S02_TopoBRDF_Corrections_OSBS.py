@@ -109,7 +109,7 @@ for i,file in enumerate(file_names):
     neon.load_coeffs(brdf_coeffs, 'brdf')
     print("corrections loaded")
     # Store map info for raster
-    refl_md, header_dict = store_metadata(neon)
+    refl_md, header_dict = store_metadata(neon, epsg)
     # Export with corrections
     wavelength = header_dict['wavelength']
     good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
