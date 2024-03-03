@@ -23,78 +23,26 @@ Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
-# Find files for mosaicing (define search terms)
-#search_criteria1 = "20190515"
-#search_criteria2 = "20190901_17"
-#dirpath = "SERC_flightlines/"
-
-# List objects in the S3 bucket in the matching directory
-#objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
-# Filter objects based on the search criteria
-#files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (search_criteria1 in obj['Key'])]
-#print(files)
-# Or select files based on QGIS identification
-#files = ['TEAK_flightlines/20190901_164806_output_.tif']
-# List shapefile prefices
-#shapefiles = ['Site_boundaries/SERC/SERC_010_EPSG',
-#              'Site_boundaries/SERC/SERC_009_EPSG',
-#              'Site_boundaries/SERC/SERC_005_EPSG',
-#              'Site_boundaries/SERC/SERC_004_EPSG',
-#              'Site_boundaries/SERC/SERC_044_EPSG',
-#              'Site_boundaries/SERC/SERC_012_EPSG',
-#              'Site_boundaries/SERC/SERC_001_EPSG']
-
 # Set config options
 gdal.SetConfigOption('SHAPE_RESTORE_SHX', 'YES')
 gdal.SetConfigOption('CHECK_DISK_FREE_SPACE', 'FALSE')
 
-#for i, file in enumerate(files):
-#    print('Loading file from S3')
-#    s3.download_file(bucket_name, file, Out_Dir + '/file_' + str(i) + '.tif')
-#    flight = Out_Dir + '/file_' + str(i) + '.tif'
-#    print(flight)
-#    with rasterio.open(flight) as src:
-#        clipped_data, transform = rasterio.mask.mask(src, clip_polygon.geometry, crop=True)
-#        clipped_dataset = rasterio.open('clipped_file_' + str(i) + '.tif', 'w', **src.profile)
-#        print(clipped_dataset)
-#        clipped_dataset.write(clipped_data)
-#        datasets.append(clipped_dataset)
-#print(datasets)
-# Open in read mode and add to file list
-
-src_files_to_mosaic = []
-#for j,shape in enumerate(shapefiles):
-#    
-#    print(shape)
-#
-#    # Download shapefile files
-#    downloaded_files = download_shapefile(bucket_name, shape, Out_Dir)
-#    shapefile_path = next(file for file in downloaded_files if file.endswith('.shp'))
-#    
-#    # Open shapefile and access geometry
-#    with fiona.open(shapefile_path, "r") as shapefile:
-#        shapes = [feature["geometry"] for feature in shapefile]
-#    
-#    #minx, miny, maxx, maxy = box(*shapes[0].bounds).bounds
-#    
-#    # Access the bounds of the entire GeoDataFrame
-#    gdf = gpd.read_file(shapefile_path)
-#    #minx, miny, maxx, maxy = gdf.total_bounds
-#    #print(minx, miny, maxx, maxy)
-#
 file_ID = [
-           #'002', #done
-           #'004', #done
-           #'005', #done
-           #'013', # script was killed here
-           #'015', #done
-           #'018', #done
-           #'019', # script was killed here
+           #'002', 
+           #'004',
+           '005', 
+           '013', 
+           #'015', 
+           '018', 
+           '019', 
            '024',
            '026']
 
 for i,ID in enumerate(file_ID):
     
+    # Create new list within each loop
+    src_files_to_mosaic = []
+           
     # List files associated with a single buffer shape
     search_criteria = str(ID)
     dirpath = "HEAL_flightlines/Site_boundaries/"
@@ -143,5 +91,6 @@ for i,ID in enumerate(file_ID):
     
     # Remove unneeded files (mosaic and shapefile)
     os.remove(local_file_path)
-    #os.remove(shape)
+    mosaic = None
+    src_files_to_mosaic = None
 
