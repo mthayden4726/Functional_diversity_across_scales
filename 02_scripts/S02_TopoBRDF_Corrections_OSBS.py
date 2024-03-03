@@ -47,7 +47,7 @@ ndvi_threshold = 0.25
 epsg = 32617
 
 # Find correction coefficients (define search terms)
-search_criteria = "NEON_D15_OSBS_DP1_20190415"
+search_criteria = "NEON_D03_OSBS_DP1_20190415"
 dirpath = "NEON BRDF-TOPO Corrections/2019_OSBS/"
 
 # List objects in the S3 bucket in the matching directory
