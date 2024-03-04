@@ -55,10 +55,11 @@ comps = 3 # default component numbers for PCA
 
 # Choose site and plots
 file_stem = 'HEAL_flightlines/Mosaic_HEAL_'
-plots = [
-        '015',
-        '026',
-        '024'
+plots = ['005' #,
+        #'013',
+        #'018',
+        #'024',
+        #'026'
         ]
 
 # Loop through plots
