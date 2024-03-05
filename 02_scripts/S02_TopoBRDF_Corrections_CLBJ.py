@@ -66,7 +66,7 @@ for i,file in enumerate(files):
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
 
-file_names = ['20190419_160447', '20190419_175039', '20190419_154006', '20190419_154900', '20190419_155636', '20190419_171432', '20190419_172403', '20190419_163912', '20190419_170536', '20190419_174108', '20190419_162131', '20190419_165701', '20190419_164744']
+file_names = ['20190419_154006', '20190419_154900', '20190419_155636', '20190419_171432', '20190419_172403', '20190419_163912', '20190419_170536', '20190419_174108', '20190419_162131', '20190419_165701', '20190419_164744']
 
 
 # Loop through all CLBJ files
@@ -103,7 +103,10 @@ for i,file in enumerate(file_names):
     print(topo_file)
     brdf_file = "NEON BRDF-TOPO Corrections/2019_CLBJ/NEON_D11_CLBJ_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
     s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
-    s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
+    try:
+        s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
+    except Exception as e:
+        continue
     print("Files downloaded successfully.")
     topo_coeffs = Data_Dir + "/topo.json"
     brdf_coeffs = Data_Dir + "/brdf.json"
