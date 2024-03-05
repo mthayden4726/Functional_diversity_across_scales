@@ -30,25 +30,23 @@ gdal.SetConfigOption('CHECK_DISK_FREE_SPACE', 'FALSE')
 src_files_to_mosaic = []
 
 file_ID = [
-           #'002',
-           #'005',
-           #'007',
-           #'008',
-           '010',
-           '011',
-           '018',
-           '019',
-           '021',
-           '024',
-           '030',
-           '043',
-           '073']
+           '001',
+           '002',
+           '009',
+           '012',
+           '013',
+           '020',
+           '026',
+           '027',
+           '032',
+           '044'
+           ]
 
 for i,ID in enumerate(file_ID):
     src_files_to_mosaic = []
     # List files associated with a single buffer shape
     search_criteria = str(ID)
-    dirpath = "ONAQ_flightlines/Site_boundaries/ONAQ/"
+    dirpath = "TALL_flightlines/Site_boundaries/TALL/"
 
     # List objects in the S3 bucket in the matching directory
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -77,17 +75,17 @@ for i,ID in enumerate(file_ID):
         "height": mosaic.shape[1],
         "width": mosaic.shape[2],
         "transform": out_trans,
-        "crs": "+init=epsg:32612 +units=m +no_defs "}) # for ONAQ UTM WGS 12N
+        "crs": "+init=epsg:32616 +units=m +no_defs "}) # for TALL UTM WGS 16N
     print(out_meta)
 
     # Write to computer, send to S3
-    local_file_path = Out_Dir + "/mosaic_ONAQ.tif"
+    local_file_path = Out_Dir + "/mosaic_TALL.tif"
     with rasterio.open(local_file_path, "w", **out_meta) as dest:
         dest.write(mosaic)
     print("File written")
     
     # Push to S3 bucket
-    destination_s3_key = 'ONAQ_flightlines/Mosaic_ONAQ_'+str(ID)+'.tif'
+    destination_s3_key = 'TALL_flightlines/Mosaic_TALL_'+str(ID)+'.tif'
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
     print("File uploaded to S3")
     
