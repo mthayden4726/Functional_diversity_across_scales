@@ -25,8 +25,8 @@ bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
 # Find files for mosaicing (define search terms)
-search_criteria = "201905"
-dirpath = "KONZ_flightlines/"
+search_criteria = "201904"
+dirpath = "TALL_flightlines/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -35,10 +35,16 @@ files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (searc
 print(files)
 
 # List shapefile prefices
-shapefiles = ['Site_boundaries/KONZ/KONZ_005',
-              'Site_boundaries/KONZ/KONZ_007',
-              'Site_boundaries/KONZ/KONZ_009',
-              'Site_boundaries/KONZ/KONZ_019'
+shapefiles = ['Site_boundaries/TALL/TALL_001',
+              'Site_boundaries/TALL/TALL_002',
+              'Site_boundaries/TALL/TALL_012',
+              'Site_boundaries/TALL/TALL_013',
+              'Site_boundaries/TALL/TALL_009',
+              'Site_boundaries/TALL/TALL_020',
+              'Site_boundaries/TALL/TALL_044',
+              'Site_boundaries/TALL/TALL_026',
+              'Site_boundaries/TALL/TALL_027',
+              'Site_boundaries/TALL/TALL_032'
              ]
 
 # Load the polygon for clipping ()
@@ -77,7 +83,7 @@ for j,shape in enumerate(shapefiles):
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
                     print("File Written")
-                destination_s3_key = 'KONZ_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
+                destination_s3_key = 'TALL_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
                 upload_to_s3(bucket_name, local_file_path, destination_s3_key)
                 print("File uploaded to S3")
                 os.remove(local_file_path)
