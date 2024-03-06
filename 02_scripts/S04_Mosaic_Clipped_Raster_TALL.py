@@ -90,7 +90,7 @@ for i,ID in enumerate(file_ID):
 
     # Mosaic files
     print(src_files_to_mosaic)
-    mosaic, out_trans = merge(src_files_to_mosaic, method = max)
+    mosaic, out_trans = merge(src_files_to_mosaic, method = 'max')
     print('Merge complete')
     # Update metadata
     out_meta = src.meta.copy()
