@@ -44,11 +44,11 @@ s3 = boto3.client('s3')
 nir_band = 90
 red_band = 58
 ndvi_threshold = 0.25
-epsg = 32616
+epsg = 32614
 
 # Find correction coefficients (define search terms)
-search_criteria = "NEON_D08_TALL_DP1_20190427"
-dirpath = "NEON BRDF-TOPO Corrections/2019_TALL/"
+search_criteria = "NEON_D09_WOOD_DP1_20190722"
+dirpath = "NEON BRDF-TOPO Corrections/2019_WOOD/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -86,27 +86,27 @@ for i,file in enumerate(file_names):
     mask = None
     
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D08/2019_TALL_5/L1/Spectrometer/ReflectanceH5/2019042713/NEON_D08_TALL_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D09/2019_WOOD_3/L1/Spectrometer/ReflectanceH5/2019072214/NEON_D09_WOOD_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
         retrieve_neon_files(files, Data_Dir)
     except Exception as e:
         continue 
-    img = Data_Dir + "/NEON_D08_TALL_DP1_" + file + '_reflectance.h5'
+    img = Data_Dir + "/NEON_D09_WOOD_DP1_" + file + '_reflectance.h5'
     neon = ht.HyTools() 
     neon.read_file(img,'neon')
     print("file loaded")
-    topo_file = "NEON BRDF-TOPO Corrections/2019_TALL/NEON_D08_TALL_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
+    topo_file = "NEON BRDF-TOPO Corrections/2019_WOOD/NEON_D09_WOOD_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
     print(topo_file)
-    #brdf_file = "NEON BRDF-TOPO Corrections/2019_TALL/NEON_D08_TALL_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
+    brdf_file = "NEON BRDF-TOPO Corrections/2019_WOOD/NEON_D09_WOOD_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
     s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
-    #s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
+    s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
     print("Files downloaded successfully.")
     topo_coeffs = Data_Dir + "/topo.json"
-    #brdf_coeffs = Data_Dir + "/brdf.json"
+    brdf_coeffs = Data_Dir + "/brdf.json"
     neon.load_coeffs(topo_coeffs,'topo')
-    #neon.load_coeffs(brdf_coeffs, 'brdf')
+    neon.load_coeffs(brdf_coeffs, 'brdf')
     print("corrections loaded")
     # Store map info for raster
     refl_md, header_dict = store_metadata(neon, epsg)
@@ -128,7 +128,7 @@ for i,file in enumerate(file_names):
     print("Shape of mask array:", mask.shape)
     print("masking by ndvi")
     fullarraystack[mask, :] = np.nan
-    destination_s3_key = 'TALL_flightlines/'+ str(file)+'_output_' + '.tif'
+    destination_s3_key = 'WOOD_flightlines/'+ str(file)+'_output_' + '.tif'
     local_file_path = Out_Dir + '/output_fullarray_' + file + '.tif'
     print(local_file_path)
     print("rasterizing array")
