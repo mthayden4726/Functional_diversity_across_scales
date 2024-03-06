@@ -69,8 +69,12 @@ for i,ID in enumerate(file_ID):
             print(nodata)
             if nodata is not None:
                 array[array == nodata] = 0
+                array[array == None] = 0
+                array[np.isnan(array) | np.isinf(array)] = 0
             else:
                 # Consider what to do if nodata is not defined, or define a default action
+                array[array == None] = 0
+                array[np.isnan(array) | np.isinf(array)] = 0
                 print("nodata is not defined")
 
             # Define modified file path
