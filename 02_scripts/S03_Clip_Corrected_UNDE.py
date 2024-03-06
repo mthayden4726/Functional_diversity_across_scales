@@ -35,8 +35,9 @@ files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (searc
 print(files)
 
 # List shapefile prefices
-shapefiles = ['Site_boundaries/UNDE/UNDE_020',
-              'Site_boundaries/UNDE/UNDE_003',
+shapefiles = [
+              #'Site_boundaries/UNDE/UNDE_020',
+              #'Site_boundaries/UNDE/UNDE_003',
               'Site_boundaries/UNDE/UNDE_006',
               'Site_boundaries/UNDE/UNDE_023',
               'Site_boundaries/UNDE/UNDE_038',
@@ -67,15 +68,14 @@ for j,shape in enumerate(shapefiles):
         print(flight)
         with rasterio.open(flight) as src:
             try:
-                out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True, nodata = 0)
+                out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True)
                 out_meta = src.meta
                 print("File Clipped")
                 print(out_meta)
                 out_meta.update({"driver": "GTiff",
                     "height": out_image.shape[1],
                     "width": out_image.shape[2],
-                    "transform": out_transform,
-                    "nodata": 0})
+                    "transform": out_transform})
                 local_file_path = Out_Dir + "/clip.tif"
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
