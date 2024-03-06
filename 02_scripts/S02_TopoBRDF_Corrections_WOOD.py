@@ -66,6 +66,11 @@ for i,file in enumerate(files):
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
 
+file_names = ['20190726_153628','20190726_164943','20190726_163004', '20190726_174437', 
+              '20190726_175413', '20190726_162146', '20190726_170705', 
+              '20190726_152944', '20190726_171659', '20190726_155718', '20190726_172647', '20190726_154340', 
+              '20190726_163908','20190726_180428', '20190726_151709', '20190726_161223', 
+              '20190726_203918', '20190726_173545', '20190726_203107', '20190726_205517', '20190726_155011', '20190726_160333', '20190726_165808']
 
 # Loop through all UNDE files
 for i,file in enumerate(file_names):
@@ -100,9 +105,12 @@ for i,file in enumerate(file_names):
     topo_file = "NEON BRDF-TOPO Corrections/2019_WOOD/NEON_D09_WOOD_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
     print(topo_file)
     brdf_file = "NEON BRDF-TOPO Corrections/2019_WOOD/NEON_D09_WOOD_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
-    s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
-    s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
-    print("Files downloaded successfully.")
+    try:
+        s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
+        s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
+        print("Files downloaded successfully.")
+    except Exception as e:
+        continue
     topo_coeffs = Data_Dir + "/topo.json"
     brdf_coeffs = Data_Dir + "/brdf.json"
     neon.load_coeffs(topo_coeffs,'topo')
