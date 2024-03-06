@@ -47,7 +47,7 @@ ndvi_threshold = 0.25
 epsg = 32614
 
 # Find correction coefficients (define search terms)
-search_criteria = "NEON_D11_CLBJ_DP1_20190419"
+search_criteria = "NEON_D11_CLBJ_DP1_20190420"
 dirpath = "NEON BRDF-TOPO Corrections/2019_CLBJ/"
 
 # List objects in the S3 bucket in the matching directory
@@ -65,9 +65,6 @@ for i,file in enumerate(files):
         print("Pattern not found in the URL.")
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
-
-file_names = ['20190419_154006', '20190419_154900', '20190419_155636', '20190419_171432', '20190419_172403', '20190419_163912', '20190419_170536', '20190419_174108', '20190419_162131', '20190419_165701', '20190419_164744']
-
 
 # Loop through all CLBJ files
 for i,file in enumerate(file_names):
@@ -88,7 +85,7 @@ for i,file in enumerate(file_names):
     mask = None
     
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D11/2019_CLBJ_4/L1/Spectrometer/ReflectanceH5/2019041914/NEON_D11_CLBJ_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D11/2019_CLBJ_4/L1/Spectrometer/ReflectanceH5/2019042013/NEON_D11_CLBJ_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
