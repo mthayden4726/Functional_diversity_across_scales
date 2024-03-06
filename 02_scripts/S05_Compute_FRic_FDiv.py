@@ -54,9 +54,10 @@ comps = 3 # default component numbers for PCA
 # Loop through clipped files
 # Choose site and plots
 file_stem = 'OSBS_flightlines/Mosaic_OSBS_'
-plots = ['002',
-  '005',
-  '007',
+plots = [
+  #'002',
+  #'005',
+  #'007',
   '010',
   '011',
   '027',
