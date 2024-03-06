@@ -77,8 +77,7 @@ for j,shape in enumerate(shapefiles):
                 out_meta.update({"driver": "GTiff",
                     "height": out_image.shape[1],
                     "width": out_image.shape[2],
-                    "transform": out_transform,
-                    "nodata": 0})
+                    "transform": out_transform})
                 local_file_path = Out_Dir + "/clip.tif"
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
