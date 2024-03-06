@@ -27,6 +27,12 @@ s3 = boto3.client('s3')
 gdal.SetConfigOption('SHAPE_RESTORE_SHX', 'YES')
 gdal.SetConfigOption('CHECK_DISK_FREE_SPACE', 'FALSE')
 
+def pre121_max(old_data, new_data, old_nodata, new_nodata, **kwargs):
+    mask = np.logical_and(~old_nodata, ~new_nodata)
+    old_data[mask] = np.maximum(old_data[mask], new_data[mask])
+    mask = np.logical_and(old_nodata, ~new_nodata)
+    old_data[mask] = new_data[mask]
+
 src_files_to_mosaic = []
 
 file_ID = [
@@ -65,7 +71,7 @@ for i,ID in enumerate(file_ID):
 
     # Mosaic files
     print(src_files_to_mosaic)
-    mosaic, out_trans = merge(src_files_to_mosaic, method = "max")
+    mosaic, out_trans = merge(src_files_to_mosaic, method = pre121_max)
     print('Merge complete')
     # Update metadata
     out_meta = src.meta.copy()
