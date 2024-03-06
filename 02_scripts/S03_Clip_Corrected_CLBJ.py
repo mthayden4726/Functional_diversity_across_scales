@@ -70,7 +70,7 @@ for j,shape in enumerate(shapefiles):
         print(flight)
         with rasterio.open(flight) as src:
             try:
-                out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True, nodata = 0)
+                out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True) # remove nodata = 0 to see if this helps with mosaic
                 out_meta = src.meta
                 print("File Clipped")
                 print(out_meta)
