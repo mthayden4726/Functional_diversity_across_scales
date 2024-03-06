@@ -17,14 +17,14 @@
 **S04:** Model Scaling Relationships (Functional Metrics ~ Area)
 
 Processing scripts should be implemented as:
-1. Correct (BRDF/Topo) and export flightlines as tiffs (S02 scripts)
-2. Clip flightlines to larger field site boundary (S03 scripts)
-3. Mosaic clipped flightlines together (S04 scripts) - time to run: SERC started 12:07 pm. 
-4. Compute functional metrics for each field site's raster (S05 scripts)
-5. Analyze the output to assess scaling of functional metrics with area (S06 scripts)
+1. Correct (BRDF/Topo), mask (NDVI threshold) and export flightlines as tiffs (**S02** scripts)
+2. Clip flightlines to larger field site boundary (**S03** scripts)
+3. Mosaic clipped flightlines together (**S04** scripts)
+4. Compute functional richness and divergence metrics for each field site's raster (**S05** scripts)
+5. Analyze the output to assess scaling of functional metrics with area (**S06** scripts)
 
 **Authors:** M. Hayden, C. Amaral, M. Rossi, N. Stavros
 
-Updated: Jan. 23rd, 2024
+Updated: March 5th, 2024
 
-Next: Combining scripts into workflow based on FUNCTIONS --> script in progress: Workflow.py
+Next: Combining scripts into workflow based on FUNCTIONS (currently requires input for each site) --> script in progress: Workflow.py
