@@ -66,12 +66,6 @@ for i,file in enumerate(files):
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
 
-file_names = ['20190726_153628','20190726_164943','20190726_163004', '20190726_174437', 
-              '20190726_175413', '20190726_162146', '20190726_170705', 
-              '20190726_152944', '20190726_171659', '20190726_155718', '20190726_172647', '20190726_154340', 
-              '20190726_163908','20190726_180428', '20190726_151709', '20190726_161223', 
-              '20190726_203918', '20190726_173545', '20190726_203107', '20190726_205517', '20190726_155011', '20190726_160333', '20190726_165808']
-
 # Loop through all UNDE files
 for i,file in enumerate(file_names):
 
@@ -91,7 +85,7 @@ for i,file in enumerate(file_names):
     mask = None
     
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D09/2019_WOOD_3/L1/Spectrometer/ReflectanceH5/2019072619/NEON_D09_WOOD_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D09/2019_WOOD_3/L1/Spectrometer/ReflectanceH5/2019072613/NEON_D09_WOOD_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
