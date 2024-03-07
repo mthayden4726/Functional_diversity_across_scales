@@ -86,7 +86,7 @@ for i,file in enumerate(file_names):
     mask = None
     
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D012/2019_YELL_2/L1/Spectrometer/ReflectanceH5/2019072014/NEON_D12_YELL_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D12/2019_YELL_2/L1/Spectrometer/ReflectanceH5/2019072014/NEON_D12_YELL_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
