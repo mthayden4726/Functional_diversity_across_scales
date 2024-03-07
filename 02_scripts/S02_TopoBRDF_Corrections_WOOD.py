@@ -66,7 +66,6 @@ for i,file in enumerate(files):
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
 
-
 # Loop through all UNDE files
 for i,file in enumerate(file_names):
 
@@ -86,7 +85,7 @@ for i,file in enumerate(file_names):
     mask = None
     
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D09/2019_WOOD_3/L1/Spectrometer/ReflectanceH5/2019072619/NEON_D09_WOOD_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D09/2019_WOOD_3/L1/Spectrometer/ReflectanceH5/2019072613/NEON_D09_WOOD_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
@@ -100,9 +99,12 @@ for i,file in enumerate(file_names):
     topo_file = "NEON BRDF-TOPO Corrections/2019_WOOD/NEON_D09_WOOD_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
     print(topo_file)
     brdf_file = "NEON BRDF-TOPO Corrections/2019_WOOD/NEON_D09_WOOD_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
-    s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
-    s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
-    print("Files downloaded successfully.")
+    try:
+        s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
+        s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
+        print("Files downloaded successfully.")
+    except Exception as e:
+        continue
     topo_coeffs = Data_Dir + "/topo.json"
     brdf_coeffs = Data_Dir + "/brdf.json"
     neon.load_coeffs(topo_coeffs,'topo')

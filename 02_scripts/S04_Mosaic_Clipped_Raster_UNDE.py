@@ -30,23 +30,20 @@ gdal.SetConfigOption('CHECK_DISK_FREE_SPACE', 'FALSE')
 src_files_to_mosaic = []
 
 file_ID = [
-           '001',
-           '002',
-           '009',
-           '012',
-           '013',
            '020',
-           '026',
-           '027',
-           '032',
-           '044'
+           '003',
+           '006',
+           '023',
+           '038',
+           '001',
+           '011'
            ]
 
 for i,ID in enumerate(file_ID):
     src_files_to_mosaic = []
     # List files associated with a single buffer shape
     search_criteria = str(ID)
-    dirpath = "TALL_flightlines/Site_boundaries/TALL/"
+    dirpath = "UNDE_flightlines/Site_boundaries/UNDE/"
 
     # List objects in the S3 bucket in the matching directory
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -69,8 +66,12 @@ for i,ID in enumerate(file_ID):
             print(nodata)
             if nodata is not None:
                 array[array == nodata] = 0
+                array[array == None] = 0
+                array[np.isnan(array) | np.isinf(array)] = 0
             else:
                 # Consider what to do if nodata is not defined, or define a default action
+                array[array == None] = 0
+                array[np.isnan(array) | np.isinf(array)] = 0
                 print("nodata is not defined")
 
             # Define modified file path
@@ -104,13 +105,13 @@ for i,ID in enumerate(file_ID):
     print(out_meta)
 
     # Write to computer, send to S3
-    local_file_path = Out_Dir + "/mosaic_TALL.tif"
+    local_file_path = Out_Dir + "/mosaic_UNDE.tif"
     with rasterio.open(local_file_path, "w", **out_meta) as dest:
         dest.write(mosaic)
     print("File written")
     
     # Push to S3 bucket
-    destination_s3_key = 'TALL_flightlines/Mosaic_TALL_'+str(ID)+'.tif'
+    destination_s3_key = 'UNDE_flightlines/Mosaic_UNDE_'+str(ID)+'.tif'
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
     print("File uploaded to S3")
     
