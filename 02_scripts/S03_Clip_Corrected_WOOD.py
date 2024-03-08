@@ -26,7 +26,7 @@ s3 = boto3.client('s3')
 
 # Find files for mosaicing (define search terms)
 search_criteria = "201906"
-dirpath = "UNDE_flightlines/"
+dirpath = "UND_flightlines/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
