@@ -28,3 +28,5 @@ Processing scripts should be implemented as:
 Updated: March 5th, 2024
 
 Next: Combining scripts into workflow based on FUNCTIONS (currently requires input for each site) --> script in progress: Workflow.py
+
+Currently: Change site code and variables for each run; see scripts with various site code suffices.
