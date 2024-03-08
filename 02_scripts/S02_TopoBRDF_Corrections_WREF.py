@@ -44,11 +44,11 @@ s3 = boto3.client('s3')
 nir_band = 90
 red_band = 58
 ndvi_threshold = 0.25
-epsg = 32614
+epsg = 32610
 
 # Find correction coefficients (define search terms)
-search_criteria = "NEON_D09_WOOD_DP1_20190730"
-dirpath = "NEON BRDF-TOPO Corrections/2019_WOOD/"
+search_criteria = "NEON_D16_WREF_DP1_20190712"
+dirpath = "NEON BRDF-TOPO Corrections/2019_WREF/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -85,20 +85,20 @@ for i,file in enumerate(file_names):
     mask = None
     
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D09/2019_WOOD_3/L1/Spectrometer/ReflectanceH5/2019073014/NEON_D09_WOOD_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D16/2019_WREF_3/L1/Spectrometer/ReflectanceH5/2019071216/NEON_D16_WREF_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
         retrieve_neon_files(files, Data_Dir)
     except Exception as e:
         continue 
-    img = Data_Dir + "/NEON_D09_WOOD_DP1_" + file + '_reflectance.h5'
+    img = Data_Dir + "/NEON_D16_WREF_DP1_" + file + '_reflectance.h5'
     neon = ht.HyTools() 
     neon.read_file(img,'neon')
     print("file loaded")
-    topo_file = "NEON BRDF-TOPO Corrections/2019_WOOD/NEON_D09_WOOD_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
+    topo_file = "NEON BRDF-TOPO Corrections/2019_WREF/NEON_D16_WREF_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
     print(topo_file)
-    brdf_file = "NEON BRDF-TOPO Corrections/2019_WOOD/NEON_D09_WOOD_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
+    brdf_file = "NEON BRDF-TOPO Corrections/2019_WREF/NEON_D16_WREF_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
     try:
         s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
         s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
@@ -130,7 +130,7 @@ for i,file in enumerate(file_names):
     print("Shape of mask array:", mask.shape)
     print("masking by ndvi")
     fullarraystack[mask, :] = np.nan
-    destination_s3_key = 'WOOD_flightlines/'+ str(file)+'_output_' + '.tif'
+    destination_s3_key = 'WREF_flightlines/'+ str(file)+'_output_' + '.tif'
     local_file_path = Out_Dir + '/output_fullarray_' + file + '.tif'
     print(local_file_path)
     print("rasterizing array")
