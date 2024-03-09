@@ -30,23 +30,18 @@ gdal.SetConfigOption('CHECK_DISK_FREE_SPACE', 'FALSE')
 src_files_to_mosaic = []
 
 file_ID = [
-           '035',
-           '003',
-           '041',
-           '053',
-           '054',
-           '048',
-           '047',
-           '050',
-           '051',
-           '056'
+           '024',
+           '012',
+           '008',
+           '019',
+           '023'
            ]
 
 for i,ID in enumerate(file_ID):
     src_files_to_mosaic = []
     # List files associated with a single buffer shape
     search_criteria = str(ID)
-    dirpath = "CLBJ_flightlines/Site_boundaries/CLBJ/"
+    dirpath = "WOOD_flightlines/Site_boundaries/WOOD/"
 
     # List objects in the S3 bucket in the matching directory
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -108,13 +103,13 @@ for i,ID in enumerate(file_ID):
     print(out_meta)
 
     # Write to computer, send to S3
-    local_file_path = Out_Dir + "/mosaic_CLBJ.tif"
+    local_file_path = Out_Dir + "/mosaic_WOOD.tif"
     with rasterio.open(local_file_path, "w", **out_meta) as dest:
         dest.write(mosaic)
     print("File written")
     
     # Push to S3 bucket
-    destination_s3_key = 'CLBJ_flightlines/Mosaic_CLBJ_'+str(ID)+'.tif'
+    destination_s3_key = 'WOOD_flightlines/Mosaic_WOOD_'+str(ID)+'.tif'
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
     print("File uploaded to S3")
     
