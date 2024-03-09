@@ -36,11 +36,11 @@ print(files)
 
 # List shapefile prefices
 shapefiles = [
-              'Site_boundaries/NIWO/NIWO_030',
-  'Site_boundaries/NIWO/NIWO_004',
-  'Site_boundaries/NIWO/NIWO_007',
-  'Site_boundaries/NIWO/NIWO_021',
-  'Site_boundaries/NIWO/NIWO_16',
+              #'Site_boundaries/NIWO/NIWO_030',
+  #'Site_boundaries/NIWO/NIWO_004',
+  #'Site_boundaries/NIWO/NIWO_007',
+  #'Site_boundaries/NIWO/NIWO_021',
+  'Site_boundaries/NIWO/NIWO_016',
   'Site_boundaries/NIWO/NIWO_006'
 ]
 
