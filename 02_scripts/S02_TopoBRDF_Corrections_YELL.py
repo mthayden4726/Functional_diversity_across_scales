@@ -47,7 +47,7 @@ ndvi_threshold = 0.25
 epsg = 32612
 
 # Find correction coefficients (define search terms)
-search_criteria = "NEON_D12_YELL_DP1_20190720"
+search_criteria = "NEON_D12_YELL_DP1_20190721"
 dirpath = "NEON BRDF-TOPO Corrections/2019_YELL/"
 
 # List objects in the S3 bucket in the matching directory
@@ -65,13 +65,6 @@ for i,file in enumerate(files):
         print("Pattern not found in the URL.")
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
-
-file_names = ['20190720_165734', '20190720_192029', '20190720_221856', '20190720_175406', '20190720_225212', '20190720_174630', '20190720_223348', '20190720_220845', '20190720_171401', '20190720_163308', '20190720_184146', 
-              '20190720_214100', '20190720_225949', '20190720_220340', '20190720_164916', '20190720_225602', '20190720_184916', '20190720_182608', '20190720_221346', 
-              '20190720_224256', '20190720_222358', '20190720_173850', '20190720_223826', '20190720_215314', '20190720_214709', '20190720_170543', '20190720_185644', 
-              '20190720_191342', '20190720_180157', '20190720_181808', '20190720_181005', '20190720_172212', '20190720_224726', '20190720_162450', '20190720_222854', 
-              '20190720_215834', '20190720_183346', '20190720_173026', '20190720_190404', '20190720_161642']
-
 
 # Loop through all UNDE files
 for i,file in enumerate(file_names):
@@ -92,7 +85,7 @@ for i,file in enumerate(file_names):
     mask = None
     
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D12/2019_YELL_2/L1/Spectrometer/ReflectanceH5/2019072014/NEON_D12_YELL_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D12/2019_YELL_2/L1/Spectrometer/ReflectanceH5/2019072114/NEON_D12_YELL_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
