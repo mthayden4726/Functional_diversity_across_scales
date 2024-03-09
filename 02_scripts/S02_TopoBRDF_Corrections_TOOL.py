@@ -92,7 +92,7 @@ for i,file in enumerate(file_names):
         retrieve_neon_files(files, Data_Dir)
     except Exception as e:
         continue 
-    img = Data_Dir + "/NEON_D16_WREF_DP1_" + file + '_reflectance.h5'
+    img = Data_Dir + "/NEON_D18_TOOL_DP1_" + file + '_reflectance.h5'
     neon = ht.HyTools() 
     neon.read_file(img,'neon')
     print("file loaded")
