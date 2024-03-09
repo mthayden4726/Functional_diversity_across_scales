@@ -25,6 +25,8 @@ Processing scripts should be implemented as:
 
 **Authors:** M. Hayden, C. Amaral, M. Rossi, N. Stavros
 
-Updated: March 5th, 2024
+Updated: March 8th, 2024
 
 Next: Combining scripts into workflow based on FUNCTIONS (currently requires input for each site) --> script in progress: Workflow.py
+
+Currently: Change site code and variables for each run; see scripts with various site code suffices.

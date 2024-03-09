@@ -1,7 +1,7 @@
 
 # Script to pull rasters from S3, clip them to the extent for the field sites, and then re-export them to S3.
 # Next they will be pulled in to be merged. 
-# Meghan Hayden - 10/11/2023
+# Meghan Hayden - 2/22/2024
 
 import rasterio
 from rasterio.merge import merge
@@ -17,43 +17,32 @@ import geopandas as gpd
 from fiona.crs import from_epsg
 import pycrs
 from osgeo import gdal
-from S01_Functions.py import * # add scripts folder to python path manager
+from S01_Functions import *
 
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
 Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
-#files = ['TEAK_flightlines/20190615_171251_output_0.tif', 
-#         'TEAK_flightlines/20190615_171251_output_1.tif',
-#         'TEAK_flightlines/20190615_171251_output_2.tif',
-#         'TEAK_flightlines/20190615_171251_output_3.tif',
-#         'TEAK_flightlines/20190615_171251_output_4.tif',
-#         'TEAK_flightlines/20190615_171251_output_5.tif',
-#         'TEAK_flightlines/20190615_171251_output_6.tif',
-#         'TEAK_flightlines/output_fullarray_170625.tif']
-
 # Find files for mosaicing (define search terms)
-search_criteria1 = "20190515"
-#search_criteria2 = "20190901_17"
-dirpath = "SERC_flightlines/"
+search_criteria = "201908"
+dirpath = "NIWO_flightlines/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
 # Filter objects based on the search criteria
-files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (search_criteria1 in obj['Key'])]
+files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (search_criteria in obj['Key'])]
 print(files)
-# Or select files based on QGIS identification
-#files = ['TEAK_flightlines/20190901_164806_output_.tif']
 
 # List shapefile prefices
-shapefiles = ['Site_boundaries/SERC/SERC_010_EPSG',
-                            'Site_boundaries/SERC/SERC_009_EPSG',
-                            'Site_boundaries/SERC/SERC_005_EPSG',
-                            'Site_boundaries/SERC/SERC_004_EPSG',
-                            'Site_boundaries/SERC/SERC_044_EPSG',
-                            'Site_boundaries/SERC/SERC_012_EPSG',
-                            'Site_boundaries/SERC/SERC_001_EPSG']
+shapefiles = [
+              'Site_boundaries/NIWO/NIWO_030',
+  'Site_boundaries/NIWO/NIWO_004',
+  'Site_boundaries/NIWO/NIWO_007',
+  'Site_boundaries/NIWO/NIWO_021',
+  'Site_boundaries/NIWO/NIWO_16',
+  'Site_boundaries/NIWO/NIWO_006'
+]
 
 # Load the polygon for clipping ()
 for j,shape in enumerate(shapefiles):
@@ -78,25 +67,24 @@ for j,shape in enumerate(shapefiles):
         print(flight)
         with rasterio.open(flight) as src:
             try:
-                out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True, nodata = 0)
+                out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True)
                 out_meta = src.meta
                 print("File Clipped")
                 print(out_meta)
                 out_meta.update({"driver": "GTiff",
                     "height": out_image.shape[1],
                     "width": out_image.shape[2],
-                    "transform": out_transform,
-                    "nodata": 0})
+                    "transform": out_transform})
                 local_file_path = Out_Dir + "/clip.tif"
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
                     print("File Written")
-                destination_s3_key = 'SERC_flightlines/Shape_' + str(j) + '_Clipped_file_' + str(i) + '.tif'
+                destination_s3_key = 'NIWO_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
                 upload_to_s3(bucket_name, local_file_path, destination_s3_key)
                 print("File uploaded to S3")
                 os.remove(local_file_path)
             except ValueError as e:
                 # Handle the case where there is no overlap between the raster and the shapefiles
                 print(f"Skipping file {i} as it does not overlap with the shapefile.")
-        os.remove(flight)
+            os.remove(flight)
         print("Cleared data files")
