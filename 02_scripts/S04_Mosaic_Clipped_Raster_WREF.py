@@ -102,7 +102,8 @@ for i,ID in enumerate(file_ID):
         "height": mosaic.shape[1],
         "width": mosaic.shape[2],
         "transform": out_trans,
-        "crs": "+init=epsg:32612 +units=m +no_defs "}) # for TALL UTM WGS 16N
+        "nodata": 0,
+        "crs": "+init=epsg:32610 +units=m +no_defs "}) # for TALL UTM WGS 16N
     print(out_meta)
 
     # Write to computer, send to S3
