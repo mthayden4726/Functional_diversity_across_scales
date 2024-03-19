@@ -30,19 +30,26 @@ gdal.SetConfigOption('CHECK_DISK_FREE_SPACE', 'FALSE')
 src_files_to_mosaic = []
 
 file_ID = [
-           '030',
-           '004',
-           '007',
+           '015',
            '021',
-           '016',
-           '006'
+           '022',
+           '024',
+           '013',
+           '005',
+           '026',
+           '014',
+           '012',
+           '019',
+           '003',
+           '046',
+           '011'
            ]
 
 for i,ID in enumerate(file_ID):
     src_files_to_mosaic = []
     # List files associated with a single buffer shape
     search_criteria = str(ID)
-    dirpath = "NIWO_flightlines/Site_boundaries/NIWO/"
+    dirpath = "YELL_flightlines/Site_boundaries/YELL/"
 
     # List objects in the S3 bucket in the matching directory
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -100,17 +107,17 @@ for i,ID in enumerate(file_ID):
         "height": mosaic.shape[1],
         "width": mosaic.shape[2],
         "transform": out_trans,
-        "crs": "+init=epsg:32613 +units=m +no_defs "}) # for TALL UTM WGS 16N
+        "crs": "+init=epsg:32612 +units=m +no_defs "}) # for TALL UTM WGS 16N
     print(out_meta)
 
     # Write to computer, send to S3
-    local_file_path = Out_Dir + "/mosaic_NIWO.tif"
+    local_file_path = Out_Dir + "/mosaic_YELL.tif"
     with rasterio.open(local_file_path, "w", **out_meta) as dest:
         dest.write(mosaic)
     print("File written")
     
     # Push to S3 bucket
-    destination_s3_key = 'NIWO_flightlines/Mosaic_NIWO_'+str(ID)+'.tif'
+    destination_s3_key = 'YELL_flightlines/Mosaic_YELL_'+str(ID)+'.tif'
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
     print("File uploaded to S3")
     
