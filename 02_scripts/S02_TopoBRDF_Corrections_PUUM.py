@@ -47,7 +47,7 @@ ndvi_threshold = 0.25
 epsg = 32605
 
 # Find correction coefficients (define search terms)
-search_criteria = "NEON_D20_PUUM_DP1_20190104"
+search_criteria = "NEON_D20_PUUM_DP1_20190108"
 dirpath = "NEON BRDF-TOPO Corrections/2019_PUUM/"
 
 # List objects in the S3 bucket in the matching directory
@@ -85,7 +85,7 @@ for i,file in enumerate(file_names):
     mask = None
     
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D20/2019_PUUM_1/L1/Spectrometer/ReflectanceH5/2019010419/NEON_D20_PUUM_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D20/2019_PUUM_1/L1/Spectrometer/ReflectanceH5/2019010818/NEON_D20_PUUM_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
