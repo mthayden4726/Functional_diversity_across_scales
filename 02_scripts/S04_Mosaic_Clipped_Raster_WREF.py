@@ -58,12 +58,41 @@ for i,ID in enumerate(file_ID):
             print(f"The file '{file}' exists.")
         except Exception as e:
             print(f"Error: {e}")
-        src = rasterio.open(flight)
-        src_files_to_mosaic.append(src)
+
+        with rasterio.open(flight) as src:
+            # Read raster as array
+            array = src.read()
+            # Convert nodata values to 0 (assumes nodata values are set correctly in the metadata)
+            nodata = src.nodata
+            print(nodata)
+            if nodata is not None:
+                array[array == nodata] = 0
+                array[array == None] = 0
+                array[np.isnan(array) | np.isinf(array)] = 0
+            else:
+                # Consider what to do if nodata is not defined, or define a default action
+                array[array == None] = 0
+                array[np.isnan(array) | np.isinf(array)] = 0
+                print("nodata is not defined")
+
+            # Define modified file path
+            modified_flight = Out_Dir + '/modified_file_' + str(j) + '.tif'
+
+            # Update metadata for the modified file
+            out_meta = src.meta.copy()
+            out_meta.update({
+                "nodata": 0  # Ensure nodata is now set to 0 in the metadata
+            })
+
+            # Write modified array to new TIFF
+            with rasterio.open(modified_flight, "w", **out_meta) as dest:
+                dest.write(array)
+        modified_src = rasterio.open(modified_flight)
+        src_files_to_mosaic.append(modified_src)
 
     # Mosaic files
     print(src_files_to_mosaic)
-    mosaic, out_trans = merge(src_files_to_mosaic, nodata = -9999)
+    mosaic, out_trans = merge(src_files_to_mosaic, method = 'max')
     print('Merge complete')
     # Update metadata
     out_meta = src.meta.copy()
@@ -73,7 +102,8 @@ for i,ID in enumerate(file_ID):
         "height": mosaic.shape[1],
         "width": mosaic.shape[2],
         "transform": out_trans,
-        "crs": "+init=epsg:32610 +units=m +no_defs "}) # for OSBS UTM WGS 17N
+        "nodata": 0,
+        "crs": "+init=epsg:32610 +units=m +no_defs "}) # for TALL UTM WGS 16N
     print(out_meta)
 
     # Write to computer, send to S3
