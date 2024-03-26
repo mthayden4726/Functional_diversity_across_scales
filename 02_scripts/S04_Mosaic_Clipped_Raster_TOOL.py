@@ -29,22 +29,24 @@ gdal.SetConfigOption('CHECK_DISK_FREE_SPACE', 'FALSE')
 
 src_files_to_mosaic = []
 
-file_ID = ['029',
-  '070',
-  '002',
-  '012',
-  '020',
-  '006',
+file_ID = ['020',
+  '018',
+  '003',
   '026',
-  '015',
-          '023',
-          '021']
+  '014',
+  '010',
+  '024',
+  '071',
+          '028',
+          '043',
+          '022',
+          '023']
 
 for i,ID in enumerate(file_ID):
     src_files_to_mosaic = []
     # List files associated with a single buffer shape
     search_criteria = str(ID)
-    dirpath = "WREF_flightlines/Site_boundaries/WREF/"
+    dirpath = "TOOL_flightlines/Site_boundaries/TOOL/"
 
     # List objects in the S3 bucket in the matching directory
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -103,7 +105,7 @@ for i,ID in enumerate(file_ID):
         "width": mosaic.shape[2],
         "transform": out_trans,
         "nodata": 0,
-        "crs": "+init=epsg:32610 +units=m +no_defs "}) # for TALL UTM WGS 16N
+        "crs": "+init=epsg:32606 +units=m +no_defs "}) # for TALL UTM WGS 16N
     print(out_meta)
 
     # Write to computer, send to S3
@@ -113,7 +115,7 @@ for i,ID in enumerate(file_ID):
     print("File written")
     
     # Push to S3 bucket
-    destination_s3_key = 'WREF_flightlines/Mosaic_WREF_'+str(ID)+'.tif'
+    destination_s3_key = 'TOOL_flightlines/Mosaic_TOOL_'+str(ID)+'.tif'
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
     print("File uploaded to S3")
     

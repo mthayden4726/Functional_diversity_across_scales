@@ -26,7 +26,7 @@ s3 = boto3.client('s3')
 
 # Find files for mosaicing (define search terms)
 search_criteria = "201907"
-dirpath = "WREF_flightlines/"
+dirpath = "TOOL_flightlines/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -35,16 +35,18 @@ files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (searc
 print(files)
 
 # List shapefile prefices
-shapefiles = ['Site_boundaries/WREF/WREF_029',
-              'Site_boundaries/WREF/WREF_070',
-              'Site_boundaries/WREF/WREF_002',
-              'Site_boundaries/WREF/WREF_012',
-              'Site_boundaries/WREF/WREF_020',
-              'Site_boundaries/WREF/WREF_006',
-              'Site_boundaries/WREF/WREF_026',
-              'Site_boundaries/WREF/WREF_015',
-              'Site_boundaries/WREF/WREF_023',
-              'Site_boundaries/WREF/WREF_021',
+shapefiles = ['Site_boundaries/TOOL/TOOL_020',
+              'Site_boundaries/TOOL/TOOL_018',
+              'Site_boundaries/TOOL/TOOL_003',
+              'Site_boundaries/TOOL/TOOL_026',
+              'Site_boundaries/TOOL/TOOL_014',
+              'Site_boundaries/TOOL/TOOL_010',
+              'Site_boundaries/TOOL/TOOL_024',
+              'Site_boundaries/TOOL/TOOL_071',
+              'Site_boundaries/TOOL/TOOL_028',
+              'Site_boundaries/TOOL/TOOL_043',
+              'Site_boundaries/TOOL/TOOL_022',
+              'Site_boundaries/TOOL/TOOL_023'
              ]
 
 # Load the polygon for clipping ()
@@ -82,7 +84,7 @@ for j,shape in enumerate(shapefiles):
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
                     print("File Written")
-                destination_s3_key = 'WREF_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
+                destination_s3_key = 'TOOL_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
                 upload_to_s3(bucket_name, local_file_path, destination_s3_key)
                 print("File uploaded to S3")
                 os.remove(local_file_path)
