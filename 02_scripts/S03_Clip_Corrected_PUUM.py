@@ -25,8 +25,8 @@ bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
 # Find files for mosaicing (define search terms)
-search_criteria = "201907"
-dirpath = "YELL_flightlines/"
+search_criteria = "2019"
+dirpath = "PUUM_flightlines/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -36,19 +36,12 @@ print(files)
 
 # List shapefile prefices
 shapefiles = [
-              'Site_boundaries/YELL/YELL_015',
-  'Site_boundaries/YELL/YELL_021',
-  'Site_boundaries/YELL/YELL_022',
-  'Site_boundaries/YELL/YELL_024',
-  'Site_boundaries/YELL/YELL_013',
-  'Site_boundaries/YELL/YELL_005',
-  'Site_boundaries/YELL/YELL_026',
-  'Site_boundaries/YELL/YELL_014',
-  'Site_boundaries/YELL/YELL_012',
-  'Site_boundaries/YELL/YELL_019',
-  'Site_boundaries/YELL/YELL_003',
-  'Site_boundaries/YELL/YELL_046',
-  'Site_boundaries/YELL/YELL_011'
+              'Site_boundaries/PUUM/PUUM_005',
+  'Site_boundaries/PUUM/PUUM_020',
+  'Site_boundaries/PUUM/PUUM_017',
+  'Site_boundaries/PUUM/PUUM_004',
+  'Site_boundaries/PUUM/PUUM_013',
+  'Site_boundaries/PUUM/PUUM_032'
 ]
 
 # Load the polygon for clipping ()
@@ -86,7 +79,7 @@ for j,shape in enumerate(shapefiles):
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
                     print("File Written")
-                destination_s3_key = 'YELL_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
+                destination_s3_key = 'PUUM_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
                 upload_to_s3(bucket_name, local_file_path, destination_s3_key)
                 print("File uploaded to S3")
                 os.remove(local_file_path)

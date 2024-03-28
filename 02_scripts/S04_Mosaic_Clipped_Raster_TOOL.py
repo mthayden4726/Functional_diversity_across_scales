@@ -109,7 +109,7 @@ for i,ID in enumerate(file_ID):
     print(out_meta)
 
     # Write to computer, send to S3
-    local_file_path = Out_Dir + "/mosaic_WREF.tif"
+    local_file_path = Out_Dir + "/mosaic_TOOL.tif"
     with rasterio.open(local_file_path, "w", **out_meta) as dest:
         dest.write(mosaic)
     print("File written")
