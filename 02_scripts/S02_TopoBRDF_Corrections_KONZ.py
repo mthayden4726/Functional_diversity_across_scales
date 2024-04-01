@@ -66,6 +66,9 @@ for i,file in enumerate(files):
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
 
+file_names = ['20190517_154044', 
+              '20190517_152611', '20190517_150737', '20190517_162325', '20190517_161513', '20190517_154915']
+
 # Loop through all UNDE files
 for i,file in enumerate(file_names):
 
