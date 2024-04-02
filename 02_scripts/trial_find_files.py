@@ -13,7 +13,7 @@ data_json = data_request.json()
 print(data_json)
 # Create list of file paths of interest for given site, product, year
 file_paths = []
-for file in data_json['data']['files'][:20]:
+for file in data_json['data']['files'][:]:
   if 'reflectance.h5' in file['name']:
     file_paths.insert(1, file['url'])
     print(file['url'])
