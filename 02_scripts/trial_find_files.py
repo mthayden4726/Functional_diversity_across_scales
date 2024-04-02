@@ -1,7 +1,7 @@
 from S01_Functions import * # add scripts folder to python path manager
-SITECODE = 'KONZ'
+SITECODE = 'HARV'
 PRODUCTCODE = 'DP1.30006.001'
-YEAR = '2019-05'
+YEAR = '2019-08'
 
 SERVER = 'http://data.neonscience.org/api/v0/'
 # Build so that we can loop through reading files in
