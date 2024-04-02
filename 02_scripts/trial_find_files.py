@@ -1,5 +1,5 @@
 from S01_Functions import * # add scripts folder to python path manager
-SITECODE = 'KONZ'
+SITECODE = 'SERC'
 PRODUCTCODE = 'DP1.30006.001'
 YEAR = '2019-05'
 
