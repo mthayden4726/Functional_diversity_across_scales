@@ -25,8 +25,8 @@ bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
 # Find files for mosaicing (define search terms)
-search_criteria = "201905"
-dirpath = "KONZ_flightlines/"
+search_criteria = "2019"
+dirpath = "SERC_flightlines/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -35,11 +35,15 @@ files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (searc
 print(files)
 
 # List shapefile prefices
-shapefiles = ['Site_boundaries/KONZ/KONZ_005',
-              'Site_boundaries/KONZ/KONZ_007',
-              'Site_boundaries/KONZ/KONZ_009',
-              'Site_boundaries/KONZ/KONZ_019'
-             ]
+shapefiles = [
+              'Site_boundaries/SERC/SERC_001_EPSG',
+  'Site_boundaries/SERC/SERC_004_EPSG',
+  'Site_boundaries/SERC/SERC_005_EPSG',
+  'Site_boundaries/SERC/SERC_009_EPSG',
+  'Site_boundaries/SERC/SERC_010_EPSG',
+  'Site_boundaries/SERC/SERC_012_EPSG',
+  'Site_boundaries/SERC/SERC_044_EPSG',
+]
 
 # Load the polygon for clipping ()
 for j,shape in enumerate(shapefiles):
@@ -64,20 +68,19 @@ for j,shape in enumerate(shapefiles):
         print(flight)
         with rasterio.open(flight) as src:
             try:
-                out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True, nodata = 0)
+                out_image, out_transform = rasterio.mask.mask(src, shapes, crop=True)
                 out_meta = src.meta
                 print("File Clipped")
                 print(out_meta)
                 out_meta.update({"driver": "GTiff",
                     "height": out_image.shape[1],
                     "width": out_image.shape[2],
-                    "transform": out_transform,
-                    "nodata": 0})
+                    "transform": out_transform})
                 local_file_path = Out_Dir + "/clip.tif"
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
                     print("File Written")
-                destination_s3_key = 'KONZ_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
+                destination_s3_key = 'SERC_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
                 upload_to_s3(bucket_name, local_file_path, destination_s3_key)
                 print("File uploaded to S3")
                 os.remove(local_file_path)
