@@ -44,11 +44,11 @@ s3 = boto3.client('s3')
 nir_band = 90
 red_band = 58
 ndvi_threshold = 0.25
-epsg = 32614
+epsg = 32612
 
 # Find correction coefficients (define search terms)
-search_criteria = "NEON_D06_KONZ_DP1_20190522"
-dirpath = "NEON BRDF-TOPO Corrections/2019_KONZ/"
+search_criteria = "NEON_D14_SRER_DP1_20190901"
+dirpath = "NEON BRDF-TOPO Corrections/2019_SRER/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -85,7 +85,7 @@ for i,file in enumerate(file_names):
     mask = None
     
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D06/2019_KONZ_4/L1/Spectrometer/ReflectanceH5/2019052218/NEON_D06_KONZ_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D14/2019_SRER_3/L1/Spectrometer/ReflectanceH5/2019090114/NEON_D14_SRER_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
@@ -96,9 +96,9 @@ for i,file in enumerate(file_names):
     neon = ht.HyTools() 
     neon.read_file(img,'neon')
     print("file loaded")
-    topo_file = "NEON BRDF-TOPO Corrections/2019_KONZ/NEON_D06_KONZ_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
+    topo_file = "NEON BRDF-TOPO Corrections/2019_SRER/NEON_D14_SRER_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
     print(topo_file)
-    #brdf_file = "NEON BRDF-TOPO Corrections/2019_KONZ/NEON_D06_KONZ_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
+    #brdf_file = "NEON BRDF-TOPO Corrections/2019_SRER/NEON_D14_SRER_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
     try:
         s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
         #s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
@@ -130,7 +130,7 @@ for i,file in enumerate(file_names):
     print("Shape of mask array:", mask.shape)
     print("masking by ndvi")
     fullarraystack[mask, :] = np.nan
-    destination_s3_key = 'KONZ_flightlines/'+ str(file)+'_output_' + '.tif'
+    destination_s3_key = 'SRER_flightlines/'+ str(file)+'_output_' + '.tif'
     local_file_path = Out_Dir + '/output_fullarray_' + file + '.tif'
     print(local_file_path)
     print("rasterizing array")
