@@ -29,17 +29,20 @@ gdal.SetConfigOption('CHECK_DISK_FREE_SPACE', 'FALSE')
 
 src_files_to_mosaic = []
 
-file_ID = ['005',
-              '007',
-              '009',
-              '019'
-             ]
+file_ID = ['001',
+           '004',
+           '005',
+           '009',
+           '010',
+           '012',
+           '044'
+]
 
 for i,ID in enumerate(file_ID):
     src_files_to_mosaic = []
     # List files associated with a single buffer shape
     search_criteria = str(ID)
-    dirpath = "KONZ_flightlines/Site_boundaries/KONZ/"
+    dirpath = "SERC_flightlines/Site_boundaries/SERC/"
 
     # List objects in the S3 bucket in the matching directory
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -97,17 +100,17 @@ for i,ID in enumerate(file_ID):
         "height": mosaic.shape[1],
         "width": mosaic.shape[2],
         "transform": out_trans,
-        "crs": "+init=epsg:32614 +units=m +no_defs "}) # for TALL UTM WGS 16N
+        "crs": "+init=epsg:32618 +units=m +no_defs "}) # for TALL UTM WGS 16N
     print(out_meta)
 
     # Write to computer, send to S3
-    local_file_path = Out_Dir + "/mosaic_KONZ.tif"
+    local_file_path = Out_Dir + "/mosaic_SERC.tif"
     with rasterio.open(local_file_path, "w", **out_meta) as dest:
         dest.write(mosaic)
     print("File written")
     
     # Push to S3 bucket
-    destination_s3_key = 'KONZ_flightlines/Mosaic_KONZ_'+str(ID)+'.tif'
+    destination_s3_key = 'SERC_flightlines/Mosaic_SERC_'+str(ID)+'.tif'
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
     print("File uploaded to S3")
     
