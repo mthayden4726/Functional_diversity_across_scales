@@ -30,16 +30,16 @@ gdal.SetConfigOption('CHECK_DISK_FREE_SPACE', 'FALSE')
 src_files_to_mosaic = []
 
 file_ID = [
-  'site_0',
-  'site_1',
-  'site_10',
-  'site_11',
-  'site_12',
-  'site_2',
-  'site_3',
-  'site_4',
-          'site_5',
-          'site_6',
+  #'site_0',
+  #'site_1',
+  #'site_10',
+  #'site_11',
+  #'site_12',
+  #'site_2',
+  #'site_3',
+  #'site_4',
+          #'site_5',
+          #'site_6',
           'site_7',
           'site_9']
 
