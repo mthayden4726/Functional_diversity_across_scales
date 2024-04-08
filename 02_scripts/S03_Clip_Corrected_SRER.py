@@ -26,7 +26,7 @@ s3 = boto3.client('s3')
 
 # Find files for mosaicing (define search terms)
 search_criteria = "2019"
-dirpath = "SERC_flightlines/"
+dirpath = "SRER_flightlines/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -36,13 +36,15 @@ print(files)
 
 # List shapefile prefices
 shapefiles = [
-              'Site_boundaries/SERC/SERC_001_EPSG',
-  'Site_boundaries/SERC/SERC_004_EPSG',
-  'Site_boundaries/SERC/SERC_005_EPSG',
-  'Site_boundaries/SERC/SERC_009_EPSG',
-  'Site_boundaries/SERC/SERC_010_EPSG',
-  'Site_boundaries/SERC/SERC_012_EPSG',
-  'Site_boundaries/SERC/SERC_044_EPSG',
+              'Site_boundaries/SRER/SRER_002_EPSG',
+  'Site_boundaries/SRER/SRER_003_EPSG',
+  'Site_boundaries/SRER/SRER_006_EPSG',
+  'Site_boundaries/SRER/SRER_014_EPSG',
+  'Site_boundaries/SRER/SRER_021_EPSG',
+  'Site_boundaries/SRER/SRER_023_EPSG',
+  'Site_boundaries/SRER/SRER_026_EPSG',
+  'Site_boundaries/SRER/SRER_027_EPSG',
+  'Site_boundaries/SRER/SRER_028_EPSG'
 ]
 
 # Load the polygon for clipping ()
@@ -80,7 +82,7 @@ for j,shape in enumerate(shapefiles):
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
                     print("File Written")
-                destination_s3_key = 'SERC_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
+                destination_s3_key = 'SRER_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
                 upload_to_s3(bucket_name, local_file_path, destination_s3_key)
                 print("File uploaded to S3")
                 os.remove(local_file_path)
