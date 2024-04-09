@@ -54,16 +54,19 @@ comps = 3 # default component numbers for PCA
 # Loop through clipped files
 
 # Choose site and plots
-file_stem = 'SERC_flightlines/Mosaic_SERC_'
+file_stem = 'TEAK_flightlines/Mosaic_TEAK_'
 plots = [
-           '001',
-           '004',
-           '005',
-           '009',
-           '010',
-           '012',
-           '044'
-]
+  #'site_0',
+  #'site_1',
+  #'site_10',
+  #'site_11',
+  #'site_12',
+  #'site_2',
+  #'site_3',
+  #'site_4',
+   #       'site_5',
+          'site_7',
+          'site_9']
 
 # Loop through plots
 for i in plots:
@@ -109,14 +112,14 @@ for i in plots:
     print(pca_x.shape)
     # Calculate FRic on PCA across window sizes
     results_FR = {}
-    local_file_path_fric = Out_Dir + "/SERC_fric_" + str(i) + ".csv"
+    local_file_path_fric = Out_Dir + "/TEAK_fric_" + str(i) + ".csv"
     window_batches = [(a, pca_x, results_FR, local_file_path_fric) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
     volumes = process_map(
         window_calcs,
         window_batches,
         max_workers=cpu_count() - 1
     )
-    destination_s3_key_fric = "/SERC_fric_veg_" + str(i) + ".csv"
+    destination_s3_key_fric = "/TEAK_fric_veg_" + str(i) + ".csv"
     #f = open(local_file_path,"w")
     # write file
     #f.write(str(volumes))
@@ -126,7 +129,7 @@ for i in plots:
     print("FRic file uploaded to S3")
     # Calculate FDiv on PCA across window sizes
     results_FD = {}
-    local_file_path_fdiv = Out_Dir + "/SERC_fdiv_veg_" + str(i) + ".csv"
+    local_file_path_fdiv = Out_Dir + "/TEAK_fdiv_veg_" + str(i) + ".csv"
     window_batches = [(a, pca_x, results_FD, local_file_path_fdiv) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
     volumes = process_map(
         window_calcs_fdiv,
@@ -134,7 +137,7 @@ for i in plots:
         max_workers=cpu_count() - 1
     )
     # open file for writing
-    destination_s3_key_fdiv = "/SERC_fdiv_veg_" + str(i) + ".csv"
+    destination_s3_key_fdiv = "/TEAK_fdiv_veg_" + str(i) + ".csv"
     upload_to_s3(bucket_name, local_file_path_fdiv, destination_s3_key_fdiv)
     print("FDiv file uploaded to S3")
     os.remove(file)
