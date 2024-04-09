@@ -1,8 +1,8 @@
 from S01_Functions import * # add scripts folder to python path manager
 
-SITECODE = 'HARV'
+SITECODE = 'ONAQ'
 PRODUCTCODE = 'DP1.30006.001'
-YEAR = '2019-08'
+YEAR = '2019-05'
 
 SERVER = 'http://data.neonscience.org/api/v0/'
 # Build so that we can loop through reading files in
