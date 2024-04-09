@@ -35,14 +35,14 @@ files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (searc
 print(files)
 
 # List shapefile prefices
-shapefiles = ['Site_boundaries/HEAL/002',
-              'Site_boundaries/HEAL/004',
-              'Site_boundaries/HEAL/005',
-              'Site_boundaries/HEAL/013',
-              'Site_boundaries/HEAL/015',
-              'Site_boundaries/HEAL/018',
-              'Site_boundaries/HEAL/024',
-              'Site_boundaries/HEAL/026'
+shapefiles = ['Site_boundaries/HEAL/HEAL_002',
+              'Site_boundaries/HEAL/HEAL_004',
+              'Site_boundaries/HEAL/HEAL_005',
+              'Site_boundaries/HEAL/HEAL_013',
+              'Site_boundaries/HEAL/HEAL_015',
+              'Site_boundaries/HEAL/HEAL_018',
+              'Site_boundaries/HEAL/HEAL_024',
+              'Site_boundaries/HEAL/HEAL_026'
              ]
 
 # Load the polygon for clipping ()
