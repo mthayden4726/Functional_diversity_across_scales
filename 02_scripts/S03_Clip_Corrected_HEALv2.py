@@ -26,7 +26,7 @@ s3 = boto3.client('s3')
 
 # Find files for mosaicing (define search terms)
 search_criteria = "201906"
-dirpath = "TEAK_flightlines/"
+dirpath = "HEAL_flightlines/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -35,18 +35,14 @@ files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (searc
 print(files)
 
 # List shapefile prefices
-shapefiles = ['Site_boundaries/TEAK/site_0',
-              'Site_boundaries/TEAK/site_1',
-              'Site_boundaries/TEAK/site_10',
-              'Site_boundaries/TEAK/site_11',
-              'Site_boundaries/TEAK/site_12',
-              'Site_boundaries/TEAK/site_2',
-              'Site_boundaries/TEAK/site_3',
-              'Site_boundaries/TEAK/site_4',
-              'Site_boundaries/TEAK/site_5',
-              'Site_boundaries/TEAK/site_6',
-              'Site_boundaries/TEAK/site_7',
-              'Site_boundaries/TEAK/site_9'
+shapefiles = ['Site_boundaries/HEAL/002',
+              'Site_boundaries/HEAL/004',
+              'Site_boundaries/HEAL/005',
+              'Site_boundaries/HEAL/013',
+              'Site_boundaries/HEAL/015',
+              'Site_boundaries/HEAL/018',
+              'Site_boundaries/HEAL/024',
+              'Site_boundaries/HEAL/026'
              ]
 
 # Load the polygon for clipping ()
@@ -85,7 +81,7 @@ for j,shape in enumerate(shapefiles):
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
                     print("File Written")
-                destination_s3_key = 'TEAK_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
+                destination_s3_key = 'HEAL_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + 'v2.tif'
                 upload_to_s3(bucket_name, local_file_path, destination_s3_key)
                 print("File uploaded to S3")
                 os.remove(local_file_path)
