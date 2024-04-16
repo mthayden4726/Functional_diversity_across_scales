@@ -114,7 +114,6 @@ for i, file in enumerate(file_names):
   retrieve_neon_files(files, Data_Dir)
   local_file_path = Data_Dir + "/NEON_D15_ONAQ_DP3_" + file + '.tif'
   destination_s3_key = 'Environmental_Covariates/ONAQ/' + ENV + '_' + str(file) + '.tif'
-  dtm_tif = rasterio.open(img)
   
   upload_to_s3(bucket_name, local_file_path, destination_s3_key)
   os.remove(local_file_path)
