@@ -54,8 +54,16 @@ YEAR = "2019-05"
 PRODUCT_CODE = "DP3.30024.001"
 file_names = find_neon_files(SITE_NAME, PRODUCT_CODE, YEAR)
 
-files = [file['Key'] for file in file_names if file['Key'].endswith('.tif')]
-print(files)
+for i,file in enumerate(file_names):
+    match = re.search(r'DP3_(.*?)_DTM.tif', file)
+    if match:
+        file_name = match.group(1)
+        print(file_name)
+        file_names.add(file_name)
+    else:
+        print("Pattern not found in the URL.")
+file_names = list(file_names)  # Convert set back to a list if needed
+print(file_names)
 
 
 
