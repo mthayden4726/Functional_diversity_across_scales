@@ -66,7 +66,7 @@ SITECODE = 'KONZ'
 SITE_STR = 'D06/2019_KONZ_4'
 SITE_STR_SHORT = 'D06_KONZ'
 YEAR = '2019-05'
-ENV = 'CHM' # or CHM or slope
+ENV = 'DTM' # or CHM or slope
 
 shapefiles = ['005',
               '007',
