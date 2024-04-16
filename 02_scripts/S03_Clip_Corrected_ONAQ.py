@@ -26,7 +26,7 @@ s3 = boto3.client('s3')
 
 # Find files for mosaicing (define search terms)
 search_criteria = "2019"
-dirpath = "SRER_flightlines/"
+dirpath = "ONAQ_flightlines/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -36,15 +36,17 @@ print(files)
 
 # List shapefile prefices
 shapefiles = [
-              'Site_boundaries/SRER/SRER_002_EPSG',
-  'Site_boundaries/SRER/SRER_003_EPSG',
-  'Site_boundaries/SRER/SRER_006_EPSG',
-  'Site_boundaries/SRER/SRER_014_EPSG',
-  'Site_boundaries/SRER/SRER_021_EPSG',
-  'Site_boundaries/SRER/SRER_023_EPSG',
-  'Site_boundaries/SRER/SRER_026_EPSG',
-  'Site_boundaries/SRER/SRER_027_EPSG',
-  'Site_boundaries/SRER/SRER_028_EPSG'
+              'Site_boundaries/ONAQ/ONAQ_005',
+  'Site_boundaries/ONAQ/ONAQ_008',
+  'Site_boundaries/ONAQ/ONAQ_010',
+  'Site_boundaries/ONAQ/ONAQ_011',
+  'Site_boundaries/ONAQ/ONAQ_018',
+  'Site_boundaries/ONAQ/ONAQ_019',
+  'Site_boundaries/ONAQ/ONAQ_021',
+  'Site_boundaries/ONAQ/ONAQ_024',
+  'Site_boundaries/ONAQ/ONAQ_030',
+  'Site_boundaries/ONAQ/ONAQ_043',
+  'Site_boundaries/ONAQ/ONAQ_073'
 ]
 
 # Load the polygon for clipping ()
@@ -82,7 +84,7 @@ for j,shape in enumerate(shapefiles):
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
                     print("File Written")
-                destination_s3_key = 'SRER_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
+                destination_s3_key = 'ONAQ_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
                 upload_to_s3(bucket_name, local_file_path, destination_s3_key)
                 print("File uploaded to S3")
                 os.remove(local_file_path)
