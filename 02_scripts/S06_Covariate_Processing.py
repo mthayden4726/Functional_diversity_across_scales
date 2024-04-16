@@ -52,9 +52,9 @@ YEAR = "2019-05"
 ## Find files for:
 # Elevation (DP3.30024.001)
 PRODUCT_CODE = "DP3.30024.001"
-file_names = find_neon_files(SITE_NAME, PRODUCT_CODE, YEAR)
-
-for i,file in enumerate(file_names):
+find_neon_files(SITE_NAME, PRODUCT_CODE, YEAR)
+file_names = set()
+for i,file in enumerate(file_paths):
     match = re.search(r'DP3_(.*?)_DTM.tif', file)
     if match:
         file_name = match.group(1)
