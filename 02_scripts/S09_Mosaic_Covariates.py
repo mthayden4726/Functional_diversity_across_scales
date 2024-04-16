@@ -106,7 +106,7 @@ for i,ID in enumerate(file_ID):
       DTM_data = DTM_src.read(1, masked=True)
 
     # initialize summaries
-    data = [{'Plot': ID, 
+    data = [{'Plot': str(ID), 
              'Mean': DTM_data.mean(),
              'Max': DTM_data.max(),
              'Min': DTM_data.min(),
@@ -129,7 +129,7 @@ summary_data.to_csv('summary.csv')
 local_csv_path = 'summary.csv'
     
 # Push to S3 bucket
-destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_Mosaic_Summary.csv'
+destination_s3_key = 'Environmental_Covariates/ONAQ/ONAQ_DTM_Mosaic_Summary.csv'
 upload_to_s3(bucket_name, local_csv_path, destination_s3_key)
 print("File uploaded to S3")
 
