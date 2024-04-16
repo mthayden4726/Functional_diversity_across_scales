@@ -46,30 +46,30 @@ red_band = 58
 ndvi_threshold = 0.25
 epsg = 32619
 
-SITE_NAME = "ONAQ"
-YEAR = "2019-05"
+SITECODE = 'ONAQ'
+YEAR = '2019-05'
+
+SERVER = 'http://data.neonscience.org/api/v0/'
 
 ## Find files for:
 # Elevation (DP3.30024.001)
-PRODUCT_CODE = "DP3.30024.001"
-file_paths = find_neon_files(SITE_NAME, PRODUCT_CODE, YEAR)
+
+PRODUCTCODE = 'DP3.30024.001'
+
+# Build so that we can loop through reading files in
+url = SERVER+'data/'+PRODUCTCODE+'/'+SITECODE+'/'+YEAR
+# Request the url
+data_request = requests.get(url)
+# Convert the request to Python JSON object
+data_json = data_request.json()
+print(data_json)
+# Create list of file paths of interest for given site, product, year
+file_paths = []
+for file in data_json['data']['files'][:]:
+  if 'DTM.tif' in file['name']:
+    file_paths.insert(1, file['url'])
+    print(file['url'])
 print(file_paths)
-# Subset to just rasters for DTM
-file_names = set()
-for i,file in enumerate(file_paths):
-    match = re.search(r'DP3_(.*?)_DTM.tif', file)
-    if match:
-        file_name = match.group(1)
-        print(file_name)
-        file_names.add(file_name)
-    else:
-        print("Pattern not found in the URL.")
-file_names = list(file_names)  # Convert set back to a list if needed
-print(file_names)
-
-
-
-
 
 # Canopy Height (DP3.30015.001)
 
