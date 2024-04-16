@@ -83,6 +83,12 @@ for i,ID in enumerate(file_ID):
 
     # Write to computer, send to S3
     local_file_path = Out_Dir + "/mosaic_ONAQ.tif"
+    with rasterio.open(local_file_path) as DEM_src:
+      DEM_data = DEM_src.read(1, masked=True)
+    print('Mean:', DEM_data.mean())
+    print('Max:', DEM_data.max())
+    print('Min:', DEM_data.min())
+    print('Median', DEM_data.median())
     with rasterio.open(local_file_path, "w", **out_meta) as dest:
         dest.write(mosaic)
     print("File written")
