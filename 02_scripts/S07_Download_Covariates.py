@@ -62,20 +62,16 @@ s3 = boto3.client('s3')
 SERVER = 'http://data.neonscience.org/api/v0/'
 
 # choose for each run
-SITECODE = 'HEAL'
-SITE_STR = 'D19/2019_HEAL_3'
-SITE_STR_SHORT = 'D19_HEAL'
-YEAR = '2019-08'
+SITECODE = 'KONZ'
+SITE_STR = 'D06/2019_KONZ_4'
+SITE_STR_SHORT = 'D06_KONZ'
+YEAR = '2019-05'
 ENV = 'CHM' # or CHM or slope
 
-shapefiles = ['002',
-              '004',
-              '005',
-              '013',
-              '015',
-              '018',
-              '024',
-              '026']
+shapefiles = ['005',
+              '007',
+              '009',
+              '019']
 
 # assign local variables
 if ENV == "DTM":
@@ -191,6 +187,7 @@ summary_data = pd.DataFrame({'Site': [],
                              'Plot': [],
                              'Env': [],
                              'Mean': [],
+                             'Median': [],
                              'Max': [],
                              'Min': [],
                              'Std': [],
@@ -255,6 +252,7 @@ for i,ID in enumerate(shapefiles):
              'Plot': str(ID), 
              'Env': ENV,
              'Mean': env_data.mean(),
+             'Median': env_data.median(),
              'Max': env_data.max(),
              'Min': env_data.min(),
              'Std': env_data.std(),
