@@ -38,23 +38,24 @@ print(files)
 
 # List shapefile prefices
 shapefiles = [
-              'Site_boundaries/ONAQ/ONAQ_005',
-  'Site_boundaries/ONAQ/ONAQ_008',
-  'Site_boundaries/ONAQ/ONAQ_010',
-  'Site_boundaries/ONAQ/ONAQ_011',
-  'Site_boundaries/ONAQ/ONAQ_018',
-  'Site_boundaries/ONAQ/ONAQ_019',
-  'Site_boundaries/ONAQ/ONAQ_021',
-  'Site_boundaries/ONAQ/ONAQ_024',
-  'Site_boundaries/ONAQ/ONAQ_030',
-  'Site_boundaries/ONAQ/ONAQ_043',
-  'Site_boundaries/ONAQ/ONAQ_073'
+              '005',
+  '008',
+  '010',
+  '011',
+  '018',
+  '019',
+  '021',
+  '024',
+  '030',
+  '043',
+  '073'
 ]
 
 # Load the polygon for clipping ()
 for j,shape in enumerate(shapefiles):
     print(shape)
-    downloaded_files = download_shapefile(bucket_name, shape, Out_Dir)
+    ID = "Site_boundaries/ONAQ/ONAQ_" + str(shape)
+    downloaded_files = download_shapefile(bucket_name, ID, Out_Dir)
     shapefile_path = next(file for file in downloaded_files if file.endswith('.shp'))
     
     # Open shapefile and access geometry
@@ -81,7 +82,7 @@ for j,shape in enumerate(shapefiles):
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
                     print("File Written")
-                destination_s3_key = 'Environmental_Covariates/ONAQ/DTM' + str(shape) + '_Clipped_file' + str(i) + '.tif'
+                destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
                 upload_to_s3(bucket_name, local_file_path, destination_s3_key)
                 print("File uploaded to S3")
                 os.remove(local_file_path)
