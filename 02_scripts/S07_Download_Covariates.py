@@ -252,7 +252,7 @@ for i,ID in enumerate(shapefiles):
              'Plot': str(ID), 
              'Env': ENV,
              'Mean': env_data.mean(),
-             'Median': env_data.median(),
+             'Median': np.median(env_data),
              'Max': env_data.max(),
              'Min': env_data.min(),
              'Std': env_data.std(),
