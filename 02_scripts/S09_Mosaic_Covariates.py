@@ -114,7 +114,7 @@ for i,ID in enumerate(file_ID):
              'Var': DTM_data.var()
                             }]
     # append to dataframe
-    summary_data.append(data)
+    summary_data.append(data, ignore_index=True)
     
     # Remove unneeded files (mosaic and shapefile)
     os.remove(local_file_path)
@@ -124,8 +124,7 @@ for i,ID in enumerate(file_ID):
 
 # Create the pandas DataFrame
 print(summary_data)
-df = pd.DataFrame(summary_data, columns=['Plot','Variables', 'Values'])
-df.to_csv('summary.csv')
+summary_data.to_csv('summary.csv')
 local_csv_path = 'summary.csv'
     
 # Push to S3 bucket
