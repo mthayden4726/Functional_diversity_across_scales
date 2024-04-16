@@ -41,15 +41,25 @@ Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
-nir_band = 90
-red_band = 58
-ndvi_threshold = 0.25
 epsg = 32619
 
 SITECODE = 'ONAQ'
 YEAR = '2019-05'
-
 SERVER = 'http://data.neonscience.org/api/v0/'
+
+shapefiles = [
+              'Site_boundaries/ONAQ/ONAQ_005',
+  'Site_boundaries/ONAQ/ONAQ_008',
+  'Site_boundaries/ONAQ/ONAQ_010',
+  'Site_boundaries/ONAQ/ONAQ_011',
+  'Site_boundaries/ONAQ/ONAQ_018',
+  'Site_boundaries/ONAQ/ONAQ_019',
+  'Site_boundaries/ONAQ/ONAQ_021',
+  'Site_boundaries/ONAQ/ONAQ_024',
+  'Site_boundaries/ONAQ/ONAQ_030',
+  'Site_boundaries/ONAQ/ONAQ_043',
+  'Site_boundaries/ONAQ/ONAQ_073'
+]
 
 ## Find files for:
 # Elevation (DP3.30024.001)
@@ -68,33 +78,36 @@ file_paths = []
 for file in data_json['data']['files'][:]:
   if 'DTM.tif' in file['name']:
     file_paths.insert(1, file['url'])
-    print(file['url'])
+    #print(file['url'])
 print(file_paths)
+
+file_names = set()
+for i,file in enumerate(file_paths):
+    match = re.search(r'DP3_(.*?)_DTM', file)
+    if match:
+        file_name = match.group(1)
+        print(file_name)
+        file_names.add(file_name)
+    else:
+        print("Pattern not found in the URL.")
+file_names = list(file_names)  # Convert set back to a list if needed
+print(file_names)
+
+for i, file in enumerate(file_names):
+  print(file)
+  flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D15/2019_ONAQ_2/L3/DiscreteLidar/DTMGtif/NEON_D15_ONAQ_DP3_' + file +'_DTM.tif'
+  files = []
+  files.append(flight)
+  retrieve_neon_files(files, Data_Dir)
+  local_file_path = Data_Dir + "/NEON_D15_ONAQ_DP3_" + file + '_DTM.tif'
+  destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_' + str(file) + '.tif'
+  #dtm_tif = rasterio.open(img)
+  
+  upload_to_s3(bucket_name, local_file_path, destination_s3_key)
+  os.remove(local_file_path)
+  print("flightline complete")
 
 # Canopy Height (DP3.30015.001)
 
 # Slope/Aspect (DP3.30025.001) 
 
-
-
-# Loop through all CLBJ files
-#for i,file in enumerate(file_names):
-    #print(file)
-    #flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D01/2019_HARV_6/L1/Spectrometer/ReflectanceH5/2019082013/NEON_D01_HARV_DP1_' + file +'_reflectance.h5'
-    #files = []
-    #files.append(flight)
-    #try:
-    #    retrieve_neon_files(files, Data_Dir)
-    #except Exception as e:
-    #    continue 
-    #img = Data_Dir + "/NEON_D01_HARV_DP1_" + file + '_reflectance.h5'
-    #neon = ht.HyTools() 
-    #neon.read_file(img,'neon')
-    # Store map info for raster
-    #refl_md, header_dict = store_metadata(neon, epsg)
-
-    #print("uploading array")
-    #upload_to_s3(bucket_name, local_file_path, destination_s3_key)
-    #os.remove(local_file_path)
-    #os.remove(img)
-    #print("flightline complete")
