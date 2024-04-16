@@ -46,69 +46,45 @@ red_band = 58
 ndvi_threshold = 0.25
 epsg = 32619
 
+SITE_NAME = "ONAQ"
+YEAR = "2019-05"
+
 ## Find files for:
 # Elevation (DP3.30024.001)
+PRODUCT_CODE = "DP3.30024.001"
+file_names = find_neon_files(SITE_NAME, PRODUCT_CODE, YEAR)
+
+files = [file['Key'] for file in file_names if file['Key'].endswith('.tif')]
+print(files)
+
+
+
+
 
 # Canopy Height (DP3.30015.001)
 
 # Slope/Aspect (DP3.30025.001) 
 
-# Loop through all CLBJ files
-for i,file in enumerate(file_names):
 
-    # Set to none to reduce memory use
-    img = None
-    neon = None
-    topo_coeffs = None
-    brdf_coeffs = None
-    refl_md = None
-    header_dict = None
-    wavelength = None
-    good_wl = None
-    good_wl_list = None
-    arrays = None
-    fullarraystack = None
-    ndvi = None
-    mask = None
-    
-    print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D01/2019_HARV_6/L1/Spectrometer/ReflectanceH5/2019082013/NEON_D01_HARV_DP1_' + file +'_reflectance.h5'
-    files = []
-    files.append(flight)
-    try:
-        retrieve_neon_files(files, Data_Dir)
-    except Exception as e:
-        continue 
-    img = Data_Dir + "/NEON_D01_HARV_DP1_" + file + '_reflectance.h5'
-    neon = ht.HyTools() 
-    neon.read_file(img,'neon')
+
+# Loop through all CLBJ files
+#for i,file in enumerate(file_names):
+    #print(file)
+    #flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D01/2019_HARV_6/L1/Spectrometer/ReflectanceH5/2019082013/NEON_D01_HARV_DP1_' + file +'_reflectance.h5'
+    #files = []
+    #files.append(flight)
+    #try:
+    #    retrieve_neon_files(files, Data_Dir)
+    #except Exception as e:
+    #    continue 
+    #img = Data_Dir + "/NEON_D01_HARV_DP1_" + file + '_reflectance.h5'
+    #neon = ht.HyTools() 
+    #neon.read_file(img,'neon')
     # Store map info for raster
-    refl_md, header_dict = store_metadata(neon, epsg)
-    # Export with corrections
-    wavelength = header_dict['wavelength']
-    good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
-    good_wl_list = good_wl[~np.isnan(good_wl)]
-    print("creating arrays")
-    arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
-    print("stacking arrays")
-    fullarraystack = np.dstack(arrays)
-    print("Shape of fullarraystack:", fullarraystack.shape)
-    print("calculating ndvi")
-    ndvi = np.divide((fullarraystack[:, :, nir_band] - fullarraystack[:, :, red_band]), (fullarraystack[:, :, nir_band] + fullarraystack[:, :, red_band]), 
-                     where=(fullarraystack[:, :, nir_band] + fullarraystack[:, :, red_band]) != 0)
-    print("Shape of ndvi array:", ndvi.shape)
-    # Apply NDVI threshold mask
-    mask = ndvi < ndvi_threshold
-    print("Shape of mask array:", mask.shape)
-    print("masking by ndvi")
-    fullarraystack[mask, :] = np.nan
-    destination_s3_key = 'HARV_flightlines/'+ str(file)+'_output_' + '.tif'
-    local_file_path = Out_Dir + '/output_fullarray_' + file + '.tif'
-    print(local_file_path)
-    print("rasterizing array")
-    array2rastermb(local_file_path, fullarraystack, refl_md, Out_Dir, epsg = refl_md['epsg'], bands = fullarraystack.shape[2])
-    print("uploading array")
-    upload_to_s3(bucket_name, local_file_path, destination_s3_key)
-    os.remove(local_file_path)
-    os.remove(img)
-    print("flightline complete")
+    #refl_md, header_dict = store_metadata(neon, epsg)
+
+    #print("uploading array")
+    #upload_to_s3(bucket_name, local_file_path, destination_s3_key)
+    #os.remove(local_file_path)
+    #os.remove(img)
+    #print("flightline complete")
