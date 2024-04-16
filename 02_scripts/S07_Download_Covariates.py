@@ -245,7 +245,7 @@ for i,ID in enumerate(shapefiles):
 
     # Get summary metrics
     with rasterio.open(local_file_path) as data_src:
-      env_data = data_src.read(1, masked=False)
+      env_data = data_src.read(1, masked=True)
 
     # initialize summaries
     data = [{'Site': SITECODE,
