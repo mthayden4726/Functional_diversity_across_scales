@@ -99,10 +99,10 @@ for i,ID in enumerate(file_ID):
 
     # initialize summaries
     data = [['Mean:', DTM_data.mean()], 
-            ['Max:', DTM_data.mean()],
-            ['Min:', DTM_data.mean()],
-            ['Std:', DTM_data.mean()],
-            ['Var:', DTM_data.mean()]
+            ['Max:', DTM_data.max()],
+            ['Min:', DTM_data.min()],
+            ['Std:', DTM_data.std()],
+            ['Var:', DTM_data.var()]
            ]
  
     # Create the pandas DataFrame
@@ -111,7 +111,7 @@ for i,ID in enumerate(file_ID):
     local_csv_path = 'summary.csv'
     
     # Push to S3 bucket
-    destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_Mosaic_Summary'+str(ID)+'.csv'
+    destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_Mosaic_Summary_'+str(ID)+'.csv'
     upload_to_s3(bucket_name, local_csv_path, destination_s3_key)
     print("File uploaded to S3")
     
