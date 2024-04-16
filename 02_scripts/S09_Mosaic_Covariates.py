@@ -114,7 +114,7 @@ for i,ID in enumerate(file_ID):
              'Var': DTM_data.var()
                             }]
     # append to dataframe
-    summary_data.append(data, ignore_index=True)
+    summary_data = summary_data.append(data, ignore_index=True)
     print(summary_data)
     
     # Remove unneeded files (mosaic and shapefile)
