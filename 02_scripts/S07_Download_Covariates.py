@@ -66,7 +66,7 @@ SITECODE = 'HEAL'
 SITE_STR = 'D19/2019_HEAL_3'
 SITE_STR_SHORT = 'D19_HEAL'
 YEAR = '2019-08'
-ENV = "DTM" # or CHM or slope
+ENV = 'CHM' # or CHM or slope
 
 shapefiles = ['002',
               '004',
@@ -187,7 +187,9 @@ for j,shape in enumerate(shapefiles):
 # Mosaic files and produce output
 
 src_files_to_mosaic = []
-summary_data = pd.DataFrame({'Plot': [], 
+summary_data = pd.DataFrame({'Site': [],
+                             'Plot': [],
+                             'Env': [],
                              'Mean': [],
                              'Max': [],
                              'Min': [],
@@ -249,7 +251,9 @@ for i,ID in enumerate(shapefiles):
       env_data = data_src.read(1, masked=True)
 
     # initialize summaries
-    data = [{'Plot': str(ID), 
+    data = [{'Site': SITECODE,
+             'Plot': str(ID), 
+             'Env': ENV,
              'Mean': env_data.mean(),
              'Max': env_data.max(),
              'Min': env_data.min(),
@@ -272,7 +276,7 @@ summary_data.to_csv('summary.csv')
 local_csv_path = 'summary.csv'
     
 # Push to S3 bucket
-destination_s3_key = 'Environmental_Covariates/' + SITECODE + '/' + SITECODE + '_' + ENV + '_Mosaic_Summary'+str(ID)+'.csv'
+destination_s3_key = 'Environmental_Covariates/Summary_files/' + SITECODE + '_' + ENV + '_Summary.csv'
 upload_to_s3(bucket_name, local_csv_path, destination_s3_key)
 print("File uploaded to S3")
 
