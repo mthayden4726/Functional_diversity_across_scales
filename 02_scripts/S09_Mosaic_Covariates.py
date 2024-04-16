@@ -87,19 +87,36 @@ for i,ID in enumerate(file_ID):
         dest.write(mosaic)
     print("File written")
 
-    with rasterio.open(local_file_path) as DEM_src:
-      DEM_data = DEM_src.read(1, masked=True)
-    print('Mean:', DEM_data.mean())
-    print('Max:', DEM_data.max())
-    print('Min:', DEM_data.min())
-    print('Median', DEM_data.median())
+    # Push to S3 bucket
+    destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_Mosaic_'+str(ID)+'.tif'
+    upload_to_s3(bucket_name, local_file_path, destination_s3_key)
+    print("File uploaded to S3")
+
+    # Get summary metrics
+    with rasterio.open(local_file_path) as DTM_src:
+      DTM_data = DTM_src.read(1, masked=True)
+
+    # initialize summaries
+    data = [['Mean:', DEM_data.mean()], 
+            ['Max:', DEM_data.mean()],
+            ['Min:', DEM_data.mean()],
+            ['Std:', DEM_data.mean()],
+            ['Var:', DEM_data.mean()]
+           ]
+ 
+    # Create the pandas DataFrame
+    df = pd.DataFrame(data, columns=['Variables', 'Values'])
+    df.to_csv('summary.csv')
+    local_csv_path = 'summary.csv'
     
     # Push to S3 bucket
-    destination_s3_key = 'ONAQ_flightlines/Mosaic_ONAQ_'+str(ID)+'.tif'
-    upload_to_s3(bucket_name, local_file_path, destination_s3_key)
+    destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_Mosaic_Summary'+str(ID)+'.csv'
+    upload_to_s3(bucket_name, local_csv_path, destination_s3_key)
     print("File uploaded to S3")
     
     # Remove unneeded files (mosaic and shapefile)
     os.remove(local_file_path)
+    os.remove(local_csv_path)
+  
     mosaic = None
     src_files_to_mosaic = None 
