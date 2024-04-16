@@ -66,7 +66,7 @@ SITECODE = 'HEAL'
 SITE_STR = 'D19/2019_HEAL_3'
 SITE_STR_SHORT = 'D19_HEAL'
 YEAR = '2019-08'
-ENV = "DTM" # or CHM or slope
+ENV = 'CHM' # or CHM or slope
 
 shapefiles = ['002',
               '004',
