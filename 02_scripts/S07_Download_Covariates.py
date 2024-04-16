@@ -63,7 +63,9 @@ SERVER = 'http://data.neonscience.org/api/v0/'
 
 # choose for each run
 SITECODE = 'HEAL'
-YEAR = '2019-06'
+SITE_STR = 'D19/2019_HEAL_3'
+SITE_STR_SHORT = 'D19_HEAL'
+YEAR = '2019-08'
 ENV = "DTM" # or CHM or slope
 
 shapefiles = ['002',
@@ -118,7 +120,7 @@ print(file_names)
 
 for i, file in enumerate(file_names):
   print(file)
-  flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D15/2019_ONAQ_2/L3/DiscreteLidar/' + ENV_lab + 'Gtif/NEON_D15_ONAQ_DP3_' + file +'.tif'
+  flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/' + SITE_STR + '/L3/DiscreteLidar/' + ENV_lab + 'Gtif/NEON_' + SITE_STR_SHORT + '_DP3_' + file +'.tif'
   files = []
   files.append(flight)
   retrieve_neon_files(files, Data_Dir)
