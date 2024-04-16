@@ -110,7 +110,6 @@ for i,ID in enumerate(file_ID):
     
     # Remove unneeded files (mosaic and shapefile)
     os.remove(local_file_path)
-    os.remove(local_csv_path)
   
     mosaic = None
     src_files_to_mosaic = None 
@@ -125,3 +124,5 @@ local_csv_path = 'summary.csv'
 destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_Mosaic_Summary.csv'
 upload_to_s3(bucket_name, local_csv_path, destination_s3_key)
 print("File uploaded to S3")
+
+os.remove(local_csv_path)
