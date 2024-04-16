@@ -50,6 +50,7 @@ SERVER = 'http://data.neonscience.org/api/v0/'
 SITECODE = 'ONAQ'
 YEAR = '2019-05'
 ENV = "slope" # or CHM or slope
+
 shapefiles = [
   '005',
   '008',
@@ -67,13 +68,13 @@ shapefiles = [
 # assign local variables
 if ENV == "DTM":
   PRODUCTCODE = 'DP3.30024.001'
-  ENV_lab == "DTM"
+  ENV_lab = "DTM"
 elif ENV == "CHM":
   PRODUCTCODE = 'DP3.30015.001'
-  ENV_lab == "CanopyHeightModel"
+  ENV_lab = "CanopyHeightModel"
 elif ENV == "slope":
   PRODUCTCODE = 'DP3.30025.001'
-  ENV_lab == "Slope"
+  ENV_lab = "Slope"
 
 #################################
 
