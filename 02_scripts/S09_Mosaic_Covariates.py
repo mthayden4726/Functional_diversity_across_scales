@@ -97,11 +97,11 @@ for i,ID in enumerate(file_ID):
       DTM_data = DTM_src.read(1, masked=True)
 
     # initialize summaries
-    data = [['Mean:', DEM_data.mean()], 
-            ['Max:', DEM_data.mean()],
-            ['Min:', DEM_data.mean()],
-            ['Std:', DEM_data.mean()],
-            ['Var:', DEM_data.mean()]
+    data = [['Mean:', DTM_data.mean()], 
+            ['Max:', DTM_data.mean()],
+            ['Min:', DTM_data.mean()],
+            ['Std:', DTM_data.mean()],
+            ['Var:', DTM_data.mean()]
            ]
  
     # Create the pandas DataFrame
