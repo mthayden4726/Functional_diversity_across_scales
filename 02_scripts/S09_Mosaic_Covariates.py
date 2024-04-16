@@ -43,6 +43,7 @@ file_ID = [
   '043',
   '073'
 ]
+summary_data = []
 
 for i,ID in enumerate(file_ID):
     src_files_to_mosaic = []
@@ -98,22 +99,14 @@ for i,ID in enumerate(file_ID):
       DTM_data = DTM_src.read(1, masked=True)
 
     # initialize summaries
-    data = [['Mean:', DTM_data.mean()], 
-            ['Max:', DTM_data.max()],
-            ['Min:', DTM_data.min()],
-            ['Std:', DTM_data.std()],
-            ['Var:', DTM_data.var()]
+    data = [[ID, 'Mean', DTM_data.mean()], 
+            [ID, 'Max', DTM_data.max()],
+            [ID, 'Min', DTM_data.min()],
+            [ID, 'Std', DTM_data.std()],
+            [ID, 'Var', DTM_data.var()]
            ]
- 
-    # Create the pandas DataFrame
-    df = pd.DataFrame(data, columns=['Variables', 'Values'])
-    df.to_csv('summary.csv')
-    local_csv_path = 'summary.csv'
     
-    # Push to S3 bucket
-    destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_Mosaic_Summary_'+str(ID)+'.csv'
-    upload_to_s3(bucket_name, local_csv_path, destination_s3_key)
-    print("File uploaded to S3")
+    summary_data.append(data)
     
     # Remove unneeded files (mosaic and shapefile)
     os.remove(local_file_path)
@@ -121,3 +114,14 @@ for i,ID in enumerate(file_ID):
   
     mosaic = None
     src_files_to_mosaic = None 
+
+# Create the pandas DataFrame
+print(summary_data)
+df = pd.DataFrame(summary_data, columns=['Plot','Variables', 'Values'])
+df.to_csv('summary.csv')
+local_csv_path = 'summary.csv'
+    
+# Push to S3 bucket
+destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_Mosaic_Summary.csv'
+upload_to_s3(bucket_name, local_csv_path, destination_s3_key)
+print("File uploaded to S3")
