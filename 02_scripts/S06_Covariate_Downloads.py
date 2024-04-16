@@ -126,7 +126,7 @@ print(file_names)
 
 for i, file in enumerate(file_names):
   print(file)
-  flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D15/2019_ONAQ_2/L3/DiscreteLidar/CHMGtif/NEON_D15_ONAQ_DP3_' + file +'_CHM.tif'
+  flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D15/2019_ONAQ_2/L3/DiscreteLidar/CanopyHeightModelGtif/NEON_D15_ONAQ_DP3_' + file +'_CHM.tif'
   files = []
   files.append(flight)
   retrieve_neon_files(files, Data_Dir)
