@@ -115,6 +115,7 @@ for i,ID in enumerate(file_ID):
                             }]
     # append to dataframe
     summary_data.append(data, ignore_index=True)
+    print(summary_data)
     
     # Remove unneeded files (mosaic and shapefile)
     os.remove(local_file_path)
