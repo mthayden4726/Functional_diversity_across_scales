@@ -11,6 +11,7 @@ import boto3
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
 from shapely.geometry import box
 import geopandas as gpd
+import pandas as pd
 import fiona
 from fiona.crs import from_epsg
 import pycrs
