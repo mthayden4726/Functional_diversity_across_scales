@@ -56,7 +56,8 @@ for i,ID in enumerate(file_ID):
     src_files_to_mosaic = []
     # List files associated with a single buffer shape
     search_criteria1 = str(ID)
-    search_criteria2 = "DTM"
+    #search_criteria2 = "DTM"
+    search_criteria2 = "CHM"
     search_criteria3 = "Clipped"
     dirpath = "Environmental_Covariates/ONAQ"
 
@@ -97,7 +98,8 @@ for i,ID in enumerate(file_ID):
     print("File written")
 
     # Push to S3 bucket
-    destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_Mosaic_'+str(ID)+'.tif'
+    #destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_Mosaic_'+str(ID)+'.tif'
+    destination_s3_key = 'Environmental_Covariates/ONAQ/CHM_Mosaic_'+str(ID)+'.tif'
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
     print("File uploaded to S3")
 
@@ -106,7 +108,7 @@ for i,ID in enumerate(file_ID):
       DTM_data = DTM_src.read(1, masked=True)
 
     # initialize summaries
-    data = [{'Plot': ID, 
+    data = [{'Plot': str(ID), 
              'Mean': DTM_data.mean(),
              'Max': DTM_data.max(),
              'Min': DTM_data.min(),
@@ -129,7 +131,8 @@ summary_data.to_csv('summary.csv')
 local_csv_path = 'summary.csv'
     
 # Push to S3 bucket
-destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_Mosaic_Summary.csv'
+#destination_s3_key = 'Environmental_Covariates/ONAQ/ONAQ_DTM_Mosaic_Summary.csv'
+destination_s3_key = 'Environmental_Covariates/ONAQ/ONAQ_CHM_Mosaic_Summary.csv'
 upload_to_s3(bucket_name, local_csv_path, destination_s3_key)
 print("File uploaded to S3")
 

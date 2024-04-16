@@ -24,10 +24,10 @@ Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
-# First DTM 
 
 # Find files for mosaicing (define search terms)
-search_criteria = "DTM"
+# search_criteria = "DTM"
+search_criteria = "CHM"
 dirpath = "Environmental_Covariates/ONAQ/"
 
 # List objects in the S3 bucket in the matching directory
@@ -82,7 +82,8 @@ for j,shape in enumerate(shapefiles):
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
                     print("File Written")
-                destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
+                #destination_s3_key = 'Environmental_Covariates/ONAQ/DTM_' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
+                destination_s3_key = 'Environmental_Covariates/ONAQ/CHM_' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
                 upload_to_s3(bucket_name, local_file_path, destination_s3_key)
                 print("File uploaded to S3")
                 os.remove(local_file_path)
