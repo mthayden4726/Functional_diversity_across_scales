@@ -99,10 +99,10 @@ for i,ID in enumerate(file_ID):
 
     # initialize summaries
     data = [['Mean:', DTM_data.mean()], 
-            ['Max:', DTM_data.mean()],
-            ['Min:', DTM_data.mean()],
-            ['Std:', DTM_data.mean()],
-            ['Var:', DTM_data.mean()]
+            ['Max:', DTM_data.max()],
+            ['Min:', DTM_data.min()],
+            ['Std:', DTM_data.std()],
+            ['Var:', DTM_data.var()]
            ]
  
     # Create the pandas DataFrame
