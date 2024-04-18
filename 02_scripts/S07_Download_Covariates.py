@@ -66,7 +66,7 @@ SITECODE = 'SERC'
 SITE_STR = 'D02/2019_SERC_4'
 SITE_STR_SHORT = 'D02_SERC'
 YEAR = '2019-05'
-ENV = 'CHM' # or CHM or slope
+ENV = 'slope' # or CHM or slope
 
 shapefiles = ['001',
               '004',

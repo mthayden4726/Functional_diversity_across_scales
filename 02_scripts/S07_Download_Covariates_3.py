@@ -68,16 +68,16 @@ SITE_STR_SHORT = 'D17_TEAK'
 YEAR = '2019-06'
 ENV = 'DTM' # or CHM or slope
 
-shapefiles = ['000',
-              '001',
-              '002',
-              '003',
-              '004',
-              '010',
-              '012',
-             '005',
-             '007',
-             '009']
+shapefiles = ['site_0',
+              'site_1',
+              'site_2',
+              'site_3',
+              'site_4',
+              'site_10',
+              'site_12',
+             'site_5',
+             'site_7',
+             'site_9']
 
 # assign local variables
 if ENV == "DTM":
