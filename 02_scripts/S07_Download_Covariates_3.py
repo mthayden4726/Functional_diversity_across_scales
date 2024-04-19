@@ -147,7 +147,8 @@ print(files)
 # Clip files
 for j,shape in enumerate(shapefiles):
     print(shape)
-    ID = "Site_boundaries/" + SITECODE + "/" + SITECODE + "_" + str(shape)
+    #ID = "Site_boundaries/" + SITECODE + "/" + SITECODE + "_" + str(shape)
+    ID = "Site_boundaries/" + SITECODE + "/" + str(shape)
     downloaded_files = download_shapefile(bucket_name, ID, Out_Dir)
     shapefile_path = next(file for file in downloaded_files if file.endswith('.shp'))
     
