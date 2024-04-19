@@ -66,7 +66,7 @@ SITECODE = 'SRER'
 SITE_STR = 'D14/2019_SRER_3'
 SITE_STR_SHORT = 'D14_SRER'
 YEAR = '2019-09'
-ENV = 'DTM' # or CHM or slope
+ENV = 'CHM' # or CHM or slope
 
 shapefiles = ['002',
               '003',
