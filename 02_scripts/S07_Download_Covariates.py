@@ -62,22 +62,19 @@ s3 = boto3.client('s3')
 SERVER = 'http://data.neonscience.org/api/v0/'
 
 # choose for each run
-SITECODE = 'TALL'
-SITE_STR = 'D08/2019_TALL_5'
-SITE_STR_SHORT = 'D08_TALL'
-YEAR = '2019-04'
+SITECODE = 'UNDE'
+SITE_STR = 'D05/2019_UNDE_3'
+SITE_STR_SHORT = 'D05_UNDE'
+YEAR = '2019-06'
 ENV = 'DTM' # or CHM or slope
 
-shapefiles = ['001',
-              '002',
-              '009',
-              '013',
-              '012',
-              '020',
-              '026',
-             '027',
-             '032',
-             '044']
+shapefiles = ['020',
+              '003',
+              '006',
+              '023',
+              '038',
+              '001',
+              '011']
 
 # assign local variables
 if ENV == "DTM":
