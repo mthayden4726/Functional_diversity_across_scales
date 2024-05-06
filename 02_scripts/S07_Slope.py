@@ -104,8 +104,7 @@ for site in SITECODES:
         local_file_path = Data_Dir + '/mosaic.tif'
         with rasterio.open(local_file_path) as data_src:
           dem_data = data_src.read(1)
-        dem_np = dem_data.to_numpy()
-        dem = rd.rdarray(dem_np, no_data=-9999)
+        dem = rd.rdarray(dem_data, no_data=-9999)
         slope = rd.TerrainAttribute(dem, attrib='slope_riserun')
 
         # initialize summaries
