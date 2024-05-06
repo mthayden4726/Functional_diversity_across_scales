@@ -103,7 +103,7 @@ for site in SITECODES:
         s3.download_file(bucket_name, file_name, Data_Dir + '/mosaic.tif')
         local_file_path = Data_Dir + '/mosaic.tif'
         with rasterio.open(local_file_path) as data_src:
-          dem_data = data_src.read(1)
+          dem_data = data_src.read(1,masked=True)
         dem = rd.rdarray(dem_data, no_data=-9999)
         slope = rd.TerrainAttribute(dem, attrib='slope_riserun')
 
