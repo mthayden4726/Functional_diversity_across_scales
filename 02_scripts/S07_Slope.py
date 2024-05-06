@@ -108,17 +108,16 @@ for site in SITECODES:
         mask = (dem != -9999)
         slope = rd.TerrainAttribute(dem, attrib='slope_riserun')
         masked_slope = np.ma.masked_array(slope, mask=~mask)
-        print(masked_slope.min())
 
         # initialize summaries
         data = [{'Site': site,
             'Plot': str(j), 
-            'Mean_slope': slope.mean(),
-            'Median_slope': np.median(slope),
-            'Max_slope': slope.max(),
-            'Min_slope': slope.min(),
-            'Std_slope': slope.std(),
-            'Var_slope': slope.var()
+            'Mean_slope': masked_slope.mean(),
+            'Median_slope': np.median(masked_slope),
+            'Max_slope': masked_slope.max(),
+            'Min_slope': masked_slope.min(),
+            'Std_slope': masked_slope.std(),
+            'Var_slope': masked_slope.var()
                         }]
         # append to dataframe
         summary_data = summary_data.append(data, ignore_index=True)
