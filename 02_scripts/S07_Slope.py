@@ -62,7 +62,7 @@ s3 = boto3.client('s3')
 # global variables
 SERVER = 'http://data.neonscience.org/api/v0/'
 
-SITECODES = [
+#SITECODES = [
 #            'CLBJ',
 #            'HEAL',
 #            'KONZ',
@@ -78,7 +78,9 @@ SITECODES = [
 #            'UNDE',
 #            'WOOD',
 #            'WREF',
-            'YELL']
+#            'YELL']
+
+SITECODES = ['YELL']
 
 search_criteria1 = "DTM"
 search_criteria2 = "Mosaic"
