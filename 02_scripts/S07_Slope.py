@@ -66,12 +66,12 @@ SITECODES = ['CLBJ']
 
 search_criteria1 = "DTM"
 search_criteria2 = "Mosaic"
-file_stem = "DTM_Mosaic_"
 
 #################################
 # Pull elevation mosaics for calculating slope for each plot
 for site in SITECODES:
     dirpath = "Environmental_Covariates/" + site + "/"
+    file_stem = dirpath + "DTM_Mosaic_"
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
     # Filter objects based on the search criteria
     files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (search_criteria1 in obj['Key']) and (search_criteria2 in obj['Key'])]
