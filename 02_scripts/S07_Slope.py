@@ -105,7 +105,10 @@ for site in SITECODES:
         with rasterio.open(local_file_path) as data_src:
           dem_data = data_src.read(1,masked=True)
         dem = rd.rdarray(dem_data, no_data=-9999)
+        mask = (dem != -9999)
         slope = rd.TerrainAttribute(dem, attrib='slope_riserun')
+        masked_slope = np.ma.masked_array(slope, mask=~mask)
+        print(masked_slope.min())
 
         # initialize summaries
         data = [{'Site': site,
