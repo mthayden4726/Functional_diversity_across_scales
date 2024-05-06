@@ -74,7 +74,7 @@ for site in SITECODES:
     dirpath = "Environmental_Covariates/" + site + "/"
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
     # Filter objects based on the search criteria
-    files = [obj['Key'] for obj in objects if obj['Key'].endswith('.json') and (search_criteria1 in obj['Key']) and (search_criteria2 in obj['Key'])]
+    files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (search_criteria1 in obj['Key']) and (search_criteria2 in obj['Key'])]
     file_names = set()
     for i,file in enumerate(files):
         match = re.search(r'DTM_Mosaic_(.*?).tif', file)
