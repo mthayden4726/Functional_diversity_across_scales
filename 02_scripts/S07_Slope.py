@@ -70,7 +70,7 @@ file_stem = "DTM_Mosaic_"
 
 #################################
 # Pull elevation mosaics for calculating slope for each plot
-for i,site in SITECODES:
+for site in SITECODES:
     dirpath = "Environmental_Covariates/" + site + "/"
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
     # Filter objects based on the search criteria
