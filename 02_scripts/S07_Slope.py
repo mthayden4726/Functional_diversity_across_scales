@@ -102,9 +102,9 @@ for site in SITECODES:
         # Download plot mosaic
         s3.download_file(bucket_name, file_name, Data_Dir + '/mosaic.tif')
         local_file_path = Data_Dir + '/mosaic.tif'
-        with rasterio.open(local_file_path) as data_src:
-          dem = data_src.read(1, masked=True)
-        #dem = rd.LoadGDAL(local_file_path)
+        #with rasterio.open(local_file_path) as data_src:
+         # dem = data_src.read(1, masked=True)
+        dem = rd.LoadGDAL(local_file_path, no_data = -9999.0)
         slope = rd.TerrainAttribute(dem, attrib='slope_riserun')
 
         # initialize summaries
