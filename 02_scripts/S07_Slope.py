@@ -67,6 +67,16 @@ SITECODES = ['CLBJ']
 search_criteria1 = "DTM"
 search_criteria2 = "Mosaic"
 
+summary_data = pd.DataFrame({'Site': [],
+                             'Plot': [],
+                             'Mean_slope': [],
+                             'Median_slope': [],
+                             'Max_slope': [],
+                             'Min_slope': [],
+                             'Std_slope': [],
+                             'Var_slope': [],
+                            })
+
 #################################
 # Pull elevation mosaics for calculating slope for each plot
 for site in SITECODES:
