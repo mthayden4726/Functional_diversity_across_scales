@@ -114,6 +114,20 @@ for site in SITECODES:
             print("Pattern not found in the URL.")
     file_names = list(file_names)  # Convert set back to a list if needed
     print(file_names)
+    file_names = ['003',
+                 '005',
+                 '011',
+                 '012',
+                 '013',
+                  '014',
+                 '015',
+                  '019',
+                  '021',
+                  '022',
+                  '024',
+                  '026',
+                  '046'
+                 ]
     for j in file_names:
         file_name = file_stem + str(j) + '.tif'
         print(file_name)
