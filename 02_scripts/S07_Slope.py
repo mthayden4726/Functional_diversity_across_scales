@@ -138,12 +138,12 @@ for site in SITECODES:
         # initialize summaries
         data = [{'Site': site,
             'Plot': str(j), 
-            'Mean_slope': masked_slope.nanmean(),
-            'Median_slope': np.nanmedian(masked_slope),
-            'Max_slope': masked_slope.nanmax(),
-            'Min_slope': masked_slope.nanmin(),
-            'Std_slope': masked_slope.nanstd(),
-            'Var_slope': masked_slope.nanvar()
+            'Mean_slope': masked_slope.mean(),
+            'Median_slope': np.median(masked_slope),
+            'Max_slope': masked_slope.max(),
+            'Min_slope': masked_slope.min(),
+            'Std_slope': masked_slope.std(),
+            'Var_slope': masked_slope.var()
                         }]
         # append to dataframe
         summary_data = summary_data.append(data, ignore_index=True)
