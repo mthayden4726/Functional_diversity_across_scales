@@ -66,7 +66,7 @@ SITECODE = 'BART'
 SITE_STR = 'D01/2019_BART_5'
 SITE_STR_SHORT = 'D01_BART'
 YEAR = '2019-08'
-ENV = 'DTM' # or CHM or slope
+ENV = 'CHM' # or CHM or slope
 
 shapefiles = ['015',
              '013',
