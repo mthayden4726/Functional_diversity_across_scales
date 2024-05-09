@@ -132,10 +132,8 @@ for site in SITECODES:
         nan_mask = np.isnan(dem)
         # Combine masks using logical OR
         combined_mask = np.logical_or(no_data_mask, nan_mask)
-        masked_dem = np.ma.masked_array(dem, mask=combined_mask)
-        slope = rd.TerrainAttribute(masked_dem, attrib='slope_riserun')
-        masked_slope = slope
-        #masked_slope = np.ma.masked_array(slope, mask=~mask)
+        slope = rd.TerrainAttribute(dem, attrib='slope_riserun')
+        masked_slope = np.ma.masked_array(slope, mask=combined_mask)
 
         # initialize summaries
         data = [{'Site': site,
