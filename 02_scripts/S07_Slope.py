@@ -80,7 +80,7 @@ SERVER = 'http://data.neonscience.org/api/v0/'
 #            'WREF',
 #            'YELL']
 
-SITECODES = ['YELL']
+SITECODES = ['ONAQ']
 
 search_criteria1 = "DTM"
 search_criteria2 = "Mosaic"
@@ -114,20 +114,18 @@ for site in SITECODES:
             print("Pattern not found in the URL.")
     file_names = list(file_names)  # Convert set back to a list if needed
     print(file_names)
-    file_names = ['003',
-                 '005',
-                 '011',
-                 '012',
-                 '013',
-                  '014',
-                 '015',
-                  '019',
-                  '021',
-                  '022',
-                  '024',
-                  '026',
-                  '046'
-                 ]
+
+    file_names = ['002',
+             '005',
+             '008',
+             '010',
+             '018',
+              '019',
+                 '021',
+                 '030',
+                 '043',
+                 '073']
+  
     for j in file_names:
         file_name = file_stem + str(j) + '.tif'
         print(file_name)
@@ -138,6 +136,11 @@ for site in SITECODES:
           dem_data = data_src.read(1,masked=True)
         dem = rd.rdarray(dem_data, no_data=-9999)
         mask = (dem != -9999)
+        # Create masks for NoData and NaN values
+        #no_data_mask = (dem == -9999)
+        #nan_mask = np.isnan(dem)
+        # Combine masks using logical OR
+        #combined_mask = np.logical_and(no_data_mask, nan_mask)
         slope = rd.TerrainAttribute(dem, attrib='slope_riserun')
         masked_slope = np.ma.masked_array(slope, mask=~mask)
 
