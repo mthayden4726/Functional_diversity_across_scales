@@ -126,14 +126,14 @@ for site in SITECODES:
         with rasterio.open(local_file_path) as data_src:
           dem_data = data_src.read(1,masked=True)
         dem = rd.rdarray(dem_data, no_data=-9999)
-        #mask = (dem != -9999)
+        mask = (dem != -9999)
         # Create masks for NoData and NaN values
-        no_data_mask = (dem == -9999)
-        nan_mask = np.isnan(dem)
+        #no_data_mask = (dem == -9999)
+        #nan_mask = np.isnan(dem)
         # Combine masks using logical OR
-        combined_mask = np.logical_and(no_data_mask, nan_mask)
+        #combined_mask = np.logical_and(no_data_mask, nan_mask)
         slope = rd.TerrainAttribute(dem, attrib='slope_riserun')
-        masked_slope = np.ma.masked_array(slope, mask=combined_mask)
+        masked_slope = np.ma.masked_array(slope, mask=~mask)
 
         # initialize summaries
         data = [{'Site': site,
