@@ -3,7 +3,7 @@
 ## Table of Contents
 1. [Environment Setup for BioSCape: Biodiversity Across Scales](#environment-setup-for-bioscape)
 2. [Function Library](#function-library)
-3. [Image Correction: Topographic & BRDF Correction of Flightlines](#image-correction:-topographict-&-BRDF-Correction-of-Flightlines)
+3. [Image Correction: Topographic & BRDF Correction of Flightlines](#image-correction-(topographic-and-brdf-correction-of-flightlines))
 4. [Calculating Sun Angles](#calculating-sun-angles)
 5. [Extracting Slope and Aspect for Drone Data using DEM](#extracting-slope-and-aspect-for-drone-data-using-dem)
 6. [Topographic Correction using Methods for Drone Data](#topographic-correction-using-methods-for-drone-data)
@@ -63,7 +63,7 @@ Once your instance is launched on AWS, for all subsequent times you connect you 
 
 ## Function Library
 ADD TEXT HERE
-## Image Correction: Topographic & BRDF Correction of Flightlines
+## Image Correction (Topographic and BRDF Correction of Flightlines)
 The first step of the workflow is to implement topographic and BRDF corrections based on correction coefficients provided by Kyle Kovach. *If correction coefficients are not available, this step could be skipped*
 This section outlines the steps for correcting the NEON data product, spectrometer orthorectified surface directional reflectance: [DP1.30006.001](https://data.neonscience.org/data-products/DP1.30006.001)). 
 
@@ -75,6 +75,7 @@ This script requires the following input from users:
    2. Domain of the NEON site (e.g., D01)
    3. EPSG of NEON site (e.g., 32619)
    4. Date of desired flights (e.g., 20190825)
+
 Global parameters include:
    * ndvi_threshold = 0.25
    * nir_band = 90
