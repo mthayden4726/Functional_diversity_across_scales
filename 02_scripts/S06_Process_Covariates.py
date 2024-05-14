@@ -69,7 +69,7 @@ parser = argparse.ArgumentParser(description="Input script for environmental ana
 # Add the arguments
 parser.add_argument('--SITECODE', type=str, required=True, help='SITECODE (All caps)')
 parser.add_argument('--DOMAIN', type=str, required=True, help='DOMAIN (D##)')
-parser.add_argument('--ID_NO', type=int, required=True, help='ID (#)')
+parser.add_argument('--ID_NO', type=str, required=True, help='ID (#)')
 parser.add_argument('--YEAR', type=str, required=True, help='YEAR (YYYY-MM)')
 parser.add_argument('--ENV', type=str, required=True, choices=['DTM', 'CHM'], help='Environmental Covariate of Interest (DTM or CHM)')
 
