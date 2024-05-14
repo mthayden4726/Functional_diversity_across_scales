@@ -265,15 +265,15 @@ The fifth step of the workflow is to process the environmental covariates for ea
 **Objective:** Extract summaries of elevation, slope and canopy height from NEON data at the plot-level using [02_scripts/S06_Process_Covariates.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/5411a8ab1337e47b79a0dbe6e3bc7141dde12c09/02_scripts/S06_Process_Covariates.py)
 
 ### Implementation:
-Example command: ``` python 02_scripts/S06_Process_Covariates.py ```
 
 This script requires the following input from users:
    1. Name of the NEON site in all caps (e.g., BART)
    2. Domain of the NEON site (e.g., D01)
-   3. EPSG of NEON site (e.g., 32619)
    4. ID of NEON site (e.g., 4)
    5. Date of desired flights as YYYY-MM (e.g., 201908)
    6. Environmental raster of interest (DTM or CHM)
+
+Example command: ```python 02_scripts/S06_Process_Covariates.py --SITECODE BART --DOMAIN D01 --ID_NO 5 --YEAR 2019-08 --ENV CHM```
 
 *For a list of parameters associated with sites included in analysis, see the [2019 NEON Site List](https://docs.google.com/spreadsheets/d/17DJtV1BKtq0uLfcYCtM2kp7JjjjaWpuEV_jt95l_830/edit#gid=124418455)*
 
