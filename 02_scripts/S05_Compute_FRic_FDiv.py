@@ -67,7 +67,7 @@ plots = [
 
 # Loop through plots
 for i in plots:
-    clip_file = file_stem + str(i) + '.tif'
+    clip_file = file_stem + str(i) + '_2.tif'
     print(clip_file)
     # Download plot mosaic
     s3.download_file(bucket_name, clip_file, Data_Dir + '/mosaic.tif')
