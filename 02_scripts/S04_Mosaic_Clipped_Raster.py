@@ -29,7 +29,7 @@ gdal.SetConfigOption('CHECK_DISK_FREE_SPACE', 'FALSE')
 
 # Use arg parse for local variables
 # Create the parser
-parser = argparse.ArgumentParser(description="Input script for clipping flightlines.")
+parser = argparse.ArgumentParser(description="Input script for mosaicking flightlines.")
 
 # Add the arguments
 parser.add_argument('--SITECODE', type=str, required=True, help='SITECODE (All caps)')
