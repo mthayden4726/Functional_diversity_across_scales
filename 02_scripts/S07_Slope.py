@@ -80,7 +80,7 @@ SERVER = 'http://data.neonscience.org/api/v0/'
 #            'WREF',
 #            'YELL']
 
-SITECODES = ['ONAQ']
+SITECODES = ['TEAK']
 
 search_criteria1 = "DTM"
 search_criteria2 = "Mosaic"
@@ -115,16 +115,13 @@ for site in SITECODES:
     file_names = list(file_names)  # Convert set back to a list if needed
     print(file_names)
 
-    file_names = ['002',
-             '005',
-             '008',
-             '010',
-             '018',
-              '019',
-                 '021',
-                 '030',
-                 '043',
-                 '073']
+    file_names = [
+              '002',
+      '004',
+      '006',
+      '007',
+      '011',
+      '014']
   
     for j in file_names:
         file_name = file_stem + str(j) + '.tif'
