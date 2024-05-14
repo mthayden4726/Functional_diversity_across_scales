@@ -24,9 +24,24 @@ Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
+# Use arg parse for local variables
+# Create the parser
+parser = argparse.ArgumentParser(description="Input script for clipping flightlines.")
+
+# Add the arguments
+parser.add_argument('--SITECODE', type=str, required=True, help='SITECODE (All caps)')
+parser.add_argument('--YEAR', type=str, required=True, help='YEAR (YYYYMM)')
+
+# Parse the arguments
+args = parser.parse_args()
+
+# Assign the arguments to variables
+SITECODE = args.SITECODE
+YEAR = args.YEAR
+
 # Find files for mosaicing (define search terms)
-search_criteria = "201908"
-dirpath = "BART_flightlines/"
+search_criteria = YEAR
+dirpath = SITECODE + "_flightlines/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -34,18 +49,28 @@ objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
 files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (search_criteria in obj['Key'])]
 print(files)
 
-# List shapefile prefices
-shapefiles = ['Site_boundaries/BART/BART_015',
-              'Site_boundaries/BART/BART_013',
-              'Site_boundaries/BART/BART_026',
-              'Site_boundaries/BART/BART_029',
-              'Site_boundaries/BART/BART_027',
-              'Site_boundaries/BART/BART_012'
-             ]
+# List shapefiles for a site in the S3 bucket in the matching directory
+search_criteria = SITECODE
+dirpath = "Site_boundaries/" + SITECODE + "/"
+objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
+# Filter objects based on the search criteria
+shapefiles = [obj['Key'] for obj in objects if obj['Key'].endswith('.shp') and (search_criteria in obj['Key'])]
+shapefile_names = set()
+for i,shp in enumerate(shapefiles):
+    match = re.search(r'Site_boundaries/(.*?)/(.*?)_(.*?).shp', shp)
+    if match:
+        shapefile_name = match.group(3)
+        print(shapefile_name)
+        shapefile_names.add(shapefile_name)
+    else:
+        print("Pattern not found in the URL.")
+shapefile_names = list(shapefile_names)  # Convert set back to a list if needed
+print(shapefile_names)
 
 # Load the polygon for clipping ()
-for j,shape in enumerate(shapefiles):
-    print(shape)
+for j,shp in enumerate(shapefile_names):
+    print(shp)
+    shape = 'Site_boundaries/' + SITECODE + '/' + SITECODE + '_' + shp
     downloaded_files = download_shapefile(bucket_name, shape, Out_Dir)
     shapefile_path = next(file for file in downloaded_files if file.endswith('.shp'))
     
@@ -78,7 +103,7 @@ for j,shape in enumerate(shapefiles):
                 with rasterio.open(local_file_path, "w", **out_meta) as dest:
                     dest.write(out_image)
                     print("File Written")
-                destination_s3_key = 'BART_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
+                destination_s3_key = SITECODE + '_flightlines/' + str(shape) + '_Clipped_file_' + str(i) + '.tif'
                 upload_to_s3(bucket_name, local_file_path, destination_s3_key)
                 print("File uploaded to S3")
                 os.remove(local_file_path)
