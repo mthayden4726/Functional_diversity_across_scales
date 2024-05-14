@@ -55,11 +55,11 @@ comps = 3 # default component numbers for PCA
 # Choose site and plots
 file_stem = 'TEAK_flightlines/Mosaic_TEAK_'
 plots = [
-              '002',
-  '004',
-  '006',
-  '007',
-  '008',
+              #'002',
+  #'004',
+  #'006',
+  #'007',
+  #'008',
   '011',
   '014'
 ]
