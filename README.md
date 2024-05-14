@@ -4,6 +4,8 @@
 
 **Scripts implemented in Python**
 
+See [Documentation.md](https://github.com/mthayden4726/BioSCape_across_scales/blob/25c5cc9100f1ee14097ed48f8af2e4acf129dd67/Documentation.md) for detailed documentation on the workflow, scripts, and required user inputs. 
+
 **S01:** Module containing functions that pre-process and compute diversity metrics.
 
 **S02:** Image Correction (BRDF & Topo)
@@ -25,7 +27,7 @@ Processing scripts should be implemented as:
 
 **Authors:** M. Hayden, C. Amaral, M. Rossi, N. Stavros
 
-Updated: May 3rd, 2024
+Updated: May 14th, 2024
 
 Next: Combining scripts into workflow based on FUNCTIONS (currently requires input for each site) --> script in progress: Workflow.py
 
