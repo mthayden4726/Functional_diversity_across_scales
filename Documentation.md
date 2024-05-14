@@ -230,10 +230,11 @@ The fourth step of the workflow is to compute functional richness and divergence
 **Objective:** Calculate functional richness and divergence across a set of neighborhood/window sizes for each scene using [02_scripts/S05_Compute_FRic_FDiv.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/4bee04f61cb48478cda5c2c340aaf6c690e3a29c/02_scripts/S05_Compute_FRic_FDiv.py)
 
 ### Implementation:
-Example command: ``` python 02_scripts/S05_Compute_FRic_FDiv.py ```
 
 This script requires the following input from users:
    1. Name of the NEON site (e.g., BART)
+
+Example command: ``` python 02_scripts/S05_Compute_FRic_FDiv.py --SITECODE BART```
 
 *For a list of all sites included in analysis, see the [2019 NEON Site List](https://docs.google.com/spreadsheets/d/17DJtV1BKtq0uLfcYCtM2kp7JjjjaWpuEV_jt95l_830/edit#gid=124418455)*
 
