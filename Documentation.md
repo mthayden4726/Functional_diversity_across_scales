@@ -1,16 +1,17 @@
 # Documenation of Workflow for BioSCape Scale-Normalized Functional Diversity 
 
 ## Table of Contents
-1. [Environment Setup for BioSCape: Biodiversity Across Scales](#environment-setup-for-bioscape)
-2. [Function Library](#function-library)
-3. [Image Correction: Topographic & BRDF Correction of Flightlines](#image-correction-(topographic-and-brdf-correction-of-flightlines))
-4. [Calculating Sun Angles](#calculating-sun-angles)
-5. [Extracting Slope and Aspect for Drone Data using DEM](#extracting-slope-and-aspect-for-drone-data-using-dem)
-6. [Topographic Correction using Methods for Drone Data](#topographic-correction-using-methods-for-drone-data)
-7. [Topo and BRDF Correction using Hytools (Steps to Use It)](#topo-and-brdf-correction-using-hytools-steps-to-use-it)
-8. [Resampling](#resampling)
-9. [NEON Data Access using API](#neon-data-access-using-api)
-10. [About Cyverse](#about-cyverse)
+1. [Workflow for BioSCape: Biodiversity Across Scales](#workflow-for-bioscape)
+2. [Environment Setup for BioSCape: Biodiversity Across Scales](#environment-setup-for-bioscape)
+3. [Function Library](#function-library)
+4. [Image Correction: Topo/BRDF Correction and Radiometric Filtering of Flightlines](#image-correction)
+5. [Image Clipping: ](#image-clipping)
+6. [Image Mosaic: ](#image-mosaic)
+7. [Functional Diversity Computation: ](#functional-diversity-computation)
+8. [Environmental Covariates: ](#environmental-covariates)
+9. [Scaling Analysis: ](#scaling-analysis)
+   
+## Workflow for BioSCape 
 
 ## Environment Setup for BioSCape
 This section details the steps for setting up the environment required for the BioSCape project. Follow these steps to ensure a smooth and consistent development environment.
@@ -63,18 +64,23 @@ Once your instance is launched on AWS, for all subsequent times you connect you 
 
 ## Function Library
 ADD TEXT HERE
-## Image Correction (Topographic and BRDF Correction of Flightlines)
-The first step of the workflow is to implement topographic and BRDF corrections based on correction coefficients provided by Kyle Kovach. *If correction coefficients are not available, this step could be skipped*
+
+## Image Correction
+The first step of the workflow is to implement topographic and BRDF corrections (as well as an NDVI threshold) based on correction coefficients provided by Kyle Kovach. *If correction coefficients are not available, this step could be skipped*
 This section outlines the steps for correcting the NEON data product, spectrometer orthorectified surface directional reflectance: [DP1.30006.001](https://data.neonscience.org/data-products/DP1.30006.001)). 
 
-**Objective:** Correct variations in reflectance caused by BRDF & topographic effects like slope and aspect using the script [02_scripts/S02_TopoBRDF_Corrections.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/a73d3ea27cc2bff5dd30d4a6140351a09a150007/02_scripts/S02_TopoBRDF_Corrections_BART.py)
+**Objective:** Correct variations in reflectance caused by BRDF & topographic effects like slope and aspect, as well as remove non-vegetated pixels, using the script [02_scripts/S02_TopoBRDF_Corrections.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/a73d3ea27cc2bff5dd30d4a6140351a09a150007/02_scripts/S02_TopoBRDF_Corrections_BART.py)
 
 ### Implementation:
+Example command: ``` python 02_scripts/S02_TopoBRDF_Corrections.py ```
+
 This script requires the following input from users:
    1. Name of the NEON site (e.g., BART)
    2. Domain of the NEON site (e.g., D01)
    3. EPSG of NEON site (e.g., 32619)
    4. Date of desired flights (e.g., 20190825)
+
+*For a list of parameters for all sites included in analysis, see the [2019 NEON Site List](https://docs.google.com/spreadsheets/d/17DJtV1BKtq0uLfcYCtM2kp7JjjjaWpuEV_jt95l_830/edit#gid=124418455)*
 
 Global parameters include:
    * ndvi_threshold = 0.25
@@ -97,272 +103,155 @@ The script includes:
 
 For a detailed walkthrough, see the notebook: [NA]
 
-
-### SCS+C (Sun-Canopy-Sensor + Cosine) Topographic Correction
-**Objective:** Extend the SCS method by including a cosine correction factor, enhancing effectiveness in rugged terrains.
-
-**Implementation:**
-
-The notebook includes:
-
-*   Parameters are derived from metadata within the NEON file, with solar zenith angles averaged over multiple flightlines.
-
-*   Extract Parameters from Metadata: Similar to Notebook 1, detailing the extraction process of relevant parameters from the NEON data metadata.
-
-*   Topographic Correction using SCS+C Method: Implementing the SCS+C method for topographic correction which includes an additional cosine correction factor.
-
-*   Various Graphical Plots for Topographic Correction: Visualizing data and correction effects, especially focusing on NIR band 93.
-
-*   Function for Plotting Aspect and Illumination: Similar to Notebook 1, but tailored for the SCS+C method.
-
-*   Statistical Analysis of Pixel Values: Examining the impact of SCS+C correction on pixel values.
-
-*   Correlation Analysis: Assessing correlations post-topographic correction using the SCS+C method.
-
-*   NDVI Analysis and Correction: Detailed steps for applying NDVI on corrected data, including methods for choosing the nearest red and NIR bands.
-
-*   Comparative NDVI Graphs: Visual comparison between reflectance NDVI and post-correction NDVI.
-
-For an in-depth explanation and code, view: [Topo_Corr_SCS_C.ipynb](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/Topo_Corr_using_Methods/Topo_Corr_SCS_C_Final.ipynb)
-
-## Calculating Sun angles
-
-This section of the documentation outlines the methodologies used in the Jupyter notebook for calculating the sun angles, which is a crucial step in topographic and radiometric corrections for remote sensing data.
-
-### Overview
-The notebook provides two distinct methods for calculating sun angles, leveraging geographical data from drone imagery. It includes functions to extract latitude and longitude coordinates from the drone images and to compute sun angles for each pixel.
-
-### Detailed Steps
-1.  Extracting Latitude and Longitude from Drone Images:
-Functionality is developed to extract geographic coordinates (latitude and longitude) directly from the metadata of drone imagery.
-
-2.  Method 1: Basic Sun Angle Calculation
-This method calculates the sun angles using a simplified approach, ideal for scenarios where detailed topographic information is not critical.
-
-3.  Method 2: Advanced Sun Angle Calculation
-An advanced technique for calculating sun angles, providing more accuracy and detail. This method is particularly useful for rigorous topographic and radiometric analyses.
-
-4.  Function to Calculate Sun Angles for Each Image Pixel:
-A comprehensive function that calculates the sun angles for every pixel in the drone image, using the extracted latitude and longitude coordinates. This function is essential for detailed pixel-by-pixel analysis in remote sensing applications.
-
 ### Application
-These methods are crucial for understanding the solar illumination conditions for each pixel, which significantly impacts the reflectance values in remote sensing data. Accurate sun angle calculation allows for more precise corrections and analyses in subsequent steps of the project.
+ADD TEXT
 
-For an in-depth explanation and code, view: [calculating_sun_angles.ipynb](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/Topo_Corr_using_Methods/Calulating_Sun_angles.ipynb)
+## Image Clipping
+The second step of the workflow is to clip corrected flightlines to the desired boundaries. In this case, we want a 2.5 x 2.5 km2 box around each NEON plot of interest. For our implementation, there are two inputs:
+1. The corrected flightlines (located in S3 bucket "SITENAME_flightlines/")
+2. The shapefiles for each plot boundary (located in S3 bucket "Site_boundaries/")
 
+**Objective:** Clip flightlines to areas of interest (to reduce processing time) using the script [02_scripts/S03_Clip_Corrected.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/4bee04f61cb48478cda5c2c340aaf6c690e3a29c/02_scripts/S03_Clip_Corrected_BART.py)
 
+### Implementation:
+Example command: ``` python 02_scripts/S03_Clip_Corrected.py ```
 
-## Extracting Slope and Aspect for drone data using DEM
+This script requires the following input from users:
+   1. Name of the NEON site (e.g., BART)
 
-This section of the documentation details the process outlined in the Jupyter notebook for deriving slope and aspect data from Digital Elevation Models (DEM) applied to drone imagery. This procedure is crucial for understanding the topography of the area captured by drone data and getting slope and aspect for further corrections as they are the required parameters.
+*For a list of all sites included in analysis, see the [2019 NEON Site List](https://docs.google.com/spreadsheets/d/17DJtV1BKtq0uLfcYCtM2kp7JjjjaWpuEV_jt95l_830/edit#gid=124418455)*
 
-### Overview
-The notebook demonstrates the procedure to calculate slope and aspect using DEM data, which are critical parameters in topographical analysis and can significantly impact the accuracy of remote sensing data interpretation.
+Global parameters include:
+   * Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
+   * Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
+   * bucket_name = 'bioscape.gra'
+   * s3 = boto3.client('s3')
 
-### Detailed Steps
-*   Loading the Digital Elevation Model (DEM) File: The first step involves loading the DEM file specified in the DEM_path variable. This file contains the elevation data necessary for calculating slope and aspect.
-*   Calculating Slope and Aspect:The notebook provides code for calculating two key topographic parameters:
-    *   Slope: This measures the steepness or degree of incline of the terrain. The slope is essential for understanding the terrain's gradient and is calculated in degrees.
-    *   Aspect: This refers to the compass direction that the slope faces. Aspect is crucial for determining the direction of the sun's illumination on the terrain.
-    
-*   Output Path for Saving Results:
-The notebook includes functionality to save the calculated slope and aspect data to specified output paths. This ensures that the results are stored for further analysis and use in the project.
+The script includes:
+*   Find all corrected flightlines (located in S3 bucket "SITENAME_flightlines/")
+*   Load all shapefiles associated with site. For each shapefile:
+   * Load a flightline.
+   * If there is overlap, clip flightline to shapefile.
+   * Update flightline metadata and upload to S3.
+   * Repeat with all flightlines.
 
-For an in-depth explanation and code, view: [slope_aspect_drone_dtm.ipynb](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/Topo_Corr_using_Methods/Slope_Aspect_Drone_Data.ipynb)
+For a detailed walkthrough, see the notebook: [NA]
 
-### Application
-Slope and aspect data extracted from DEM are fundamental in environmental and geographical studies, especially in projects involving remote sensing and aerial imagery. They provide insights into the terrain characteristics, which are vital for various analyses, including ecological studies, land-use planning, and agricultural assessments.
+## Image Mosaic
+The third step of the workflow is to mosaic the clipped and corrected flightlines to create a 2.5 km x 2.5 km scene for analyses. For our implementation, there is one input:
+1. The clipped and corrected flightlines (located in S3 bucket "SITENAME_flightlines/Site_boundaries/SITENAME/")
 
-## Topographic Correction using methods for Drone Data
+**Objective:** Mosaic clipped and corrected flightlines into scenes for analyses [02_scripts/S04_Mosaic_Clipped_Raster.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/4bee04f61cb48478cda5c2c340aaf6c690e3a29c/02_scripts/S04_Mosaic_Clipped_Raster_BART.py)
 
-### Overview
-The notebook focuses on applying the SCS+C method for correcting topographic effects in drone imagery. This method is particularly effective for landscapes with varied terrain, as it accounts for differences in sunlight angles and terrain features.
+### Implementation:
+Example command: ``` python 02_scripts/S04_Mosaic_Clipped_Raster.py ```
 
-### Detailed Steps
-1.  Assigning Paths for Drone Data, Slope, and Aspect:
-Define file paths for the drone data, slope, and aspect datasets necessary for topographic correction.
+This script requires the following input from users:
+   1. Name of the NEON site (e.g., BART)
+   2. EPSG of the NEON site (e.g., 32619)
 
-2.  Setting Parameters for SCS+C Topographic Correction:
-Outlines the parameters needed for the SCS+C method, including the reading of specific bands from drone data.
+*For a list of the EPSG of all sites included in analysis, see the [2019 NEON Site List](https://docs.google.com/spreadsheets/d/17DJtV1BKtq0uLfcYCtM2kp7JjjjaWpuEV_jt95l_830/edit#gid=124418455)*
 
-3.  Function for Slope and Aspect Extraction:
-Describes the process of using rasterio to extract slope and aspect data, essential components for the SCS+C correction.
+Global parameters include:
+   * Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
+   * Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
+   * bucket_name = 'bioscape.gra'
+   * s3 = boto3.client('s3')
 
-4.  Calculating Sun Angles:
-Details the calculation of sun angles for each pixel in the drone imagery, a key factor in the topographic correction process.
+The script includes:
+*   Find all clipped and corrected flightlines (located in S3 bucket "SITENAME_flightlines/Site_boundaries/SITENAME/")
+*   Load all rasters associated with a plot, site. For each file:
+   * Load file.
+   * Change nodata values to 0.
+   * Append to list of files for each plot, site to merge.
+*   Merge files using method = "max".
+*   Update metadata for mosaicked file.
+*   Upload mosaic to S3 and delete local file. 
 
-5.  Gathering Parameters for Topographic Correction:
-Consolidates all necessary parameters (including illumination, slope, aspect, and sun angles) for executing the SCS+C correction.
+For a detailed walkthrough, see the notebook: [NA]
 
-6.  Illumination Plotting:
-Visualizing the illumination component, crucial for understanding the light dynamics over the terrain.
+## Functional Diversity Computation
+The fourth step of the workflow is to compute functional richness and divergence across a set of window sizes for each mosaic produced in the previous step (representing a plot nested within a NEON site). For our implementation, there is one input:
+1. The mosaics (located in S3 bucket "SITENAME_flightlines/")
 
-7.  Topographic Correction using SCS+C Method:
-Implementation of the SCS+C topographic correction, including a detailed function to perform this correction on the drone data.
+**Objective:** Calculate functional richness and divergence across a set of neighborhood/window sizes for each scene using [02_scripts/S05_Compute_FRic_FDiv.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/4bee04f61cb48478cda5c2c340aaf6c690e3a29c/02_scripts/S05_Compute_FRic_FDiv.py)
 
-8.  Visual Analysis for NIR Band:
-Includes plots and analysis focusing on the NIR band to assess the effectiveness of the topographic correction.
-9.  NDVI Calculation:
-Demonstrates the calculation of the Normalized Difference Vegetation Index (NDVI), both with and without a threshold, to analyze vegetation health post-correction.
+### Implementation:
+Example command: ``` python 02_scripts/S05_Compute_FRic_FDiv.py ```
 
-For an in-depth explanation and code, view: [Topo_Corr_drone_data.ipynb](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/Topo_Corr_using_Methods/Topo_corr_Drone_data.ipynb)
+This script requires the following input from users:
+   1. Name of the NEON site (e.g., BART)
 
-#### Application
-The application of topographic correction using the SCS+C method is vital in ensuring the accuracy of remote sensing data, especially in areas with complex terrain. This notebook provides a comprehensive guide for applying this correction to drone imagery, which can be crucial for environmental monitoring, agricultural assessments, and land-use studies.
-## Topo and BRDF correction using Hytools (steps to use it)
+*For a list of all sites included in analysis, see the [2019 NEON Site List](https://docs.google.com/spreadsheets/d/17DJtV1BKtq0uLfcYCtM2kp7JjjjaWpuEV_jt95l_830/edit#gid=124418455)*
 
-### Overview
-This documentation covers a comprehensive workflow for processing NEON data using Python scripts. The process involves converting NEON data to ENVI format, generating configuration files for topographic and BRDF corrections, and applying these corrections to the imagery.
+Global parameters include:
+   * Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
+   * Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
+   * bucket_name = 'bioscape.gra'
+   * s3 = boto3.client('s3')
+   * window_sizes = [60, 120, 240, 480, 960, 1200, 1500, 2000, 2200] (List of window sizes for computation of functional diversity metrics)
+   * comps = 3 (Number of components to retain from principal component analysis)
 
-### Python Scripts Description
-1. neon2envi2.py: NEON to ENVI Conversion, code: [neon2envi.py](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/BRDF-Topo-HyTools/Topo%20and%20Brdf%20Corr/neon2envi2.py)
-Purpose: Converts NEON AOP H5 data files to ENVI format.
-Usage:
-Run the script from the command line with the dataset path and output folder.
-Optional flag -anc to export ancillary data.
-Example:
-```python neon2envi2.py <path-to-dataset_name> <path-to-output_folder> -anc```
-2. config_generator.py: Configuration File Generation, code: [config_generator.py](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/BRDF-Topo-HyTools/Topo%20and%20Brdf%20Corr/config_generator.py)
-Functionality: Generates JSON configuration files for applying topographic (TOPO) and Bidirectional Reflectance Distribution Function (BRDF) corrections.
-Configuration Options: Includes settings for various correction types, wavelengths, and other parameters.
-Running the Script: Edit the script according to the desired corrections and run it to create config_<iteration>.json files.
-Example Command:
-```python config_generator.py```
-3. image_correct.py: Applying Corrections, code: [image_correct.py](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/BRDF-Topo-HyTools/Topo%20and%20Brdf%20Corr/image_correct.py)
-Purpose: Reads the generated JSON configuration file and applies the specified TOPO and BRDF corrections to the imagery.
-Execution: Run the script with the configuration file as a command-line argument.
-```python image_correct.py <path-to-config-file>```
+The script includes:
+*   Find all mosaics associated with a site (located in S3 bucket "SITENAME_flightlines/")
+*   For each mosaic:
+   * Load mosaic.
+   * Prepare mosaic for dimensionality reduction:
+        * Convert to numpy array.
+        * Reshape and rescale data.
+        * Impute values for NAs using "mean".
+        * Scale and standarize according to mean and standard deviation.
+        * Fit PCA on a subset of the data.
+   * Transform with PCA.
+   * Using a moving window, calculate functional richness and divergence for each window.
+      * Functional richness is computed as the volume of the minimum convex hull that encompasses all PCA pixels in the window. (REF)
+      * Functional divergence is computed as the distance of all PCA pixels in the window from the center of gravity. (REF)
+   * Export FRic and FDiv for each window as a .csv.
+   * Upload to S3 and delete local files.  
 
+For a detailed walkthrough, see the notebook: [NA]
 
-### Overview for config_generator.py
-The config_generator.py script is designed to automate the creation of configuration files for topographic (TOPO) and Bidirectional Reflectance Distribution Function (BRDF) corrections of geospatial imagery. It allows customization to accommodate different correction methods and input formats.
+## Environmental Covariates
+The fifth step of the workflow is to process the environmental covariates for each site to get summary characteristics for each plot (within a NEON site). For our implementation, there is one input:
+1. The plot shapefiles (located in S3 bucket "Site_boundaries/")
 
-#### TOPO Correction Methods
-The script supports various TOPO correction methods, including SCS (Sun-Canopy-Sensor), SCS+C (Sun-Canopy-Sensor + Cosine), and C correction. For this project, the SCS+C method has been chosen due to its effectiveness in handling varied terrain by incorporating an additional cosine correction factor.
+**Objective:** Extract summaries of elevation, slope and canopy height from NEON data at the plot-level using [02_scripts/S06_Process_Covariates.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/5411a8ab1337e47b79a0dbe6e3bc7141dde12c09/02_scripts/S06_Process_Covariates.py)
 
-##### Key Features of SCS+C Method:
-*   Accounts for solar zenith angle, slope, and aspect.
-*   Adjusts reflectance values based on pixel-specific illumination conditions.
-*   Particularly effective in landscapes with significant elevation changes.
+### Implementation:
+Example command: ``` python 02_scripts/S06_Process_Covariates.py ```
 
-#### BRDF Correction Methods
-Two primary methods for BRDF correction are supported: the Universal method and the Flex method. In this project, the Flex method is used due to its adaptability and suitability for the specific requirements of NEON data.
+This script requires the following input from users:
+   1. Name of the NEON site in all caps (e.g., BART)
+   2. Domain of the NEON site (e.g., D01)
+   3. EPSG of NEON site (e.g., 32619)
+   4. ID of NEON site (e.g., 4)
+   5. Date of desired flights as YYYY-MM (e.g., 201908)
+   6. Environmental raster of interest (DTM or CHM)
 
-##### Key Features of Flex Method:
-*   Tailors BRDF corrections based on scene-specific characteristics.
-*   Handles a wide range of surface and atmospheric conditions.
-*   Note: Diagnostic plots are more challenging with the Flex method compared to the Universal method, as Flex returns different values that require extensive modifications to the HyTools library.
+*For a list of parameters associated with sites included in analysis, see the [2019 NEON Site List](https://docs.google.com/spreadsheets/d/17DJtV1BKtq0uLfcYCtM2kp7JjjjaWpuEV_jt95l_830/edit#gid=124418455)*
 
-##### Customization and Preferences
-Users can modify the config_generator.py script to choose their preferred methods for both TOPO and BRDF corrections. The script is structured to allow easy switching between different correction algorithms and settings.
+Global parameters include:
+   * Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
+   * Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
+   * bucket_name = 'bioscape.gra'
+   * s3 = boto3.client('s3')
 
-#### Configuration File Generation:
-*   The script generates JSON files for each ancillary file related to the main image.
-*   Users can specify bad bands, file types, input files, and other settings.
-*   The output includes detailed settings for export options, masks, coefficients, and correction-specific parameters.
-#### Usage:
-*   Ideal for workflows requiring specific topographic and BRDF corrections.
-*   Users can edit the script to select desired correction methods and parameters.
-*   The output JSON files serve as input for subsequent correction processes using tools like image_correct.py.
+The script includes:
+*   Find all flightlines associated with the environmental covariate of interest and the area of interest (shapefile).
+*   For each flightline, clip to the area of interest.
+*   Mosaic together all clipped flightlines that align with the same area of interest.
+*   Extract summary metrics for each mosaic, including mean, median, min, max, std, and var.
+*   Export as .csv and upload to S3. 
 
-#### Flexibility and Extensibility:
-The configuration generator script offers flexibility and extensibility, allowing users to adapt the correction process to their specific needs. By modifying the script, users can experiment with different correction methods and parameters, optimizing their workflow for the best possible results in geospatial imagery analysis.
-### Steps to Run the Workflow ([readme](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/BRDF-Topo-HyTools/Topo%20and%20Brdf%20Corr/README.md))
-*   Step 1: Convert NEON Data to ENVI
-Ensure the output folder exists before running the conversion script.
-Example:
-```python neon2envi2.py neon.h5 output/ -anc```
-*   Step 2: Generate Configuration JSON
-Modify config_generator.py as needed for the specific corrections.
-Run the script to generate the configuration file.
-Example:
-```python config_generator.py```
-*   Step 3: Perform Correction
-Use image_correct.py with the generated config file to apply corrections.
-Example:
-```python image_correct.py output/config_01.json```
+For a detailed walkthrough, see the notebook: [NA]
 
-### Applications of the Workflow
-This workflow is ideal for remote sensing professionals and researchers working with NEON data who require precise spectral matching and corrections for their analysis. The streamlined process from data conversion to correction application ensures accuracy and efficiency in multispectral and ecological studies.
+## Scaling Analysis 
+The final step of the workflow is to fit scaling relationships to the functional richness and divergence outputs and extract parameters (exponent and coefficient) from the model fits. For our implementation, there is one input:
+1. The FRic and FDiv results files (located in S3 bucket "/")
 
+**Objective:** Fit power law functions to the functional diversity metrics and extract parameters of interest using [02_scripts/S07_Scaling_Functions.py](NA)
 
-## Resampling
-### Overview 
-This tool facilitates the resampling of NEON and drone hyperspectral data to align with Landsat sensor specifications. It utilizes a JSON file for defining sensor parameters and a Python script incorporating the HyTools library for the resampling process.
-### [Readme](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/Resampling/README_RESAMPLING.md)
-### Components
-*   [landsat_band_parameters.json](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/Resampling/landsat_band_parameters.json): This JSON file includes band parameters for various Landsat missions. It can be adapted to include specifications for NEON and drone sensors, allowing users to resample their data to match the Landsat spectral response.
+### Implementation:
+Example command: ``` python 02_scripts/S07_Scaling_Functions.py ```
 
-*   [resampling_demo.py](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/Resampling/resampling_demo.py): A Python script that executes the resampling of NEON and drone data. Key components include:
-
-    *   resampler_hy_obj Class: Initializes with the sensor type (Landsat, NEON, or drone), JSON file path, and HDR file path. Manages the reading and application of band parameters for resampling.
-
-    *  create_header_info Method: Generates necessary header information from the HDR file for the resampling process.
-
-    *   save_envi_data Method: Saves resampled data in the ENVI format.
-
-    *   load_envi_data Function: Loads hyperspectral data from an ENVI binary file, preparing it for resampling.
-
-### Prerequisites
-*   Python 3.x
-*   NumPy
-*   Spectral Python (SPy)
-*   HyTools library
-
-### Installation
-
-Install necessary Python libraries:
-```pip install numpy spectral hytools```
-
-### Usage
-*   Update the landsat_band_parameters.json with NEON or drone sensor parameters if required.
-*   Ensure both the JSON file and resampling_demo.py are in your working directory.
-*   Execute the script with appropriate arguments for sensor type, file paths, and output specifications.
-
-#### Example
-```python
-from resampling_deom import resampler_hy_obj
-
-# Initialize resampler object for Landsat 8 OLI
-resampler = resampler_hy_obj(sensor_type='Landsat 8 OLI', json_file='landsat_band_parameters.json')
-
-# Apply resampling (add details based on your data and requirements)
-```
-
-### Application
-This tool is crucial for researchers and professionals working with NEON and drone hyperspectral data who need to align their datasets with Landsat spectral characteristics. Such resampling is essential for comparative analysis across different sensors, enhancing the validity of environmental and geographical studies.
-
-
-## NEON data access using API
-### Overview
-This guide provides a generalized method to access data from the National Ecological Observatory Network (NEON) by altering the site name and product ID. It is based on a Python script that utilizes the NEON API for data retrieval.
-### [Code](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/neon-api.ipynb)
-### Step-by-Step Guide
-1. Defining NEON API Endpoint
-Define the base URL for the NEON API. For example:
-```NEON_API_ENDPOINT = "https://data.neonscience.org/api/v0/"```
-2. Specifying Site and Product ID
-Assign variables for the site name and product ID. These can be changed to access different datasets.
-```site_name = "NEON_SITE_NAME"  # Replace with desired site name```
-```product_id = "NEON_PRODUCT_ID"  # Replace with specific product ID```
-3. Constructing the API Request
-Build the request URL using the specified site and product ID, and make the API request:
-```request_url = f"{NEON_API_ENDPOINT}data/{product_id}/{site_name}"```
-```response = requests.get(request_url)```
-4. Parsing the Response
-Convert the response to a JSON format and extract relevant data:
-```data = response.json()```
-4. Handling Data
-Depending on your requirements, process or analyze the retrieved data. This might involve data cleaning, analysis, visualization, etc.
-
-
-### Application
-This method is ideal for ecologists, environmental scientists, and data analysts who require access to NEON's vast ecological datasets. By simply changing the site name and product ID, a wide range of ecological data can be accessed and utilized for research and analysis.
-
-
-## About Cyverse
-
-*   I have downloaded NIWO and RMNP data from year 2020 and stored them inside commuitydata -> earthlab -> macrosystems -> NIWO_and_RMNP
-*   I have also cloned gitHub repo into macrosystems environment
-*   While following above steps we can run the files required.
-
+SCRIPT IN PROGRESS - TRANSLATING FROM R AND FOR USE WITH S3. 
