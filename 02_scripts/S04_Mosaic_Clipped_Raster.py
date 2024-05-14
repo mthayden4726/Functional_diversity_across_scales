@@ -27,21 +27,48 @@ s3 = boto3.client('s3')
 gdal.SetConfigOption('SHAPE_RESTORE_SHX', 'YES')
 gdal.SetConfigOption('CHECK_DISK_FREE_SPACE', 'FALSE')
 
-src_files_to_mosaic = []
+# Use arg parse for local variables
+# Create the parser
+parser = argparse.ArgumentParser(description="Input script for clipping flightlines.")
 
-file_ID = ['015',
-              '013',
-              '026',
-              '029',
-              '027',
-              '012'
-             ]
+# Add the arguments
+parser.add_argument('--SITECODE', type=str, required=True, help='SITECODE (All caps)')
+parser.add_argument('--EPSG', type=str, required=True, help='EPSG (#####)')
+
+# Parse the arguments
+args = parser.parse_args()
+
+# Assign the arguments to variables
+SITECODE = args.SITECODE
+EPSG = args.EPSG
+
+# Identify plot IDs
+# List shapefiles for a site in the S3 bucket in the matching directory
+search_criteria = SITECODE
+dirpath = "Site_boundaries/" + SITECODE + "/"
+objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
+# Filter objects based on the search criteria
+shapefiles = [obj['Key'] for obj in objects if obj['Key'].endswith('.shp') and (search_criteria in obj['Key'])]
+shapefile_names = set()
+for i,shp in enumerate(shapefiles):
+    match = re.search(r'Site_boundaries/(.*?)/(.*?)_(.*?).shp', shp)
+    if match:
+        shapefile_name = match.group(3)
+        print(shapefile_name)
+        shapefile_names.add(shapefile_name)
+    else:
+        print("Pattern not found in the URL.")
+file_ID = list(shapefile_names)  # Convert set back to a list if needed
+print(shapefile_names)
+
+# Loop through plots, collect clipped files and mosaic
+src_files_to_mosaic = []
 
 for i,ID in enumerate(file_ID):
     src_files_to_mosaic = []
     # List files associated with a single buffer shape
     search_criteria = str(ID)
-    dirpath = "BART_flightlines/Site_boundaries/BART/"
+    dirpath = SITECODE + "_flightlines/Site_boundaries/" + SITE_CODE + "/"
 
     # List objects in the S3 bucket in the matching directory
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -99,17 +126,17 @@ for i,ID in enumerate(file_ID):
         "height": mosaic.shape[1],
         "width": mosaic.shape[2],
         "transform": out_trans,
-        "crs": "+init=epsg:32619 +units=m +no_defs "}) # for TALL UTM WGS 16N
+        "crs": "+init=epsg:" + str(EPSG) + "+units=m +no_defs"}) 
     print(out_meta)
 
     # Write to computer, send to S3
-    local_file_path = Out_Dir + "/mosaic_BART.tif"
+    local_file_path = Out_Dir + "/mosaic.tif"
     with rasterio.open(local_file_path, "w", **out_meta) as dest:
         dest.write(mosaic)
     print("File written")
     
     # Push to S3 bucket
-    destination_s3_key = 'BART_flightlines/Mosaic_BART_'+str(ID)+'_v2.tif'
+    destination_s3_key = SITE_CODE + '_flightlines/Mosaic_' + SITECODE + '_'+str(ID)+'.tif'
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
     print("File uploaded to S3")
     
