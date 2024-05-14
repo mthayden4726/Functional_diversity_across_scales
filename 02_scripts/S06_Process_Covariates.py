@@ -231,10 +231,10 @@ summary_data = pd.DataFrame({'Site': [],
                              'Var': [],
                             })
 
-for i,ID in enumerate(shapefiles):
+for i,shp in enumerate(shapefile_names):
     src_files_to_mosaic = []
     # List files associated with a single buffer shape
-    search_criteria1 = str(ID)
+    search_criteria1 = str(shp)
     search_criteria2 = ENV
     search_criteria3 = "Clipped"
     dirpath = "Environmental_Covariates/" + SITECODE
