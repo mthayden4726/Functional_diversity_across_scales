@@ -17,6 +17,7 @@ import pycrs
 from osgeo import gdal
 import numpy as np
 from S01_Functions import * # add scripts folder to python path manager
+import argparse
 
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
 Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
