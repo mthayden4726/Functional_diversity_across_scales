@@ -69,7 +69,7 @@ for i,ID in enumerate(file_ID):
     src_files_to_mosaic = []
     # List files associated with a single buffer shape
     search_criteria = str(ID)
-    dirpath = SITECODE + "_flightlines/Site_boundaries/" + SITE_CODE + "/"
+    dirpath = SITECODE + "_flightlines/Site_boundaries/" + SITECODE + "/"
 
     # List objects in the S3 bucket in the matching directory
     objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
