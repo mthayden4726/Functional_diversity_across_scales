@@ -119,18 +119,21 @@ This section outlines the steps for correcting the NEON data product, spectromet
 **Objective:** Correct variations in reflectance caused by BRDF & topographic effects like slope and aspect, as well as remove non-vegetated pixels, using the script [02_scripts/S02_TopoBRDF_Corrections.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/a73d3ea27cc2bff5dd30d4a6140351a09a150007/02_scripts/S02_TopoBRDF_Corrections_BART.py)
 
 ### Implementation:
-Example command: ``` python 02_scripts/S02_TopoBRDF_Corrections.py ```
 
 This script requires the following input from users:
    1. Name of the NEON site (e.g., BART)
    2. Domain of the NEON site (e.g., D01)
-   3. EPSG of NEON site (e.g., 32619)
+   3. ID of desired flights (e.g., 5)
    4. Date of desired flights (e.g., 20190825)
+   5. Date and ID of desired flights (e.g., 2019082513)
+   6. EPSG of NEON site (e.g., 32619)
+   7. Desired NDVI threshold (e.g., 0.25)
+
+Example command: ``` python 02_scripts/S02_TopoBRDF_Corrections.py --SITECODE BART --DOMAIN D01 --ID_NO 5 --DATE 20190825 --DATE_ID 2019082513 --EPSG 36219 --NDVI 0.25```
 
 *For a list of parameters for all sites included in analysis, see the [2019 NEON Site List](https://docs.google.com/spreadsheets/d/17DJtV1BKtq0uLfcYCtM2kp7JjjjaWpuEV_jt95l_830/edit#gid=124418455)*
 
 Global parameters include:
-   * ndvi_threshold = 0.25
    * nir_band = 90
    * red_band = 58
    * Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
