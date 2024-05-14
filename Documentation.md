@@ -14,7 +14,9 @@
 ## Workflow for BioSCape 
 ADD TEXT
 
-![Workflow for extracting scale-normalized diversity from NEON AOP reflectance data across 17 sites]((https://github.com/mthayden4726/BioSCape_across_scales/assets/70178120/187d103c-8122-4108-a1b2-ea29ff3883d7) "Scale-Normalized Functional Diversity Workflow")
+![image](https://github.com/mthayden4726/BioSCape_across_scales/assets/70178120/d83d8a23-c4c2-4a13-86ed-6b104902836b)
+
+
 ## Environment Setup for BioSCape
 This section details the steps for setting up the environment required for the BioSCape project. Follow these steps to ensure a smooth and consistent development environment.
 ### Dependencies
@@ -71,6 +73,23 @@ The functions to compute functional richness and functional divergence across ne
    * [02_scripts/S01_Moving_Window_FRic.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/608d9a2d1b883640afa6566f39fd39991e04b9ee/02_scripts/S01_Moving_Window_FRIC.py)
    * [02_scripts/S01_Moving_Window_FDiv.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/608d9a2d1b883640afa6566f39fd39991e04b9ee/02_scripts/S01_Moving_Window_FDiv.py)
 
+Supporting functions included in this script include functions for:
+   * **Interacting with the NEON database**
+      * find_neon_files(): returns the file paths for NEON files according to site code, product code, and desired dates
+      * retrieve_neon_files(): downloads NEON files from list of file paths
+   * **Interacting with AWS S3 Buckets**
+      * download_shapefile(): downloads the set of files constituting a shapefile from the specified bucket
+      * upload_to_s3(): uploads local file to S3
+   * **Processing images**
+      * arraytoraster(): converts an array to a single band raster
+      * array2rastermb(): converts an array to a multi-band raster
+      * clip_raster(): clips a raster to bounds set by a shapefile
+      * scale_transform(): centers, scales, and fits a PCA to a raster
+      * pca_steps(): takes a raster through all the steps to a PCA (center, scale, fit and transform)
+      * store_metadata(): stores metadata of a raster
+   * **Visualizing images**
+      * rbg_show(): plots hytools object in RGB
+
 ### Computing Functional Richness
 Our computation of functional richness uses the ConvexHull() function implemented in scipy.spatial. We also wrote a function which subsets the input PCA into subarrays and calculates functional richness for each window using a moving window approach. This gives us a set of functional richness values across every window in the scene, from which we take the median to represent the functional richness for the plot at a given area. 
 
@@ -86,6 +105,7 @@ First, the function ```calc_fdiv()``` computes functional divergence.
    * This function requires a PCA-transformed raster as an input.
    * The function calculates the mean pixel value in dimension 1, and then calculates the euclidean distance of each pixel from the mean.
    * Ultimately, functional divergence combines the mean of those distances and the deviations from the mean, following Villeger et al., 2008 as:
+     
      ![image](https://github.com/mthayden4726/BioSCape_across_scales/assets/70178120/b51a62ec-0c03-4593-a95e-83ac7769e3e7)
 
 Second, the function ```window_calcs_fdiv() ``` uses a moving window approach to loop across the PCA, segmenting the PCA into subarrays of the appropriate window size and calculating functional divergence for each subarray.
