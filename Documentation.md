@@ -196,11 +196,12 @@ The third step of the workflow is to mosaic the clipped and corrected flightline
 **Objective:** Mosaic clipped and corrected flightlines into scenes for analyses [02_scripts/S04_Mosaic_Clipped_Raster.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/4bee04f61cb48478cda5c2c340aaf6c690e3a29c/02_scripts/S04_Mosaic_Clipped_Raster_BART.py)
 
 ### Implementation:
-Example command: ``` python 02_scripts/S04_Mosaic_Clipped_Raster.py ```
 
 This script requires the following input from users:
    1. Name of the NEON site (e.g., BART)
    2. EPSG of the NEON site (e.g., 32619)
+
+Example command: ``` python 02_scripts/S04_Mosaic_Clipped_Raster.py --SITECODE BART --EPSG 36219```
 
 *For a list of the EPSG of all sites included in analysis, see the [2019 NEON Site List](https://docs.google.com/spreadsheets/d/17DJtV1BKtq0uLfcYCtM2kp7JjjjaWpuEV_jt95l_830/edit#gid=124418455)*
 
