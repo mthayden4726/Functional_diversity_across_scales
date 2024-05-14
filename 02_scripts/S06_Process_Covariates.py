@@ -59,10 +59,10 @@ Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
-# global variables
+# Set global variables
 SERVER = 'http://data.neonscience.org/api/v0/'
 
-# experimenting with arg parse
+# Use arg parse for local variables
 # Create the parser
 parser = argparse.ArgumentParser(description="Input script for environmental analysis.")
 
@@ -83,7 +83,7 @@ ID_NO = args.ID_NO
 YEAR = args.YEAR
 ENV = args.ENV
 
-# prompt script user to provide input instead
+# alternatively can prompt script user to provide input instead
 #SITECODE = input("SITECODE (All caps)")
 #DOMAIN = input("DOMAIN (D##)")
 #ID_NO = input("ID (#)")
@@ -102,9 +102,6 @@ if ENV == "DTM":
 elif ENV == "CHM":
   PRODUCTCODE = 'DP3.30015.001'
   ENV_lab = "CanopyHeightModel"
-elif ENV == "slope":
-  PRODUCTCODE = 'DP3.30025.001'
-  ENV_lab = "Slope"
 
 #################################
 
@@ -151,17 +148,35 @@ for i, file in enumerate(file_names):
 
 #################### 
 # Clip files to shapefiles
+
+# List flightslines for a site in the S3 bucket in the matching directory
 search_criteria = ENV
 dirpath = "Environmental_Covariates/" + SITECODE + "/"
-
-# List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
 # Filter objects based on the search criteria
 files = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (search_criteria in obj['Key'])]
 print(files)
 
+# List shapefiles for a site in the S3 bucket in the matching directory
+search_criteria = SITECODE
+dirpath = "Site_boundaries/" + SITECODE + "/"
+objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
+# Filter objects based on the search criteria
+shapefiles = [obj['Key'] for obj in objects if obj['Key'].endswith('.shp') and (search_criteria in obj['Key'])]
+shapefile_names = set()
+for i,shp in enumerate(shapefiles):
+    match = re.search(r'_(.*?).shp', shp)
+    if match:
+        shapefile_name = match.group(1)
+        print(shapefile_name)
+        shapefile_names.add(shapefile_name)
+    else:
+        print("Pattern not found in the URL.")
+shapefile_names = list(shapefile_names)  # Convert set back to a list if needed
+print(shapefile_names)
+
 # Clip files
-for j,shape in enumerate(shapefiles):
+for j,shape in enumerate(shapefile_names):
     print(shape)
     ID = "Site_boundaries/" + SITECODE + "/" + SITECODE + "_" + str(shape)
     downloaded_files = download_shapefile(bucket_name, ID, Out_Dir)
