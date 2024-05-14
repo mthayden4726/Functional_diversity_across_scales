@@ -25,7 +25,7 @@ from progress.bar import Bar
 from tqdm.contrib.concurrent import process_map
 from multiprocessing import Pool, cpu_count
 from S01_Moving_Window_FRIC import * # add scripts folder to python path manager
-from S01_Functions_KONZ import * # add scripts folder to python path manager
+from S01_Functions import * # add scripts folder to python path manager
 from osgeo import gdal, osr
 from matplotlib.pyplot import subplots, show
 import h5py
@@ -34,6 +34,7 @@ import rasterio
 import boto3
 import re
 from botocore.exceptions import NoCredentialsError, PartialCredentialsError, ClientError
+import argparse
 
 # Set specifications 
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
@@ -41,14 +42,43 @@ Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
 s3 = boto3.client('s3')
 
+# Set global parameters
 nir_band = 90
 red_band = 58
-ndvi_threshold = 0.25
-epsg = 32619
+
+# Use arg parse for local variables
+# Create the parser
+parser = argparse.ArgumentParser(description="Input script for BRDF/Topo corrections.")
+
+# Add the arguments
+parser.add_argument('--SITECODE', type=str, required=True, help='SITECODE (All caps)')
+parser.add_argument('--DOMAIN', type=str, required=True, help='DOMAIN (D##)')
+parser.add_argument('--ID_NO', type=str, required=True, help='ID (#)')
+parser.add_argument('--DATE', type=str, required=True, help='YEAR (YYYYMMDD)')
+parser.add_argument('--DATE_ID', type=str, required=True, help='YEAR (YYYYMMDD##)')
+parser.add_argument('--EPSG', type=int, required=True, help='EPSG (#####)')
+parser.add_argument('--NDVI', type=int, required=True, help='NDVI threshold(0-1)')
+
+# Parse the arguments
+args = parser.parse_args()
+
+# Assign the arguments to variables
+SITECODE = args.SITECODE
+DOMAIN = args.DOMAIN
+ID_NO = args.ID_NO
+DATE = args.DATE
+DATE_ID = args.DATE_ID
+epsg = args.EPSG
+ndvi_threshold = args.NDVI
+
+# assign local variables
+
+SITE_STR = DOMAIN + '/' + '2019_' + SITECODE + '_' + ID_NO
+SITE_STR_SHORT = DOMAIN + '_' + SITECODE
 
 # Find correction coefficients (define search terms)
-search_criteria = "NEON_D01_BART_DP1_20190825"
-dirpath = "NEON BRDF-TOPO Corrections/2019_BART/"
+search_criteria = "NEON_" + DOMAIN + "_" + SITECODE + "_DP1_" + DATE
+dirpath = "NEON BRDF-TOPO Corrections/2019_" + SITECODE + "/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
@@ -85,20 +115,20 @@ for i,file in enumerate(file_names):
     mask = None
     
     print(file)
-    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/D01/2019_BART_5/L1/Spectrometer/ReflectanceH5/2019082513/NEON_D01_BART_DP1_' + file +'_reflectance.h5'
+    flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/'+ SITE_STR + '/L1/Spectrometer/ReflectanceH5/' + DATE_ID + '/NEON_' + SITE_STR_SHORT + '_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
     try:
         retrieve_neon_files(files, Data_Dir)
     except Exception as e:
         continue 
-    img = Data_Dir + "/NEON_D01_BART_DP1_" + file + '_reflectance.h5'
+    img = Data_Dir + '/NEON_' + SITE_STR_SHORT + '_DP1_' + file + '_reflectance.h5'
     neon = ht.HyTools() 
     neon.read_file(img,'neon')
     print("file loaded")
-    topo_file = "NEON BRDF-TOPO Corrections/2019_BART/NEON_D01_BART_DP1_" + file + "_reflectance_topo_coeffs_topo.json"
+    topo_file = "NEON BRDF-TOPO Corrections/2019_' + SITECODE + '/NEON_' + SITE_STR_SHORT + '_DP1_' + file + "_reflectance_topo_coeffs_topo.json"
     print(topo_file)
-    brdf_file = "NEON BRDF-TOPO Corrections/2019_BART/NEON_D01_BART_DP1_" + file + "_reflectance_brdf_coeffs_topo_brdf.json"
+    brdf_file = "NEON BRDF-TOPO Corrections/2019_' + SITECODE + '/NEON_' + SITE_STR_SHORT + '_DP1_' + file + "_reflectance_brdf_coeffs_topo_brdf.json"
     try:
         s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
         s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
@@ -130,7 +160,7 @@ for i,file in enumerate(file_names):
     print("Shape of mask array:", mask.shape)
     print("masking by ndvi")
     fullarraystack[mask, :] = np.nan
-    destination_s3_key = 'BART_flightlines/'+ str(file)+'_output_' + '.tif'
+    destination_s3_key = SITECODE + '_flightlines/'+ str(file)+'_output_' + '.tif'
     local_file_path = Out_Dir + '/output_fullarray_' + file + '.tif'
     print(local_file_path)
     print("rasterizing array")
