@@ -49,6 +49,7 @@ import pycrs
 import geopandas as gpd
 import pandas as pd
 from fiona.crs import from_epsg
+import argparse
 
 #########################
 
@@ -61,18 +62,40 @@ s3 = boto3.client('s3')
 # global variables
 SERVER = 'http://data.neonscience.org/api/v0/'
 
-# choose for each run
-SITECODE = input("SITECODE (All caps)")
-DOMAIN = input("DOMAIN (D##)")
-ID_NO = input("ID (#)")
-YEAR = input("YYYY-MM")
-ENV = input("Environmental Covariate of Interest (DTM, CHM, or slope)")
-shapefiles = input("List of shapefiles (['00#',...]")
+# experimenting with arg parse
+# Create the parser
+parser = argparse.ArgumentParser(description="Input script for environmental analysis.")
+
+# Add the arguments
+parser.add_argument('--SITECODE', type=str, required=True, help='SITECODE (All caps)')
+parser.add_argument('--DOMAIN', type=str, required=True, help='DOMAIN (D##)')
+parser.add_argument('--ID_NO', type=int, required=True, help='ID (#)')
+parser.add_argument('--YEAR', type=str, required=True, help='YEAR (YYYY-MM)')
+parser.add_argument('--ENV', type=str, required=True, choices=['DTM', 'CHM'], help='Environmental Covariate of Interest (DTM or CHM)')
+
+# Parse the arguments
+args = parser.parse_args()
+
+# Assign the arguments to variables
+SITECODE = args.SITECODE
+DOMAIN = args.DOMAIN
+ID_NO = args.ID_NO
+YEAR = args.YEAR
+ENV = args.ENV
+
+# prompt script user to provide input instead
+#SITECODE = input("SITECODE (All caps)")
+#DOMAIN = input("DOMAIN (D##)")
+#ID_NO = input("ID (#)")
+#YEAR = input("YYYY-MM")
+#ENV = input("Environmental Covariate of Interest (DTM, CHM, or slope)")
+#shapefiles = input("List of shapefiles (['00#',...]")
+
+# assign local variables
 
 SITE_STR = DOMAIN + '/' + '2019_' + SITECODE + '_' + ID_NO
 SITE_STR_SHORT = DOMAIN + '_' + SITECODE
 
-# assign local variables
 if ENV == "DTM":
   PRODUCTCODE = 'DP3.30024.001'
   ENV_lab = "DTM"
