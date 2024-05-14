@@ -57,7 +57,7 @@ parser.add_argument('--ID_NO', type=str, required=True, help='ID (#)')
 parser.add_argument('--DATE', type=str, required=True, help='YEAR (YYYYMMDD)')
 parser.add_argument('--DATE_ID', type=str, required=True, help='YEAR (YYYYMMDD##)')
 parser.add_argument('--EPSG', type=int, required=True, help='EPSG (#####)')
-parser.add_argument('--NDVI', type=int, required=True, help='NDVI threshold(0-1)')
+parser.add_argument('--NDVI', type=float, required=True, help='NDVI threshold(0-1)')
 
 # Parse the arguments
 args = parser.parse_args()
