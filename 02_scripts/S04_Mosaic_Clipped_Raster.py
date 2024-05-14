@@ -126,8 +126,7 @@ for i,ID in enumerate(file_ID):
     out_meta.update({"driver": "GTiff",
         "height": mosaic.shape[1],
         "width": mosaic.shape[2],
-        "transform": out_trans,
-        "crs": "+init=epsg:" + str(EPSG) + "+units=m +no_defs"}) 
+        "transform": out_trans}) 
     print(out_meta)
 
     # Write to computer, send to S3
