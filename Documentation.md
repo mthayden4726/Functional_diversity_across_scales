@@ -164,10 +164,12 @@ The second step of the workflow is to clip corrected flightlines to the desired 
 **Objective:** Clip flightlines to areas of interest (to reduce processing time) using the script [02_scripts/S03_Clip_Corrected.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/4bee04f61cb48478cda5c2c340aaf6c690e3a29c/02_scripts/S03_Clip_Corrected_BART.py)
 
 ### Implementation:
-Example command: ``` python 02_scripts/S03_Clip_Corrected.py ```
 
 This script requires the following input from users:
    1. Name of the NEON site (e.g., BART)
+   2. Date of desired files (e.g., 201908). Some sites had flights occur at multiple times throughout the year - for mosaicking purposes, we want to combine flights that were part of the same survey (or occurred at around the same time). 
+
+Example command: ``` python 02_scripts/S03_Clip_Corrected.py --SITECODE BART --YEAR 201908```
 
 *For a list of all sites included in analysis, see the [2019 NEON Site List](https://docs.google.com/spreadsheets/d/17DJtV1BKtq0uLfcYCtM2kp7JjjjaWpuEV_jt95l_830/edit#gid=124418455)*
 
