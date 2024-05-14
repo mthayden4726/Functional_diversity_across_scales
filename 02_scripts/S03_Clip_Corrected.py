@@ -18,6 +18,7 @@ from fiona.crs import from_epsg
 import pycrs
 from osgeo import gdal
 from S01_Functions import *
+import argparse
 
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
 Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
