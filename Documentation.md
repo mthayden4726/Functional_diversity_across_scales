@@ -75,25 +75,25 @@ The functions to compute functional richness and functional divergence across ne
 
 Supporting functions included in this script include functions for:
    * **Interacting with the NEON database**
-      * find_neon_files(): returns the file paths for NEON files according to site code, product code, and desired dates
-      * retrieve_neon_files(): downloads NEON files from list of file paths
+      * ```find_neon_files()```: returns the file paths for NEON files according to site code, product code, and desired dates
+      * ```retrieve_neon_files()```: downloads NEON files from list of file paths
    * **Interacting with AWS S3 Buckets**
-      * download_shapefile(): downloads the set of files constituting a shapefile from the specified bucket
-      * upload_to_s3(): uploads local file to S3
+      * ```download_shapefile()```: downloads the set of files constituting a shapefile from the specified bucket
+      * ```upload_to_s3()```: uploads local file to S3
    * **Processing images**
-      * arraytoraster(): converts an array to a single band raster
-      * array2rastermb(): converts an array to a multi-band raster
-      * clip_raster(): clips a raster to bounds set by a shapefile
-      * scale_transform(): centers, scales, and fits a PCA to a raster
-      * pca_steps(): takes a raster through all the steps to a PCA (center, scale, fit and transform)
-      * store_metadata(): stores metadata of a raster
+      * ```arraytoraster()```: converts an array to a single band raster
+      * ```array2rastermb()```: converts an array to a multi-band raster
+      * ```clip_raster()```: clips a raster to bounds set by a shapefile
+      * ```scale_transform()```: centers, scales, and fits a PCA to a raster
+      * ```pca_steps()```: takes a raster through all the steps to a PCA (center, scale, fit and transform)
+      * ```store_metadata()```: stores metadata of a raster
    * **Visualizing images**
-      * rbg_show(): plots hytools object in RGB
+      * ```rbg_show()```: plots hytools object in RGB
 
 ### Computing Functional Richness
 Our computation of functional richness uses the ConvexHull() function implemented in scipy.spatial. We also wrote a function which subsets the input PCA into subarrays and calculates functional richness for each window using a moving window approach. This gives us a set of functional richness values across every window in the scene, from which we take the median to represent the functional richness for the plot at a given area. 
 
-Specifically, the function ```window_calcs_fric() ``` uses a moving window approach to loop across the input PCA, segmenting the PCA into subarrays of the appropriate window size and calculating functional richness as the volume of the convex hull for each subarray.
+Specifically, the function ```window_calcs_fric()``` uses a moving window approach to loop across the input PCA, segmenting the PCA into subarrays of the appropriate window size and calculating functional richness as the volume of the convex hull for each subarray.
    * This function is parallelized such that the same approach is running simultaneously for multiple window sizes. 
 
 ### Computing Functional Divergence
@@ -108,7 +108,7 @@ First, the function ```calc_fdiv()``` computes functional divergence.
      
      ![image](https://github.com/mthayden4726/BioSCape_across_scales/assets/70178120/b51a62ec-0c03-4593-a95e-83ac7769e3e7)
 
-Second, the function ```window_calcs_fdiv() ``` uses a moving window approach to loop across the PCA, segmenting the PCA into subarrays of the appropriate window size and calculating functional divergence for each subarray.
+Second, the function ```window_calcs_fdiv()``` uses a moving window approach to loop across the PCA, segmenting the PCA into subarrays of the appropriate window size and calculating functional divergence for each subarray.
    * This function is parallelized such that the same approach is running simultaneously for multiple window sizes. 
 
 
