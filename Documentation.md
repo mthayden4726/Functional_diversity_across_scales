@@ -2,14 +2,15 @@
 
 ## Table of Contents
 1. [Environment Setup for BioSCape: Biodiversity Across Scales](#environment-setup-for-bioscape)
-2. [Topographic Correction using methods for NIWO (multiple flightlines)](#topographic-correction-using-methods-for-niwo-multiple-flightlines)
-3. [Calculating Sun Angles](#calculating-sun-angles)
-4. [Extracting Slope and Aspect for Drone Data using DEM](#extracting-slope-and-aspect-for-drone-data-using-dem)
-5. [Topographic Correction using Methods for Drone Data](#topographic-correction-using-methods-for-drone-data)
-6. [Topo and BRDF Correction using Hytools (Steps to Use It)](#topo-and-brdf-correction-using-hytools-steps-to-use-it)
-7. [Resampling](#resampling)
-8. [NEON Data Access using API](#neon-data-access-using-api)
-9. [About Cyverse](#about-cyverse)
+2. [Function Library](#function-library)
+3. [Image Correction: Topographic & BRDF Correction of Flightlines](#image-correction:-topographict-&-BRDF-Correction-of-Flightlines)
+4. [Calculating Sun Angles](#calculating-sun-angles)
+5. [Extracting Slope and Aspect for Drone Data using DEM](#extracting-slope-and-aspect-for-drone-data-using-dem)
+6. [Topographic Correction using Methods for Drone Data](#topographic-correction-using-methods-for-drone-data)
+7. [Topo and BRDF Correction using Hytools (Steps to Use It)](#topo-and-brdf-correction-using-hytools-steps-to-use-it)
+8. [Resampling](#resampling)
+9. [NEON Data Access using API](#neon-data-access-using-api)
+10. [About Cyverse](#about-cyverse)
 
 ## Environment Setup for BioSCape
 This section details the steps for setting up the environment required for the BioSCape project. Follow these steps to ensure a smooth and consistent development environment.
@@ -33,7 +34,7 @@ Depending on your operating system, use the following:
     * ``` sudo yum install git ```
 5. Clone the git repository
     * ``` git clone https://github.com/mthayden4726/BioSCape_across_scales ```
-    * You will be asked for a password for which you can enter your personal token. The personal token for mthayden4726 expires July 13, 2024 and is: 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
+    * You will be asked for a password for which you can enter your personal token. The personal token for **mthayden4726** expires July 13, 2024 and is: **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**
 6. Create and activate the environment
     * First, enter the project directory: ```cd BioSCape_across_scales ```
     * Next, create environment: ``` conda env create -n bioscape-env --file environment.yml ```
@@ -45,8 +46,7 @@ Depending on your operating system, use the following:
         4. ``` conda config --set solver libmamba ```
         5. ``` conda env create -n bioscape-env --file environment.yml ```
     * Finally, activate the environment: ``` source activate bioscape-env ```
-7. Environment Ready
-    After these steps, your environment is set up and ready for project work.
+7. After these steps, your environment is set up and ready for project work. For all future work on this instance, start at [Re-starting an instance](#re-starting-an-instance).
 
 ### Re-starting an instance
 Once your instance is launched on AWS, for all subsequent times you connect you can:
@@ -61,31 +61,40 @@ Once your instance is launched on AWS, for all subsequent times you connect you 
     * ``` cd BioSCape_across_scales ```
     * ``` source activate bioscape-env ```
 
-## Topographic Correction using methods for NIWO (multiple flightlines)
-**Data Product Name:** NEON_D13_NIWO_DP3_449000_4435000_reflectance.h5
+## Function Library
+ADD TEXT HERE
+## Image Correction: Topographic & BRDF Correction of Flightlines
+The first step of the workflow is to implement topographic and BRDF corrections based on correction coefficients provided by Kyle Kovach. *If correction coefficients are not available, this step could be skipped*
+This section outlines the steps for correcting the NEON data product, spectrometer orthorectified surface directional reflectance: [DP1.30006.001](https://data.neonscience.org/data-products/DP1.30006.001)). 
 
-This section outlines the methods used for topographic correction on the specified NEON data product. Two primary methods are implemented: SCS (Sun-Canopy-Sensor) and SCS+C (Sun-Canopy-Sensor + Cosine).
+**Objective:** Correct variations in reflectance caused by BRDF & topographic effects like slope and aspect using the script [02_scripts/S02_TopoBRDF_Corrections.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/a73d3ea27cc2bff5dd30d4a6140351a09a150007/02_scripts/S02_TopoBRDF_Corrections_BART.py)
 
-### SCS (Sun-Canopy-Sensor) Topographic Correction
-**Objective:** Correct variations in reflectance caused by topographic effects like slope and aspect. 
+### Implementation:
+This script requires the following input from users:
+   1. Name of the NEON site (e.g., BART)
+   2. Domain of the NEON site (e.g., D01)
+   3. EPSG of NEON site (e.g., 32619)
+   4. Date of desired flights (e.g., 20190825)
+Global parameters include:
+   * ndvi_threshold = 0.25
+   * nir_band = 90
+   * red_band = 58
+   * Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
+   * Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
+   * bucket_name = 'bioscape.gra'
+   * s3 = boto3.client('s3')
 
-**Implementation:**
-Parameters such as solar zenith angle are averaged across multiple flightlines, extracted from the NEON file metadata.
+The script includes:
+*   Find all flightlines with matching correction coefficients (located in S3 bucket "NEON BRDF-TOPO Corrections/")
+*   Download those flightlines. For each flightline:
+   *   Load matching BRDF & Topo correction coefficients.
+   *   Remove bad bands.
+   *   Apply corrections.
+   *   Calculate NDVI and apply NDVI threshold.
+   *   Rasterize the corrected array, update metadata and export as a .tif.
+   *   Upload to S3 and delete file locally. 
 
-The notebook includes:
-*   Extract Parameters from Metadata: Outline the process for extracting necessary parameters from the NEON data metadata.
-
-*   Topographic Correction using SCS Method: Detailed steps and code implementation for applying the Sun-Canopy-Sensor (SCS) method for topographic correction.
-
-*   Function for Plotting Aspect and Illumination: A function to visualize aspect, illumination alongside original and corrected reflectance values.
-
-*   Statistical Analysis of Pixel Values: Analyzing pixel value distributions before and after the topographic correction.
-
-*   Correlation Analysis: Evaluating the correlation between different variables in the dataset.
-
-*   NDVI Analysis: Application of the Normalized Difference Vegetation Index (NDVI) on the dataset.
-
-For a detailed walkthrough, see the notebook: [Topo_Corr_SCS.ipynb](https://github.com/earthlab/cross-sensor-cal/blob/janushi-main/Topo_Corr_using_Methods/Topo_Corr_SCS_final.ipynb)
+For a detailed walkthrough, see the notebook: [NA]
 
 
 ### SCS+C (Sun-Canopy-Sensor + Cosine) Topographic Correction
