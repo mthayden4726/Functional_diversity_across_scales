@@ -1,7 +1,7 @@
 # Documenation of Workflow for BioSCape Scale-Normalized Functional Diversity 
 
 ## Table of Contents
-1. [Environment Setup for BioSCape: Biodiversity Across Scales](#environment-setup-for-macrosystems-project)
+1. [Environment Setup for BioSCape: Biodiversity Across Scales](#environment-setup-for-bioscape)
 2. [Topographic Correction using methods for NIWO (multiple flightlines)](#topographic-correction-using-methods-for-niwo-multiple-flightlines)
 3. [Calculating Sun Angles](#calculating-sun-angles)
 4. [Extracting Slope and Aspect for Drone Data using DEM](#extracting-slope-and-aspect-for-drone-data-using-dem)
@@ -16,44 +16,50 @@ This section details the steps for setting up the environment required for the B
 ### Dependencies
 Before starting, make sure you have the [environment.yml](https://github.com/mthayden4726/BioSCape_across_scales/blob/4fd0ba43a21235032893b45b26042cf354a5a22a/environment.yml) file. This file contains all the necessary dependencies.
 
-If you are setting up a new instance, follow the [Step-by-Step Guide](#step-by-step-guide). If you have already set up an instance, skip ahead to [Running the code](#running-the-code). 
+If you are setting up a new instance, follow the [Step-by-Step Guide](#step-by-step-guide). If you have already set up an instance, skip ahead to [restarting an instance](#restarting-an-instance). 
 ### Step-by-Step Guide
-1.  Prepare the Environment File
-Locate your environment.yml file. This should include all dependencies from name: bioscape-gra to the prefix line.
-
-2.  Open Command Line Interface
-    Depending on your operating system, use the following:
-    Windows Users: Anaconda Prompt or Command Prompt.
-    macOS/Linux Users: Terminal application.
-
-3.  Navigate to File Location: 
-    In your CLI, navigate to the directory containing environment.yml using the cd command.
-
-4.  Create the Conda Environment: Run the following command to create the Conda environment:
-
-    ``` conda env create -f environment.yml ```
-
-    This will set up an environment named cires-demo and install all necessary packages.
-
-5.  Activate the Environment
-    Switch to your new environment with:
-    ```conda activate cires-demo ``` 
-    It's important to activate cires-demo to access the installed packages.
-
-6.  Verify Installation
-    To check if all packages are installed correctly:
-    ``` conda list```
-    This command lists all packages in the cires-demo environment.
-
-7.  Environment Ready
+1.  Open Command Line Interface
+Depending on your operating system, use the following:
+    * Windows Users: Anaconda Prompt or Command Prompt.
+    * macOS/Linux Users: Terminal application.
+2.  SSH into AWS instance
+    * ``` ssh -i meha3816.pem ec2-user@ec2-44-238-190-104.us-west-2.compute.amazonaws.com ```
+    * The path will vary depending on the user and instance ID. To find the instance ID, click on "InstanceID" and then select "Connect" in the AWS EC2 interface.
+3.  Install anaconda, run the installer and make sure it is on your path.
+    * ``` wget https://repo.anaconda.com/archive/Anaconda3-2023.03-1-Linux-x86_64.sh ```
+    * ``` bash Anaconda3-2023.03-1-Linux-x86_64.sh ```
+    * ``` source ~/.bashrc ```
+4. Install git
+    * ``` sudo yum install git ```
+5. Clone the git repository
+    * ``` git clone https://github.com/mthayden4726/BioSCape_across_scales ```
+    * You will be asked for a password for which you can enter your personal token. The personal token for mthayden4726 expires July 13, 2024 and is: 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
+6. Create and activate the environment
+    * First, enter the project directory: ```cd BioSCape_across_scales ```
+    * Next, create environment: ``` conda env create -n bioscape-env --file environment.yml ```
+          * Note: If this environment does not build, I have additional steps listed in steps #9 & #11 in [AWS & Git Integration Steps](https://docs.google.com/document/d/1slMC_8aWb2bYjJKfHYCFtAxefhWc12xr_H9IauA0B7g/edit)
+      * If the conda build is taking too long, use libmama instead. Follow these alternative steps to update conda, install libmama and then build the environment:
+        1. ``` conda update conda ```
+        2. ``` conda update conda-build ```
+        3. ``` conda install -n base conda-libmamba-solver ```
+        4. ``` conda config --set solver libmamba ```
+        5. ``` conda env create -n bioscape-env --file environment.yml ```
+    * Finally, activate the environment: ``` source activate bioscape-env ```
+7. Environment Ready
     After these steps, your environment is set up and ready for project work.
 
-### Step-by-Step Guide
+### Re-starting an instance
 Once your instance is launched on AWS, for all subsequent times you connect you can:
 1. Open terminal
 2. ssh into instance (e.g., ssh -i meha3816.pem ec2-user@ec2-44-238-190-104.us-west-2.compute.amazonaws.com)
-*If instance was already started and steps below completed without termination, ONLY this step needs to be completed before running code from BioSCape_across_scales directory)*
-
+3. Start a virtual screen
+    * *This is not strictly necessary but I like to do this to ensure that the code continues to run if my local machine stops*
+    * To start a new screen, ``` screen -S name ```
+    * To resume an existing screen, ``` screen -r name ```
+    * To exit a screen, Ctrl + A.
+5. Change directory and activate environment.
+    * ``` cd BioSCape_across_scales ```
+    * ``` source activate bioscape-env ```
 
 ## Topographic Correction using methods for NIWO (multiple flightlines)
 **Data Product Name:** NEON_D13_NIWO_DP3_449000_4435000_reflectance.h5
