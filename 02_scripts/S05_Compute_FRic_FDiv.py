@@ -53,7 +53,7 @@ comps = 3 # default component numbers for PCA
 
 # Use arg parse for local variables
 # Create the parser
-parser = argparse.ArgumentParser(description="Input script for clipping flightlines.")
+parser = argparse.ArgumentParser(description="Input script for computing functional diversity metrics.")
 
 # Add the arguments
 parser.add_argument('--SITECODE', type=str, required=True, help='SITECODE (All caps)')
