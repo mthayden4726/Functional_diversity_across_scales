@@ -165,9 +165,9 @@ objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
 shapefiles = [obj['Key'] for obj in objects if obj['Key'].endswith('.shp') and (search_criteria in obj['Key'])]
 shapefile_names = set()
 for i,shp in enumerate(shapefiles):
-    match = re.search(r'_(.*?).shp', shp)
+    match = re.search(r'Site_boundaries/(.*?)/(.*?)_(.*?).shp', shp)
     if match:
-        shapefile_name = match.group(1)
+        shapefile_name = match.group(3)
         print(shapefile_name)
         shapefile_names.add(shapefile_name)
     else:
