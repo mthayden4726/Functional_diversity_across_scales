@@ -5,14 +5,16 @@
 2. [Environment Setup for BioSCape: Biodiversity Across Scales](#environment-setup-for-bioscape)
 3. [Function Library](#function-library)
 4. [Image Correction: Topo/BRDF Correction and Radiometric Filtering of Flightlines](#image-correction)
-5. [Image Clipping: ](#image-clipping)
-6. [Image Mosaic: ](#image-mosaic)
-7. [Functional Diversity Computation: ](#functional-diversity-computation)
-8. [Environmental Covariates: ](#environmental-covariates)
-9. [Scaling Analysis: ](#scaling-analysis)
+5. [Image Clipping: Subsetting Data to NEON Plots](#image-clipping)
+6. [Image Mosaic: Setting the Scene for Diversity Calculations](#image-mosaic)
+7. [Functional Diversity Computation: Calculating Functional Richness and Functional Divergence across Window Sizes](#functional-diversity-computation)
+8. [Environmental Covariates: Assessing Environmental Characteristics of NEON Sites](#environmental-covariates)
+9. [Scaling Analysis: Creating a Scale-Normalized Functional Diversity Metric](#scaling-analysis)
    
 ## Workflow for BioSCape 
+ADD TEXT
 
+![Workflow for extracting scale-normalized diversity from NEON AOP reflectance data across 17 sites]((https://github.com/mthayden4726/BioSCape_across_scales/assets/70178120/187d103c-8122-4108-a1b2-ea29ff3883d7) "Scale-Normalized Functional Diversity Workflow")
 ## Environment Setup for BioSCape
 This section details the steps for setting up the environment required for the BioSCape project. Follow these steps to ensure a smooth and consistent development environment.
 ### Dependencies
