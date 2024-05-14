@@ -65,7 +65,32 @@ Once your instance is launched on AWS, for all subsequent times you connect you 
     * ``` source activate bioscape-env ```
 
 ## Function Library
-ADD TEXT HERE
+All of the supporting functions necessary to run this workflow are in the script [02_scripts/S01_Functions.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/608d9a2d1b883640afa6566f39fd39991e04b9ee/02_scripts/S01_Functions.py).
+
+The functions to compute functional richness and functional divergence across neighborhood/window sizes have their own files:
+   * [02_scripts/S01_Moving_Window_FRic.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/608d9a2d1b883640afa6566f39fd39991e04b9ee/02_scripts/S01_Moving_Window_FRIC.py)
+   * [02_scripts/S01_Moving_Window_FDiv.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/608d9a2d1b883640afa6566f39fd39991e04b9ee/02_scripts/S01_Moving_Window_FDiv.py)
+
+### Computing Functional Richness
+Our computation of functional richness uses the ConvexHull() function implemented in scipy.spatial. We also wrote a function which subsets the input PCA into subarrays and calculates functional richness for each window using a moving window approach. This gives us a set of functional richness values across every window in the scene, from which we take the median to represent the functional richness for the plot at a given area. 
+
+Specifically, the function ```window_calcs_fric() ``` uses a moving window approach to loop across the input PCA, segmenting the PCA into subarrays of the appropriate window size and calculating functional richness as the volume of the convex hull for each subarray.
+   * This function is parallelized such that the same approach is running simultaneously for multiple window sizes. 
+
+### Computing Functional Divergence
+There are two primary components to compute functional divergence:
+   * Function for calculating functional divergence for a single subarray
+   * Function for subsetting PCA into subarrays and calculating functional divergence for each using a moving window approach
+
+First, the function ```calc_fdiv()``` computes functional divergence.
+   * This function requires a PCA-transformed raster as an input.
+   * The function calculates the mean pixel value in dimension 1, and then calculates the euclidean distance of each pixel from the mean.
+   * Ultimately, functional divergence combines the mean of those distances and the deviations from the mean, following Villeger et al., 2008 as:
+     ![image](https://github.com/mthayden4726/BioSCape_across_scales/assets/70178120/b51a62ec-0c03-4593-a95e-83ac7769e3e7)
+
+Second, the function ```window_calcs_fdiv() ``` uses a moving window approach to loop across the PCA, segmenting the PCA into subarrays of the appropriate window size and calculating functional divergence for each subarray.
+   * This function is parallelized such that the same approach is running simultaneously for multiple window sizes. 
+
 
 ## Image Correction
 The first step of the workflow is to implement topographic and BRDF corrections (as well as an NDVI threshold) based on correction coefficients provided by Kyle Kovach. *If correction coefficients are not available, this step could be skipped*
