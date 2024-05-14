@@ -126,9 +126,9 @@ for i,file in enumerate(file_names):
     neon = ht.HyTools() 
     neon.read_file(img,'neon')
     print("file loaded")
-    topo_file = "NEON BRDF-TOPO Corrections/2019_' + SITECODE + '/NEON_' + SITE_STR_SHORT + '_DP1_' + file + "_reflectance_topo_coeffs_topo.json"
+    topo_file = 'NEON BRDF-TOPO Corrections/2019_' + SITECODE + '/NEON_' + SITE_STR_SHORT + '_DP1_' + file + '_reflectance_topo_coeffs_topo.json'
     print(topo_file)
-    brdf_file = "NEON BRDF-TOPO Corrections/2019_' + SITECODE + '/NEON_' + SITE_STR_SHORT + '_DP1_' + file + "_reflectance_brdf_coeffs_topo_brdf.json"
+    brdf_file = 'NEON BRDF-TOPO Corrections/2019_' + SITECODE + '/NEON_' + SITE_STR_SHORT + '_DP1_' + file + '_reflectance_brdf_coeffs_topo_brdf.json'
     try:
         s3.download_file(bucket_name, topo_file, Data_Dir + '/topo.json')
         s3.download_file(bucket_name, brdf_file, Data_Dir + '/brdf.json')
