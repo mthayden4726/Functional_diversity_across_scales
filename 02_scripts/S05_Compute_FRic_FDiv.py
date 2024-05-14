@@ -39,6 +39,7 @@ from csv import writer
 from S01_Functions import * # add scripts folder to python path manager
 from S01_Moving_Window_FRIC import *
 from S01_Moving_Window_FDiv import *
+import argparse
 
 # Set directories
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
