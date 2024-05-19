@@ -1,3 +1,5 @@
+## CURRENTLY IN PROGRESS - NOT RUNNING ###
+
 ## Workflow for going from original NEON flightline to output of functional metrics ##
 # Pulls functions from multiple other scripts.
 
