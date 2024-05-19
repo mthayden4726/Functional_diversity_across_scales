@@ -1,12 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Script containing functions for processing imagery and calculating spectral diversity metrics.
-- Functional richness
-- Functional evenness (in progress)
-- Functional divergence (in progress)
-
-Additionally contains processing functions to:
+Script containing processing functions to:
     - plot an RGB map of multi-band raster.
     - find and load NEON files
     - subsample pixels and scale, center and fit PCA to subsample
@@ -85,7 +80,7 @@ def find_neon_files(SITECODE, PRODUCTCODE,
     """
     # Server's URL will remain the same
     SERVER = 'http://data.neonscience.org/api/v0/'
-    # Build so that we can loop through reading files in
+    # Build url with user inputs
     url = SERVER+'data/'+PRODUCTCODE+'/'+SITECODE+'/'+YEAR
     # Request the url
     data_request = requests.get(url)
@@ -118,9 +113,12 @@ def retrieve_neon_files(file_paths, data_directory):
     """
     files = []
     for file_path in file_paths:
+        # for each file path, join path name with directory where it should be stored
         base_name = os.path.basename(file_path)
         save_path = os.path.join(data_directory, base_name)
+        # retrieve files
         loc, message = urlretrieve(file_path, save_path)
+        # add location of file to list
         files.append(loc)
     return files
 
@@ -128,6 +126,22 @@ def retrieve_neon_files(file_paths, data_directory):
 
 # Download shapefile from S3 Bucket
 def download_shapefile(bucket, prefix, output_dir):
+    """Function to download all necessary files to constitute a shapefile from AWS S3 Bucket.
+    
+    Parameters:
+    -----------
+    
+    bucket: string of bucket name
+    
+    prefix: string identifying which set of files should be downloaded
+
+    output_dir: string of location in which to store files locally
+   
+    Returns:
+    -----------
+    files: list of locations of downloaded files on OS
+    
+    """
     # List all files with the given prefix
     files = s3.list_objects(Bucket=bucket, Prefix=prefix)['Contents']
 
@@ -149,9 +163,9 @@ def upload_to_s3(bucket_name, file_path, s3_key):
     """
     Upload a file from an EC2 instance to Amazon S3.
 
-    :param bucket_name: Name of the S3 bucket
-    :param file_path: Local path to the file on the EC2 instance
-    :param s3_key: Destination key in the S3 bucket (e.g., folder/file_name.ext)
+    bucket_name: Name of the S3 bucket
+    file_path: Local path to the file on the EC2 instance
+    s3_key: Destination key in the S3 bucket (e.g., folder/file_name.ext)
     """
     # Initialize the S3 client
     s3 = boto3.client('s3')
@@ -162,6 +176,8 @@ def upload_to_s3(bucket_name, file_path, s3_key):
         print(f'Successfully uploaded {file_path} to {bucket_name}/{s3_key}')
     except Exception as e:
         print(f"Error uploading file: {e}")
+
+
 ## 3. Processing Images ####
 
 # Convert array to raster (single band)
