@@ -1,11 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Aug 29 10:28:57 2023
+Script to perform BRDF and Topographical corrections on NEON flightlines using correction coefficients from Kovach et al. 
 
-@author: meha3816
+Author: M. Hayden
+Updated: May 20, 2024
+
+User input:
+1. Name of the NEON site (e.g., BART)
+2. Domain of the NEON site (e.g., D01)
+3. ID of desired flights (e.g., 5)
+4. Date of desired flights (e.g., 20190825)
+5. Date and ID of desired flights (e.g., 2019082513)
+6. EPSG of NEON site (e.g., 32619)
+7. Desired NDVI threshold (e.g., 0.25)
+
 """
 
+# Load required libraries
 import hytools as ht
 import matplotlib.pyplot as plt
 import numpy as np
@@ -71,8 +83,6 @@ DATE_ID = args.DATE_ID
 epsg = args.EPSG
 ndvi_threshold = args.NDVI
 
-# assign local variables
-
 SITE_STR = DOMAIN + '/' + '2019_' + SITECODE + '_' + ID_NO
 SITE_STR_SHORT = DOMAIN + '_' + SITECODE
 
@@ -82,9 +92,12 @@ dirpath = "NEON BRDF-TOPO Corrections/2019_" + SITECODE + "/"
 
 # List objects in the S3 bucket in the matching directory
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
+
 # Filter objects based on the search criteria
 files = [obj['Key'] for obj in objects if obj['Key'].endswith('.json') and (search_criteria in obj['Key'])]
+# Create empty set for file names
 file_names = set()
+# For each reflectance file, add ID to list
 for i,file in enumerate(files):
     match = re.search(r'DP1_(.*?)_reflectance', file)
     if match:
@@ -96,7 +109,7 @@ for i,file in enumerate(files):
 file_names = list(file_names)  # Convert set back to a list if needed
 print(file_names)
 
-# Loop through all BART files
+# Loop through all files in list created above
 for i,file in enumerate(file_names):
 
     # Set to none to reduce memory use
@@ -113,11 +126,13 @@ for i,file in enumerate(file_names):
     fullarraystack = None
     ndvi = None
     mask = None
-    
+
+    # Retrieve and load reflectance as hytools object
     print(file)
     flight = 'https://storage.googleapis.com/neon-aop-products/2019/FullSite/'+ SITE_STR + '/L1/Spectrometer/ReflectanceH5/' + DATE_ID + '/NEON_' + SITE_STR_SHORT + '_DP1_' + file +'_reflectance.h5'
     files = []
     files.append(flight)
+    # Download file
     try:
         retrieve_neon_files(files, Data_Dir)
     except Exception as e:
@@ -125,7 +140,9 @@ for i,file in enumerate(file_names):
     img = Data_Dir + '/NEON_' + SITE_STR_SHORT + '_DP1_' + file + '_reflectance.h5'
     neon = ht.HyTools() 
     neon.read_file(img,'neon')
-    print("file loaded")
+    print("Flightline loaded")
+    
+    # Load correction coefficients
     topo_file = 'NEON BRDF-TOPO Corrections/2019_' + SITECODE + '/NEON_' + SITE_STR_SHORT + '_DP1_' + file + '_reflectance_topo_coeffs_topo.json'
     print(topo_file)
     brdf_file = 'NEON BRDF-TOPO Corrections/2019_' + SITECODE + '/NEON_' + SITE_STR_SHORT + '_DP1_' + file + '_reflectance_brdf_coeffs_topo_brdf.json'
@@ -139,19 +156,25 @@ for i,file in enumerate(file_names):
     brdf_coeffs = Data_Dir + "/brdf.json"
     neon.load_coeffs(topo_coeffs,'topo')
     neon.load_coeffs(brdf_coeffs, 'brdf')
-    print("corrections loaded")
+    print("Corrections loaded")
+
+    # Correct and export reflectance as a raster
     # Store map info for raster
     refl_md, header_dict = store_metadata(neon, epsg)
-    # Export with corrections
+    # Remove bad bands
     wavelength = header_dict['wavelength']
     good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
     good_wl_list = good_wl[~np.isnan(good_wl)]
-    print("creating arrays")
+    # Perform corrections on each 'good' band
+    print("Creating arrays")
     arrays = [neon.get_wave(wave, corrections= ['topo','brdf'], mask = None) for wave in good_wl_list]
-    print("stacking arrays")
+    # Stack all corrected bands
+    print("Stacking arrays")
     fullarraystack = np.dstack(arrays)
-    print("Shape of fullarraystack:", fullarraystack.shape)
-    print("calculating ndvi")
+    print("Shape of corrected array:", fullarraystack.shape)
+    
+    # Perform radiometric corrections using NDVI threshold
+    print("Calculating ndvi")
     ndvi = np.divide((fullarraystack[:, :, nir_band] - fullarraystack[:, :, red_band]), (fullarraystack[:, :, nir_band] + fullarraystack[:, :, red_band]), 
                      where=(fullarraystack[:, :, nir_band] + fullarraystack[:, :, red_band]) != 0)
     print("Shape of ndvi array:", ndvi.shape)
@@ -160,13 +183,15 @@ for i,file in enumerate(file_names):
     print("Shape of mask array:", mask.shape)
     print("masking by ndvi")
     fullarraystack[mask, :] = np.nan
+    
+    # Rasterize and export array to S3
+    print("Rasterizing array")
     destination_s3_key = SITECODE + '_flightlines/'+ str(file)+'_output_' + '.tif'
     local_file_path = Out_Dir + '/output_fullarray_' + file + '.tif'
     print(local_file_path)
-    print("rasterizing array")
     array2rastermb(local_file_path, fullarraystack, refl_md, Out_Dir, epsg = refl_md['epsg'], bands = fullarraystack.shape[2])
-    print("uploading array")
+    print("Uploading array")
     upload_to_s3(bucket_name, local_file_path, destination_s3_key)
     os.remove(local_file_path)
     os.remove(img)
-    print("flightline complete")
+    print("Flightline complete. Next flightline!")
