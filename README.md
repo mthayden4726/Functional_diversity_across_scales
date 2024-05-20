@@ -25,10 +25,7 @@ Processing scripts should be implemented as:
 4. Compute functional richness and divergence metrics for each field site's raster (**S05** scripts)
 5. Analyze the output to assess scaling of functional metrics with area (**S06** scripts)
 
-**Authors:** M. Hayden, C. Amaral, M. Rossi, N. Stavros
+**Authors:** M. Hayden, M. Rossi, C. Amaral, N. Stavros
 
-Updated: May 14th, 2024
+[![DOI](https://zenodo.org/badge/628900130.svg)](https://zenodo.org/doi/10.5281/zenodo.11223172)
 
-Next: Combining scripts into workflow based on FUNCTIONS (currently requires input for each site) --> script in progress: Workflow.py
-
-Currently: Change site code and variables for each run; see scripts with various site code suffices.
