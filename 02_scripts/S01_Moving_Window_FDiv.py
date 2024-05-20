@@ -10,6 +10,17 @@ from scipy.sparse.csgraph import minimum_spanning_tree
 
 # Calculate functional divergence from PCA
 def calculate_FDiv(pca):
+    """Function to calculate functional divergence from a PCA.
+    
+    Parameters:
+    -----------
+    pca: PCA object.
+        
+    Returns:
+    -----------
+    FDiv: value of FDiv for the given PCA chunk.
+    
+    """
     # Calculate mean of PCA data along the first axis
     mean_pca = np.mean(pca, axis=0)
     # Euclidean distances to mean along the first axis
