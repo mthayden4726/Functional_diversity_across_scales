@@ -25,7 +25,9 @@ Processing scripts should be implemented as:
 4. Compute functional richness and divergence metrics for each field site's raster (**S05** scripts)
 5. Analyze the output to assess scaling of functional metrics with area (**S06** scripts)
 
-**Authors:** M. Hayden, M. Rossi, C. Amaral, N. Stavros
+**Authors:** M. Hayden
+
+**Cite this software:** Hayden, M. (2024). Functional diversity across scales (Version 0.1.0) [Computer software]. https://doi.org/10.5281/zenodo.11223173
 
 [![DOI](https://zenodo.org/badge/628900130.svg)](https://zenodo.org/doi/10.5281/zenodo.11223172)
 
