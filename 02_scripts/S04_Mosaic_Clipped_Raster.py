@@ -1,3 +1,18 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Script to mosaic clipped and corrected rasters for analyses.
+
+Author: M. Hayden
+Updated: May 20, 2024
+
+User input:
+1. Name of the NEON site (e.g., BART)
+2. EPSG (e.g., 32619)
+    
+"""
+
+# Load required libraries
 import rasterio
 from rasterio.merge import merge
 from rasterio.plot import show
@@ -19,6 +34,7 @@ import numpy as np
 from S01_Functions import * # add scripts folder to python path manager
 import argparse
 
+# Set global parameters
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
 Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
 bucket_name = 'bioscape.gra'
@@ -43,7 +59,7 @@ args = parser.parse_args()
 SITECODE = args.SITECODE
 EPSG = args.EPSG
 
-# Identify plot IDs
+# Identify plot IDs for a given site
 # List shapefiles for a site in the S3 bucket in the matching directory
 search_criteria = SITECODE
 dirpath = "Site_boundaries/" + SITECODE + "/"
@@ -62,9 +78,8 @@ for i,shp in enumerate(shapefiles):
 file_ID = list(shapefile_names)  # Convert set back to a list if needed
 print(shapefile_names)
 
-# Loop through plots, collect clipped files and mosaic
+# Loop through plot IDs, identify clipped files matching plots, and mosaic them together
 src_files_to_mosaic = []
-
 for i,ID in enumerate(file_ID):
     src_files_to_mosaic = []
     # List files associated with a single buffer shape
@@ -112,10 +127,12 @@ for i,ID in enumerate(file_ID):
             # Write modified array to new TIFF
             with rasterio.open(modified_flight, "w", **out_meta) as dest:
                 dest.write(array)
-        modified_src = rasterio.open(modified_flight)
+        modified_src = rasterio.open(modified_flight)]
+        # Add modified file to list to mosaic
         src_files_to_mosaic.append(modified_src)
 
     # Mosaic files
+    print('Merging files for plot:', ID)
     print(src_files_to_mosaic)
     mosaic, out_trans = merge(src_files_to_mosaic, method = 'max')
     print('Merge complete')
