@@ -1,11 +1,20 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Tue Aug 29 10:28:57 2023
+Script to load, clip and summarize elevation and canopy height within plot boundaries using user-created shapefiles and NEON environmental data.
 
-@author: meha3816
+Author: M. Hayden
+Updated: May 20, 2024
+
+User input:
+1. Name of the NEON site in all caps (e.g., BART)
+2. Domain of the NEON site (e.g., D01)
+3. ID of NEON site (e.g., 4)
+4. Date of desired flights as YYYY-MM (e.g., 201908)
+5. Environmental raster of interest (DTM or CHM)
+
 """
-
+# Load required libraries
 import hytools as ht
 import matplotlib.pyplot as plt
 import numpy as np
