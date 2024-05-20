@@ -1,3 +1,6 @@
+## This script is in progress - as of May 2024, I did not get functional evenness to work ##
+
+
 import numpy as np
 from scipy.sparse.csgraph import minimum_spanning_tree
 from scipy.spatial.distance import pdist, squareform
