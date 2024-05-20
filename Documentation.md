@@ -1,4 +1,4 @@
-# Documenation of Workflow for BioSCape Scale-Normalized Functional Diversity 
+# Documentation of Workflow for BioSCape Scale-Normalized Functional Diversity 
 
 ## Table of Contents
 1. [Workflow for BioSCape: Biodiversity Across Scales](#workflow-for-bioscape)
