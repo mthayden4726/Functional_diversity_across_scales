@@ -1,5 +1,7 @@
 # BioSCape_across_scales
 
+[![DOI](https://zenodo.org/badge/628900130.svg)](https://zenodo.org/doi/10.5281/zenodo.11223172)
+
 **Goal:** Process airborne hyperspectral imagery to produce maps of functional richness, divergence and evenness.
 
 **Scripts implemented in Python**
@@ -28,6 +30,4 @@ Processing scripts should be implemented as:
 **Authors:** M. Hayden
 
 **Cite this software:** Hayden, M. (2024). Functional diversity across scales (Version 0.1.0) [Computer software]. https://doi.org/10.5281/zenodo.11223173
-
-[![DOI](https://zenodo.org/badge/628900130.svg)](https://zenodo.org/doi/10.5281/zenodo.11223172)
 
