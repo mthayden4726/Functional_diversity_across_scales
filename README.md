@@ -18,7 +18,7 @@ See [Documentation.md](https://github.com/mthayden4726/BioSCape_across_scales/bl
 
 **S05:** Compute Functional Metrics.
 
-**S04:** Model Scaling Relationships (Functional Metrics ~ Area)
+**S06:** Model Scaling Relationships (Functional Metrics ~ Area)
 
 Processing scripts should be implemented as:
 1. Correct (BRDF/Topo), mask (NDVI threshold) and export flightlines as tiffs (**S02** scripts)
