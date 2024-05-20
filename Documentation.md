@@ -265,6 +265,9 @@ The script includes:
 
 For a detailed walkthrough, see the notebook: [NA]
 
+## Condensed FRic & FDiv Workflow
+To run all of the above scripts for a single NEON site and associated parameters, users can input their parameters and run the following script which executes S02-S05 in order: [S07_Full_Workflow.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/28b4a40efab78a0c74ba37c81fc44798cb353f56/02_scripts/S07_Full_Workflow.py)
+
 ## Environmental Covariates
 The fifth step of the workflow is to process the environmental covariates for each site to get summary characteristics for each plot (within a NEON site). For our implementation, there is one input:
 1. The plot shapefiles (located in S3 bucket "Site_boundaries/")
@@ -305,9 +308,12 @@ For a detailed walkthrough, see the notebook: [NA]
 The final step of the workflow is to fit scaling relationships to the functional richness and divergence outputs and extract parameters (exponent and coefficient) from the model fits. For our implementation, there is one input:
 1. The FRic and FDiv results files (located in S3 bucket "/")
 
-**Objective:** Fit power law functions to the functional diversity metrics and extract parameters of interest using [02_scripts/S07_Scaling_Functions.py](NA)
+Currently, this script is implemented in R and requires downloading the files to your local machine. 
+
+I have also compiled all of the summarized parameters (c, z and all associated covariates, including species richness, slope, elevation, etc.) are [here](https://o365coloradoedu-my.sharepoint.com/:x:/r/personal/meha3816_colorado_edu/Documents/NEON_Data_for_Analysis.csv?d=w49acfbaade6d4e239c83d521acd9cfee&csf=1&web=1&e=gCBfOY).
+
+**Objective:** Fit power law functions to the functional diversity metrics and extract parameters of interest using [02_scripts/S08_Scaling_Relationships.R](https://github.com/mthayden4726/BioSCape_across_scales/blob/28b4a40efab78a0c74ba37c81fc44798cb353f56/02_scripts/S08_Scaling_Relationships.R)
 
 ### Implementation:
-Example command: ``` python 02_scripts/S07_Scaling_Functions.py ```
 
 SCRIPT IN PROGRESS - TRANSLATING FROM R AND FOR USE WITH S3. 
