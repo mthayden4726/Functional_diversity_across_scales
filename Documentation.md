@@ -299,6 +299,8 @@ The script includes:
 
 For a detailed walkthrough, see the notebook: [NA]
 
+** Note: Right now, processing slope is a separate file - could be combined with the processing of elevation!
+
 ## Scaling Analysis 
 The final step of the workflow is to fit scaling relationships to the functional richness and divergence outputs and extract parameters (exponent and coefficient) from the model fits. For our implementation, there is one input:
 1. The FRic and FDiv results files (located in S3 bucket "/")
