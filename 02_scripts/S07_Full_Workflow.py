@@ -5,6 +5,10 @@ Script that loops through individual files to correct, clip, mosaic and compute 
 
 User must define parameters that feed into calling each script. 
 
+Requires:
+- correction coefficients
+- shapefiles (plot boundaries)
+
 
 Author: M. Hayden
 Last Updated: 1/23/24
