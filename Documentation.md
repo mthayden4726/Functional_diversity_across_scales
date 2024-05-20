@@ -39,7 +39,7 @@ Depending on your operating system, use the following:
     * ``` sudo yum install git ```
 5. Clone the git repository
     * ``` git clone https://github.com/mthayden4726/BioSCape_across_scales ```
-    * You will be asked for a password for which you can enter your personal token. The personal token for **mthayden4726** expires July 13, 2024 and is: **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**
+    * You will be asked for a password for which you can enter your personal token.
 6. Create and activate the environment
     * First, enter the project directory: ```cd BioSCape_across_scales ```
     * Next, create environment: ``` conda env create -n bioscape-env --file environment.yml ```
