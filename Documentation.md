@@ -20,7 +20,7 @@ ADD TEXT
 ## Environment Setup for BioSCape
 This section details the steps for setting up the environment required for the BioSCape project. Follow these steps to ensure a smooth and consistent development environment.
 ### Dependencies
-Before starting, make sure you have the [environment.yml](https://github.com/mthayden4726/BioSCape_across_scales/blob/4fd0ba43a21235032893b45b26042cf354a5a22a/environment.yml) file. This file contains all the necessary dependencies.
+Before starting, make sure you have the [environment.yml](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/environment.yml) file. This file contains all the necessary dependencies.
 
 If you are setting up a new instance, follow the [Step-by-Step Guide](#step-by-step-guide). If you have already set up an instance, skip ahead to [restarting an instance](#restarting-an-instance). 
 ### Step-by-Step Guide
