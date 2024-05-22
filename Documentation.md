@@ -67,11 +67,11 @@ Once your instance is launched on AWS, for all subsequent times you connect you 
     * ``` source activate bioscape-env ```
 
 ## Function Library
-All of the supporting functions necessary to run this workflow are in the script [02_scripts/S01_Functions.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/608d9a2d1b883640afa6566f39fd39991e04b9ee/02_scripts/S01_Functions.py).
+All of the supporting functions necessary to run this workflow are in the script [02_scripts/S01_Functions.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S01_Functions.py).
 
 The functions to compute functional richness and functional divergence across neighborhood/window sizes have their own files:
-   * [02_scripts/S01_Moving_Window_FRic.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/608d9a2d1b883640afa6566f39fd39991e04b9ee/02_scripts/S01_Moving_Window_FRIC.py)
-   * [02_scripts/S01_Moving_Window_FDiv.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/608d9a2d1b883640afa6566f39fd39991e04b9ee/02_scripts/S01_Moving_Window_FDiv.py)
+   * [02_scripts/S01_Moving_Window_FRic.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S01_Moving_Window_FRIC.py)
+   * [02_scripts/S01_Moving_Window_FDiv.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S01_Moving_Window_FDiv.py)
 
 Supporting functions included in this script include functions for:
    * **Interacting with the NEON database**
@@ -116,7 +116,7 @@ Second, the function ```window_calcs_fdiv()``` uses a moving window approach to 
 The first step of the workflow is to implement topographic and BRDF corrections (as well as an NDVI threshold) based on correction coefficients provided by Kyle Kovach. *If correction coefficients are not available, this step could be skipped*
 This section outlines the steps for correcting the NEON data product, spectrometer orthorectified surface directional reflectance: [DP1.30006.001](https://data.neonscience.org/data-products/DP1.30006.001)). 
 
-**Objective:** Correct variations in reflectance caused by BRDF & topographic effects like slope and aspect, as well as remove non-vegetated pixels, using the script [02_scripts/S02_TopoBRDF_Corrections.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/a73d3ea27cc2bff5dd30d4a6140351a09a150007/02_scripts/S02_TopoBRDF_Corrections_BART.py)
+**Objective:** Correct variations in reflectance caused by BRDF & topographic effects like slope and aspect, as well as remove non-vegetated pixels, using the script [02_scripts/S02_TopoBRDF_Corrections.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S02_TopoBRDF_Corrections_BART.py)
 
 ### Implementation:
 
@@ -161,7 +161,7 @@ The second step of the workflow is to clip corrected flightlines to the desired 
 1. The corrected flightlines (located in S3 bucket "SITENAME_flightlines/")
 2. The shapefiles for each plot boundary (located in S3 bucket "Site_boundaries/")
 
-**Objective:** Clip flightlines to areas of interest (to reduce processing time) using the script [02_scripts/S03_Clip_Corrected.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/4bee04f61cb48478cda5c2c340aaf6c690e3a29c/02_scripts/S03_Clip_Corrected_BART.py)
+**Objective:** Clip flightlines to areas of interest (to reduce processing time) using the script [02_scripts/S03_Clip_Corrected.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S03_Clip_Corrected_BART.py)
 
 ### Implementation:
 
@@ -193,7 +193,7 @@ For a detailed walkthrough, see the notebook: [NA]
 The third step of the workflow is to mosaic the clipped and corrected flightlines to create a 2.5 km x 2.5 km scene for analyses. For our implementation, there is one input:
 1. The clipped and corrected flightlines (located in S3 bucket "SITENAME_flightlines/Site_boundaries/SITENAME/")
 
-**Objective:** Mosaic clipped and corrected flightlines into scenes for analyses [02_scripts/S04_Mosaic_Clipped_Raster.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/4bee04f61cb48478cda5c2c340aaf6c690e3a29c/02_scripts/S04_Mosaic_Clipped_Raster_BART.py)
+**Objective:** Mosaic clipped and corrected flightlines into scenes for analyses [02_scripts/S04_Mosaic_Clipped_Raster.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S04_Mosaic_Clipped_Raster_BART.py)
 
 ### Implementation:
 
@@ -227,7 +227,7 @@ For a detailed walkthrough, see the notebook: [NA]
 The fourth step of the workflow is to compute functional richness and divergence across a set of window sizes for each mosaic produced in the previous step (representing a plot nested within a NEON site). For our implementation, there is one input:
 1. The mosaics (located in S3 bucket "SITENAME_flightlines/")
 
-**Objective:** Calculate functional richness and divergence across a set of neighborhood/window sizes for each scene using [02_scripts/S05_Compute_FRic_FDiv.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/4bee04f61cb48478cda5c2c340aaf6c690e3a29c/02_scripts/S05_Compute_FRic_FDiv.py)
+**Objective:** Calculate functional richness and divergence across a set of neighborhood/window sizes for each scene using [02_scripts/S05_Compute_FRic_FDiv.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S05_Compute_FRic_FDiv.py)
 
 ### Implementation:
 
@@ -266,13 +266,13 @@ The script includes:
 For a detailed walkthrough, see the notebook: [NA]
 
 ## Condensed FRic & FDiv Workflow
-To run all of the above scripts for a single NEON site and associated parameters, users can input their parameters and run the following script which executes S02-S05 in order: [S07_Full_Workflow.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/28b4a40efab78a0c74ba37c81fc44798cb353f56/02_scripts/S07_Full_Workflow.py)
+To run all of the above scripts for a single NEON site and associated parameters, users can input their parameters and run the following script which executes S02-S05 in order: [S07_Full_Workflow.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S07_Full_Workflow.py)
 
 ## Environmental Covariates
 The fifth step of the workflow is to process the environmental covariates for each site to get summary characteristics for each plot (within a NEON site). For our implementation, there is one input:
 1. The plot shapefiles (located in S3 bucket "Site_boundaries/")
 
-**Objective:** Extract summaries of elevation, slope and canopy height from NEON data at the plot-level using [02_scripts/S06_Process_Covariates.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/5411a8ab1337e47b79a0dbe6e3bc7141dde12c09/02_scripts/S06_Process_Covariates.py)
+**Objective:** Extract summaries of elevation, slope and canopy height from NEON data at the plot-level using [02_scripts/S06_Process_Covariates.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S06_Process_Covariates.py)
 
 ### Implementation:
 
@@ -312,7 +312,7 @@ Currently, this script is implemented in R and requires downloading the files to
 
 I have also compiled all of the summarized parameters (c, z and all associated covariates, including species richness, slope, elevation, etc.) are [here](https://o365coloradoedu-my.sharepoint.com/:x:/r/personal/meha3816_colorado_edu/Documents/NEON_Data_for_Analysis.csv?d=w49acfbaade6d4e239c83d521acd9cfee&csf=1&web=1&e=gCBfOY).
 
-**Objective:** Fit power law functions to the functional diversity metrics and extract parameters of interest using [02_scripts/S08_Scaling_Relationships.R](https://github.com/mthayden4726/BioSCape_across_scales/blob/28b4a40efab78a0c74ba37c81fc44798cb353f56/02_scripts/S08_Scaling_Relationships.R)
+**Objective:** Fit power law functions to the functional diversity metrics and extract parameters of interest using [02_scripts/S08_Scaling_Relationships.R](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S08_Scaling_Relationships.R)
 
 ### Implementation:
 
