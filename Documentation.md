@@ -116,7 +116,7 @@ Second, the function ```window_calcs_fdiv()``` uses a moving window approach to 
 The first step of the workflow is to implement topographic and BRDF corrections (as well as an NDVI threshold) based on correction coefficients provided by Kyle Kovach. *If correction coefficients are not available, this step could be skipped*
 This section outlines the steps for correcting the NEON data product, spectrometer orthorectified surface directional reflectance: [DP1.30006.001](https://data.neonscience.org/data-products/DP1.30006.001)). 
 
-**Objective:** Correct variations in reflectance caused by BRDF & topographic effects like slope and aspect, as well as remove non-vegetated pixels, using the script [02_scripts/S02_TopoBRDF_Corrections.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S02_TopoBRDF_Corrections_BART.py)
+**Objective:** Correct variations in reflectance caused by BRDF & topographic effects like slope and aspect, as well as remove non-vegetated pixels, using the script [02_scripts/S02_TopoBRDF_Corrections.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S02_TopoBRDF_Corrections.py)
 
 ### Implementation:
 
@@ -161,7 +161,7 @@ The second step of the workflow is to clip corrected flightlines to the desired 
 1. The corrected flightlines (located in S3 bucket "SITENAME_flightlines/")
 2. The shapefiles for each plot boundary (located in S3 bucket "Site_boundaries/")
 
-**Objective:** Clip flightlines to areas of interest (to reduce processing time) using the script [02_scripts/S03_Clip_Corrected.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S03_Clip_Corrected_BART.py)
+**Objective:** Clip flightlines to areas of interest (to reduce processing time) using the script [02_scripts/S03_Clip_Corrected.py](https://github.com/mthayden4726/Functional_diversity_across_scales/blob/main/02_scripts/S03_Clip_Corrected.py)
 
 ### Implementation:
 
@@ -193,7 +193,7 @@ For a detailed walkthrough, see the notebook: [NA]
 The third step of the workflow is to mosaic the clipped and corrected flightlines to create a 2.5 km x 2.5 km scene for analyses. For our implementation, there is one input:
 1. The clipped and corrected flightlines (located in S3 bucket "SITENAME_flightlines/Site_boundaries/SITENAME/")
 
-**Objective:** Mosaic clipped and corrected flightlines into scenes for analyses [02_scripts/S04_Mosaic_Clipped_Raster.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S04_Mosaic_Clipped_Raster_BART.py)
+**Objective:** Mosaic clipped and corrected flightlines into scenes for analyses [02_scripts/S04_Mosaic_Clipped_Raster.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S04_Mosaic_Clipped_Raster.py)
 
 ### Implementation:
 
