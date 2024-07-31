@@ -4,9 +4,11 @@
 1. [Workflow for BioSCape: Biodiversity Across Scales](#workflow-for-bioscape)
 2. [Environment Setup for BioSCape: Biodiversity Across Scales](#environment-setup-for-bioscape)
 3. [Function Library](#function-library)
+### NEON-specific Data Processing
 4. [Image Correction: Topo/BRDF Correction and Radiometric Filtering of Flightlines](#image-correction)
 5. [Image Clipping: Subsetting Data to NEON Plots](#image-clipping)
 6. [Image Mosaic: Setting the Scene for Diversity Calculations](#image-mosaic)
+### Scale-Normalized Functional Diversity
 7. [Functional Diversity Computation: Calculating Functional Richness and Functional Divergence across Window Sizes](#functional-diversity-computation)
 8. [Environmental Covariates: Assessing Environmental Characteristics of NEON Sites](#environmental-covariates)
 9. [Scaling Analysis: Creating a Scale-Normalized Functional Diversity Metric](#scaling-analysis)
