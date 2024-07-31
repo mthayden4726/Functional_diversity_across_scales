@@ -115,7 +115,7 @@ Second, the function ```window_calcs_fdiv()``` uses a moving window approach to 
    * This function is parallelized such that the same approach is running simultaneously for multiple window sizes. 
 
 # NEON-specific Processing Steps
-In order to operationalize this workflow, we are using hyperspectral data from the NEON AOP. The following sections detail the necessary steps for pre-processing of the NEON data. If using a different data source, jump ahead to [Scale-Normalized Functional Diversity] (#Scale-Normalization). 
+In order to operationalize this workflow, we are using hyperspectral data from the NEON AOP. The following sections detail the necessary steps for pre-processing of the NEON data. If using a different data source, jump ahead to [Scale-Normalized Functional Diversity](#scale-normalization). 
 
 ## Image Correction
 The first step of the workflow is to implement topographic and BRDF corrections (as well as an NDVI threshold) based on correction coefficients provided by Kyle Kovach. *If correction coefficients are not available, this step could be skipped*
