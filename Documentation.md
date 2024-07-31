@@ -8,9 +8,9 @@
 4. [Image Correction: Topo/BRDF Correction and Radiometric Filtering of Flightlines](#image-correction)
 5. [Image Clipping: Subsetting Data to NEON Plots](#image-clipping)
 6. [Image Mosaic: Setting the Scene for Diversity Calculations](#image-mosaic)
+7. [Environmental Covariates: Assessing Environmental Characteristics of NEON Sites](#environmental-covariates)
 ### Scale-Normalized Functional Diversity
-7. [Functional Diversity Computation: Calculating Functional Richness and Functional Divergence across Window Sizes](#functional-diversity-computation)
-8. [Environmental Covariates: Assessing Environmental Characteristics of NEON Sites](#environmental-covariates)
+8. [Functional Diversity Computation: Calculating Functional Richness and Functional Divergence across Window Sizes](#functional-diversity-computation)
 9. [Scaling Analysis: Creating a Scale-Normalized Functional Diversity Metric](#scaling-analysis)
    
 ## Workflow for BioSCape 
@@ -25,6 +25,7 @@ This section details the steps for setting up the environment required for the B
 Before starting, make sure you have the [environment.yml](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/environment.yml) file. This file contains all the necessary dependencies.
 
 If you are setting up a new instance, follow the [Step-by-Step Guide](#step-by-step-guide). If you have already set up an instance, skip ahead to [restarting an instance](#restarting-an-instance). 
+
 ### Step-by-Step Guide
 1.  Open Command Line Interface
 Depending on your operating system, use the following:
@@ -113,6 +114,8 @@ First, the function ```calc_fdiv()``` computes functional divergence.
 Second, the function ```window_calcs_fdiv()``` uses a moving window approach to loop across the PCA, segmenting the PCA into subarrays of the appropriate window size and calculating functional divergence for each subarray.
    * This function is parallelized such that the same approach is running simultaneously for multiple window sizes. 
 
+# NEON-specific Processing Steps
+In order to operationalize this workflow, we are using hyperspectral data from the NEON AOP. The following sections detail the necessary steps for pre-processing of the NEON data. If using a different data source, jump ahead to [Scale-Normalized Functional Diversity] (#Scale-Normalization). 
 
 ## Image Correction
 The first step of the workflow is to implement topographic and BRDF corrections (as well as an NDVI threshold) based on correction coefficients provided by Kyle Kovach. *If correction coefficients are not available, this step could be skipped*
@@ -225,6 +228,44 @@ The script includes:
 
 For a detailed walkthrough, see the notebook: [NA]
 
+## Environmental Covariates
+The fifth step of the workflow is to process the environmental covariates for each site to get summary characteristics for each plot (within a NEON site). For our implementation, there is one input:
+1. The plot shapefiles (located in S3 bucket "Site_boundaries/")
+
+**Objective:** Extract summaries of elevation, slope and canopy height from NEON data at the plot-level using [02_scripts/S06_Process_Covariates.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S06_Process_Covariates.py)
+
+### Implementation:
+
+This script requires the following input from users:
+   1. Name of the NEON site in all caps (e.g., BART)
+   2. Domain of the NEON site (e.g., D01)
+   4. ID of NEON site (e.g., 4)
+   5. Date of desired flights as YYYY-MM (e.g., 201908)
+   6. Environmental raster of interest (DTM or CHM)
+
+Example command: ```python 02_scripts/S06_Process_Covariates.py --SITECODE BART --DOMAIN D01 --ID_NO 5 --YEAR 2019-08 --ENV CHM```
+
+*For a list of parameters associated with sites included in analysis, see the [2019 NEON Site List](https://docs.google.com/spreadsheets/d/17DJtV1BKtq0uLfcYCtM2kp7JjjjaWpuEV_jt95l_830/edit#gid=124418455)*
+
+Global parameters include:
+   * Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
+   * Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
+   * bucket_name = 'bioscape.gra'
+   * s3 = boto3.client('s3')
+
+The script includes:
+*   Find all flightlines associated with the environmental covariate of interest and the area of interest (shapefile).
+*   For each flightline, clip to the area of interest.
+*   Mosaic together all clipped flightlines that align with the same area of interest.
+*   Extract summary metrics for each mosaic, including mean, median, min, max, std, and var.
+*   Export as .csv and upload to S3. 
+
+For a detailed walkthrough, see the notebook: [NA]
+
+** Note: Right now, processing slope is a separate file - could be combined with the processing of elevation!
+
+# Scale Normalization
+Input: a hyperspectral raster. 
 ## Functional Diversity Computation
 The fourth step of the workflow is to compute functional richness and divergence across a set of window sizes for each mosaic produced in the previous step (representing a plot nested within a NEON site). For our implementation, there is one input:
 1. The mosaics (located in S3 bucket "SITENAME_flightlines/")
@@ -270,41 +311,6 @@ For a detailed walkthrough, see the notebook: [NA]
 ## Condensed FRic & FDiv Workflow
 To run all of the above scripts for a single NEON site and associated parameters, users can input their parameters and run the following script which executes S02-S05 in order: [S07_Full_Workflow.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S07_Full_Workflow.py)
 
-## Environmental Covariates
-The fifth step of the workflow is to process the environmental covariates for each site to get summary characteristics for each plot (within a NEON site). For our implementation, there is one input:
-1. The plot shapefiles (located in S3 bucket "Site_boundaries/")
-
-**Objective:** Extract summaries of elevation, slope and canopy height from NEON data at the plot-level using [02_scripts/S06_Process_Covariates.py](https://github.com/mthayden4726/BioSCape_across_scales/blob/main/02_scripts/S06_Process_Covariates.py)
-
-### Implementation:
-
-This script requires the following input from users:
-   1. Name of the NEON site in all caps (e.g., BART)
-   2. Domain of the NEON site (e.g., D01)
-   4. ID of NEON site (e.g., 4)
-   5. Date of desired flights as YYYY-MM (e.g., 201908)
-   6. Environmental raster of interest (DTM or CHM)
-
-Example command: ```python 02_scripts/S06_Process_Covariates.py --SITECODE BART --DOMAIN D01 --ID_NO 5 --YEAR 2019-08 --ENV CHM```
-
-*For a list of parameters associated with sites included in analysis, see the [2019 NEON Site List](https://docs.google.com/spreadsheets/d/17DJtV1BKtq0uLfcYCtM2kp7JjjjaWpuEV_jt95l_830/edit#gid=124418455)*
-
-Global parameters include:
-   * Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/01_rawdata'
-   * Out_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
-   * bucket_name = 'bioscape.gra'
-   * s3 = boto3.client('s3')
-
-The script includes:
-*   Find all flightlines associated with the environmental covariate of interest and the area of interest (shapefile).
-*   For each flightline, clip to the area of interest.
-*   Mosaic together all clipped flightlines that align with the same area of interest.
-*   Extract summary metrics for each mosaic, including mean, median, min, max, std, and var.
-*   Export as .csv and upload to S3. 
-
-For a detailed walkthrough, see the notebook: [NA]
-
-** Note: Right now, processing slope is a separate file - could be combined with the processing of elevation!
 
 ## Scaling Analysis 
 The final step of the workflow is to fit scaling relationships to the functional richness and divergence outputs and extract parameters (exponent and coefficient) from the model fits. For our implementation, there is one input:
