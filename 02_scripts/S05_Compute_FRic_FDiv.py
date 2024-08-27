@@ -127,7 +127,8 @@ for i in plots:
     # Set no data to nan
     X = X.astype('float32')
     X[np.isnan(X)] = np.nan
-    X[X < 0] = np.nan
+    #X[X < 0] = np.nan
+    X[X <= 0] = np.nan
     X = X/10000 # rescale data
     # Impute values for NAs
     imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
