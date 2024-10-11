@@ -51,7 +51,7 @@ from csv import writer
 import argparse
 # Import supporting functions, functions for calculating FRic and FDiv
 from S01_Functions import *
-from S01_Moving_Window_FRIC_plot import *
+from S01_Moving_Window_FRic_plot import *
 
 # Set directories
 Data_Dir = '/home/ec2-user/BioSCape_across_scales/01_data/02_processed'
