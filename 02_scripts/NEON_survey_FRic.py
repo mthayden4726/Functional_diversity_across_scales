@@ -121,6 +121,12 @@ for i in plots:
     X_transformed -=x_mean
     x_std = np.nanstd(X_transformed,axis=0)[np.newaxis, :]
     X_transformed /=x_std
+    # Check for NaN, inf, or very large values in the array
+    if not np.isfinite(X_transformed).all():
+        print("Warning: X_transformed contains NaN, inf, or very large values")
+    # Replace inf values with NaN (if any) and then drop rows containing NaN
+    X_transformed = np.nan_to_num(X_transformed, nan=np.nan, posinf=np.nan, neginf=np.nan)
+    X_transformed = X_transformed[~np.isnan(X_transformed).any(axis=1)]
     # Perform initial PCA fit
     print("Fitting PCA")
     pca = PCA(n_components=comps) # set max number of components
