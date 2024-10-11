@@ -134,12 +134,7 @@ for i in plots:
     print("Calculating FRic")
     results_FR = {}
     local_file_path_fric = Out_Dir + "/fric_" + str(i) + ".csv"
-    window_batches = [(a, pca_x, results_FR, local_file_path_fric) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
-    volumes = process_map(
-        window_calcs,
-        window_batches,
-        max_workers=cpu_count() - 1
-    )
+    window_calcs(pca_x, results_FR, local_file_path_fric)
     destination_s3_key_fric = "NEON_sr_summaries/Fric_veg_" + str(i) + ".csv"
     upload_to_s3(bucket_name, local_file_path_fric, destination_s3_key_fric)
     print("FRic file uploaded to S3")
