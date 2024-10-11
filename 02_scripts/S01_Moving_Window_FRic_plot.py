@@ -25,7 +25,7 @@ from tqdm import tqdm
 import csv
 from csv import writer
 
-def window_calcs(i, pca_chunk, results_FR, local_file_path):
+def window_calcs(i, pca_chunk, local_file_path):
     
     """ Calculate convex hull volume for a single PCA chunk and window size.
     FOR USE IN PARALLEL PROCESSING OF FUNCTIONAL RICHNESS.
