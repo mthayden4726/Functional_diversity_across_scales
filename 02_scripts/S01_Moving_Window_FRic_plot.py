@@ -41,7 +41,7 @@ def window_calcs(args):
     volume_mean: functional richness for given window size and image.
     
     """
-    windows, pca_chunk, results_FR, local_file_path  = args
+    pca_chunk, results_FR, local_file_path  = args
     window_data = []
     fric = np.zeros((pca_chunk.shape[0], pca_chunk.shape[1]))
     comps = 3
@@ -50,7 +50,7 @@ def window_calcs(args):
     mean_arr = np.nanmean(sub_arr, axis=0)
     non_zero_indices = np.nonzero(mean_arr)[0]
     hull = ConvexHull(sub_arr)
-    window_data.append([window, hull.volume])
+    window_data.append([hull.volume])
     print(f"Hull volumes for window size {window}: {np.unique(fric)}")
 
     with open(local_file_path, 'a', newline='') as csvfile:
