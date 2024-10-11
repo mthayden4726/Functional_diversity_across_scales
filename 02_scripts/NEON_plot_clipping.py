@@ -161,7 +161,7 @@ for i in plots:
     with rasterio.open(output_path, "w", **clipped_meta) as dest:
         dest.write(clipped_data)
 
-    destination_s3_key_fric = "/NEON_sr_summaries/Clip_" + mosaicID + ".tif"
+    destination_s3_key_fric = "NEON_sr_summaries/Clip_" + mosaicID + ".tif"
     upload_to_s3(bucket_name, output_path, destination_s3_key_fric)
 
     os.remove(file)
