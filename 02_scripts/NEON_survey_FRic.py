@@ -141,7 +141,7 @@ for i in plots:
     
     # Calculate FRic on PCA across window sizes
     print("Calculating FRic")
-    window_calcs(i, pca_x, local_file_path_fric)
+    window_calcs(i, shape, pca_x, local_file_path_fric)
 
     # Remove files to clear storage
     os.remove(file)
