@@ -50,7 +50,7 @@ def window_calcs(i, pca_chunk, local_file_path):
     non_zero_indices = np.nonzero(mean_arr)[0]
     hull = ConvexHull(sub_arr)
     window_data.append([str(i), hull.volume])
-    print(f"Hull volumes for plot: {hull.volume}")
+    print(f"Hull volume for plot {i}: {hull.volume}")
 
     with open(local_file_path, 'a', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
