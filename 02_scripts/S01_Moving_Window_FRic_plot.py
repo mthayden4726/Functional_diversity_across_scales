@@ -50,16 +50,12 @@ def window_calcs(args):
     mean_arr = np.nanmean(sub_arr, axis=0)
     non_zero_indices = np.nonzero(mean_arr)[0]
     if len(non_zero_indices) >= 3:
-                    try:
-                        if hull is None:
-                            #print(sub_arr[:,non_zero_indices])
-                            hull = ConvexHull(sub_arr)
-                        #fric[i, j] = hull.volume
-                        #print(hull.volume)
-                        #print(fric)
-                    except scipy.spatial.qhull.QhullError as e:
-                        continue
-                    window_data.append([window, hull.volume])
+        try:
+            if hull is None:
+                hull = ConvexHull(sub_arr)
+        except scipy.spatial.qhull.QhullError as e:
+            continue
+    window_data.append([window, hull.volume])
     print(f"Hull volumes for window size {window}: {np.unique(fric)}")
 
     with open(local_file_path, 'a', newline='') as csvfile:
