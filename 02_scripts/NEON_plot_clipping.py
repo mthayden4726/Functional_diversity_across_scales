@@ -78,7 +78,7 @@ args = parser.parse_args()
 SITECODE = args.SITECODE
 #EPSG = args.EPSG
 
-file_stem = SITECODE + '_flightlines/Mosaic_' + SITECODE + '_'
+file_stem = SITECODE + '_flightlines/Mosaic_'
 
 # Load coordinates file
 # Define the S3 CSV path
