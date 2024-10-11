@@ -89,8 +89,8 @@ df = pd.read_csv(csv_path_s3)
 
 # Identify plot IDs
 # List shapefiles for a site in the S3 bucket in the matching directory
-search_criteria = SITECODE
-dirpath = "Site_boundaries/" + SITECODE + "/"
+search_criteria = "Mosaic"
+dirpath = SITECODE + "_flightlines/"
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
 # Filter objects based on the search criteria
 shapefiles = [obj['Key'] for obj in objects if obj['Key'].endswith('.shp') and (search_criteria in obj['Key'])]
