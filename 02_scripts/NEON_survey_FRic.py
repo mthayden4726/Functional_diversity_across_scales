@@ -118,21 +118,23 @@ for i in plots:
     X_transformed = imputer.fit_transform(X)
     # Scale & standardize array 
     x_mean = X_transformed.mean(axis=0)[np.newaxis, :]
+    print(x_mean)
     X_transformed -=x_mean
     x_std = np.nanstd(X_transformed,axis=0)[np.newaxis, :]
+    print(x_std)
     X_transformed /=x_std
     # Check for NaN, inf, or very large values in the array
     if not np.isfinite(X_transformed).all():
         print("Warning: X_transformed contains NaN, inf, or very large values")
     # Replace inf values with NaN (if any) and then drop rows containing NaN
     X_transformed = np.nan_to_num(X_transformed, nan=np.nan, posinf=np.nan, neginf=np.nan)
-    X_transformed = X_transformed[~np.isnan(X_transformed).any(axis=1)]
+    X_transformed_2 = imputer.fit_transform(X_transformed)
     # Perform initial PCA fit
     print("Fitting PCA")
     pca = PCA(n_components=comps) # set max number of components
-    pca.fit(X_transformed)
+    pca.fit(X_transformed_2)
     # PCA transform
-    pca_x =  pca.transform(X_transformed)
+    pca_x =  pca.transform(X_transformed_2)
     pca_x = pca_x.reshape((dim1, dim2,comps))
     print("PCA shape:", pca_x.shape)
     
