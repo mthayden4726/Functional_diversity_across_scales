@@ -125,7 +125,8 @@ for i in plots:
     # Filter to get coordinates
     filtered_site = df[df['plotID'] == mosaicID]
     if filtered_site.empty:
-        raise ValueError(f"Site {site_name} not found in the CSV.")
+        raise ValueError(f"Site {mosaicID} not found in the CSV.")
+        continue
         
     # Get the latitude and longitude for the selected site
     lat = filtered_site.iloc[0]['latitude']
