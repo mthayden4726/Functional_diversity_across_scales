@@ -49,10 +49,7 @@ def window_calcs(args):
     sub_arr = pca_chunk.reshape((-1, comps))
     mean_arr = np.nanmean(sub_arr, axis=0)
     non_zero_indices = np.nonzero(mean_arr)[0]
-    if len(non_zero_indices) >= 3:
-        try:
-            if hull is None:
-                hull = ConvexHull(sub_arr)
+    hull = ConvexHull(sub_arr)
     window_data.append([window, hull.volume])
     print(f"Hull volumes for window size {window}: {np.unique(fric)}")
 
@@ -64,5 +61,5 @@ def window_calcs(args):
         for data_point in window_data:
             csvwriter.writerow(data_point)
 
-return results_FR
+    return results_FR
         
