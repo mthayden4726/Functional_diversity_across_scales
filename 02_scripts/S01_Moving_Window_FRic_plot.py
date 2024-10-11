@@ -60,5 +60,5 @@ def window_calcs(i, pca_chunk, local_file_path):
         for data_point in window_data:
             csvwriter.writerow(data_point)
 
-    return results_FR
+    return hull.volume
         
