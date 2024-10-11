@@ -119,7 +119,7 @@ for i in plots:
     # Open as raster
     mosaic = rasterio.open(file)
     print(mosaic.crs)
-    mosaicID = SITECODE + '_' + str(i)
+    mosaicID = str(i)
     print(mosaicID)
     
     # Filter to get coordinates
