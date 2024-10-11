@@ -25,7 +25,7 @@ from tqdm import tqdm
 import csv
 from csv import writer
 
-def window_calcs(args):
+def window_calcs(pca_chunk, results_FR, local_file_path):
     
     """ Calculate convex hull volume for a single PCA chunk and window size.
     FOR USE IN PARALLEL PROCESSING OF FUNCTIONAL RICHNESS.
@@ -41,7 +41,6 @@ def window_calcs(args):
     volume_mean: functional richness for given window size and image.
     
     """
-    pca_chunk, results_FR, local_file_path  = args
     window_data = []
     fric = np.zeros((pca_chunk.shape[0], pca_chunk.shape[1]))
     comps = 3
