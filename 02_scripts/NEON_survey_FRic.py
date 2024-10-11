@@ -84,6 +84,7 @@ print(plots)
 
 # Loop through plots to calculate FRic and FDiv
 file_stem = "NEON_sr_summaries/Clip_"
+local_file_path_fric = Out_Dir + "/fric.csv"
 for i in plots:
     # Load data
     clip_file = file_stem + str(i) + '.tif' # Define file name in S3
@@ -140,12 +141,7 @@ for i in plots:
     
     # Calculate FRic on PCA across window sizes
     print("Calculating FRic")
-    results_FR = {}
-    local_file_path_fric = Out_Dir + "/fric_" + str(i) + ".csv"
-    window_calcs(pca_x, results_FR, local_file_path_fric)
-    destination_s3_key_fric = "NEON_sr_summaries/Fric_veg_" + str(i) + ".csv"
-    upload_to_s3(bucket_name, local_file_path_fric, destination_s3_key_fric)
-    print("FRic file uploaded to S3")
+    window_calcs(i, pca_x, local_file_path_fric)
 
     # Remove files to clear storage
     os.remove(file)
@@ -155,3 +151,7 @@ for i in plots:
     veg_np = None
     
     print("Mosaic Complete - Next...")
+
+destination_s3_key_fric = "NEON_sr_summaries/Fric_plots.csv"
+upload_to_s3(bucket_name, local_file_path_fric, destination_s3_key_fric)
+print("FRic file uploaded to S3")
