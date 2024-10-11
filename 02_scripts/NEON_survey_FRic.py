@@ -133,7 +133,7 @@ for i in plots:
     # Calculate FRic on PCA across window sizes
     print("Calculating FRic")
     results_FR = {}
-    local_file_path_fric = Out_Dir + "/" + SITECODE + "_fric_" + str(i) + ".csv"
+    local_file_path_fric = Out_Dir + "/fric_" + str(i) + ".csv"
     window_batches = [(a, pca_x, results_FR, local_file_path_fric) for a in np.array_split(window_sizes, cpu_count() - 1) if a.any()]
     volumes = process_map(
         window_calcs,
