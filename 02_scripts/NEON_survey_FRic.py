@@ -83,7 +83,7 @@ plots = list(raster_names)  # Convert set back to a list if needed
 print(plots)
 
 # Loop through plots to calculate FRic and FDiv
-file_stem = "/NEON_sr_summaries/Clip_"
+file_stem = "NEON_sr_summaries/Clip_"
 for i in plots:
     # Load data
     clip_file = file_stem + str(i) + '.tif' # Define file name in S3
@@ -140,7 +140,7 @@ for i in plots:
         window_batches,
         max_workers=cpu_count() - 1
     )
-    destination_s3_key_fric = "/Fric_veg_" + str(i) + ".csv"
+    destination_s3_key_fric = "NEON_sr_summaries/Fric_veg_" + str(i) + ".csv"
     upload_to_s3(bucket_name, local_file_path_fric, destination_s3_key_fric)
     print("FRic file uploaded to S3")
 
