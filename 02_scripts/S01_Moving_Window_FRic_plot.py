@@ -25,7 +25,7 @@ from tqdm import tqdm
 import csv
 from csv import writer
 
-def window_calcs(pca_chunk, results_FR, local_file_path):
+def window_calcs(i, pca_chunk, results_FR, local_file_path):
     
     """ Calculate convex hull volume for a single PCA chunk and window size.
     FOR USE IN PARALLEL PROCESSING OF FUNCTIONAL RICHNESS.
@@ -49,13 +49,13 @@ def window_calcs(pca_chunk, results_FR, local_file_path):
     mean_arr = np.nanmean(sub_arr, axis=0)
     non_zero_indices = np.nonzero(mean_arr)[0]
     hull = ConvexHull(sub_arr)
-    window_data.append([hull.volume])
+    window_data.append([str(i), hull.volume])
     print(f"Hull volumes for plot: {hull.volume}")
 
     with open(local_file_path, 'a', newline='') as csvfile:
         csvwriter = csv.writer(csvfile)
         if csvfile.tell() == 0:
-            csvwriter.writerow(['Window_Size', 'Hull_Volume'])  # Write header
+            csvwriter.writerow(['plotID','Hull_Volume'])  # Write header
                           
         for data_point in window_data:
             csvwriter.writerow(data_point)
