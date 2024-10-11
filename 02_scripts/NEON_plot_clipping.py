@@ -93,12 +93,12 @@ search_criteria = "Mosaic"
 dirpath = SITECODE + "_flightlines/"
 objects = s3.list_objects_v2(Bucket=bucket_name, Prefix=dirpath)['Contents']
 # Filter objects based on the search criteria
-shapefiles = [obj['Key'] for obj in objects if obj['Key'].endswith('.shp') and (search_criteria in obj['Key'])]
+shapefiles = [obj['Key'] for obj in objects if obj['Key'].endswith('.tif') and (search_criteria in obj['Key'])]
 shapefile_names = set()
 for i,shp in enumerate(shapefiles):
-    match = re.search(r'Site_boundaries/(.*?)/(.*?)_(.*?).shp', shp)
+    match = re.search(r'_flightlines/Mosaic_(.*?).tif', shp)
     if match:
-        shapefile_name = match.group(3)
+        shapefile_name = match.group(1)
         print(shapefile_name)
         shapefile_names.add(shapefile_name)
     else:
