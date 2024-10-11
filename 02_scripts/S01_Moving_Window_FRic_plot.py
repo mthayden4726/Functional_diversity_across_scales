@@ -59,7 +59,7 @@ def window_calcs(args):
                         #print(fric)
                     except scipy.spatial.qhull.QhullError as e:
                         continue
-                window_data.append([window, hull.volume])
+                    window_data.append([window, hull.volume])
     print(f"Hull volumes for window size {window}: {np.unique(fric)}")
 
     with open(local_file_path, 'a', newline='') as csvfile:
