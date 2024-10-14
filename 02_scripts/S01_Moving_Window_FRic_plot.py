@@ -43,7 +43,7 @@ def window_calcs(i, shape, pca_chunk, local_file_path):
     """
     window_data = []
     fric = np.zeros((pca_chunk.shape[0], pca_chunk.shape[1]))
-    comps = 3
+    comps = 10
     hull = None
     sub_arr = pca_chunk.reshape((-1, comps))
     mean_arr = np.nanmean(sub_arr, axis=0)
