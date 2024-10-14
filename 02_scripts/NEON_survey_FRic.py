@@ -116,20 +116,28 @@ for i in plots:
     X = X/10000 # rescale data
     # Impute values for NAs
     imputer = SimpleImputer(missing_values=np.nan, strategy='mean')
-    X_transformed = imputer.fit_transform(X)
+    try:
+        X_transformed = imputer.fit_transform(X)
+    except ValueError as e:
+        print(f"Error occurred: {e}")
+        continue
     # Scale & standardize array 
     x_mean = X_transformed.mean(axis=0)[np.newaxis, :]
-    print(x_mean)
+    print(f"Mean: {x_mean}")
     X_transformed -=x_mean
     x_std = np.nanstd(X_transformed,axis=0)[np.newaxis, :]
-    print(x_std)
+    print(f"Std: {x_std}")
     X_transformed /=x_std
     # Check for NaN, inf, or very large values in the array
     if not np.isfinite(X_transformed).all():
         print("Warning: X_transformed contains NaN, inf, or very large values")
     # Replace inf values with NaN (if any) and then drop rows containing NaN
     X_transformed = np.nan_to_num(X_transformed, nan=np.nan, posinf=np.nan, neginf=np.nan)
-    X_transformed_2 = imputer.fit_transform(X_transformed)
+    try:
+        X_transformed_2 = imputer.fit_transform(X_transformed)
+    except ValueError as e:
+        print(f"Error occurred: {e}")
+        continue
     # Perform initial PCA fit
     print("Fitting PCA")
     pca = PCA(n_components=comps) # set max number of components
