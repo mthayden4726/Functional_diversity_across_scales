@@ -62,7 +62,7 @@ s3 = boto3.client('s3')
 # Set global parameters #
 # window_sizes = [10, 30, 60, 120]   # smaller list of window sizes to test
 window_sizes = [20] # full list of window size for computations
-comps = 3 # number of components for PCA
+comps = 10 # number of components for PCA
 
 # Identify files
 # List shapefiles for a site in the S3 bucket in the matching directory
@@ -160,6 +160,6 @@ for i in plots:
     
     print("Mosaic Complete - Next...")
 
-destination_s3_key_fric = "NEON_sr_summaries/Fric_plots.csv"
+destination_s3_key_fric = "NEON_sr_summaries/Fric_plots_10pcs.csv"
 upload_to_s3(bucket_name, local_file_path_fric, destination_s3_key_fric)
 print("FRic file uploaded to S3")
