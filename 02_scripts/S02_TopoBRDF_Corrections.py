@@ -70,6 +70,7 @@ parser.add_argument('--DATE', type=str, required=True, help='YEAR (YYYYMMDD)')
 parser.add_argument('--DATE_ID', type=str, required=True, help='YEAR (YYYYMMDD##)')
 parser.add_argument('--EPSG', type=int, required=True, help='EPSG (#####)')
 parser.add_argument('--NDVI', type=float, required=True, help='NDVI threshold(0-1)')
+parser.add_argument('--NIR', type=float, required=True, help='NIR threshold(0-1)')
 
 # Parse the arguments
 args = parser.parse_args()
@@ -82,6 +83,7 @@ DATE = args.DATE
 DATE_ID = args.DATE_ID
 epsg = args.EPSG
 ndvi_threshold = args.NDVI
+nir_shade_threshold = args.NIR
 
 SITE_STR = DOMAIN + '/' + '2019_' + SITECODE + '_' + ID_NO
 SITE_STR_SHORT = DOMAIN + '_' + SITECODE
@@ -163,7 +165,7 @@ for i,file in enumerate(file_names):
     refl_md, header_dict = store_metadata(neon, epsg)
     # Remove bad bands
     wavelength = header_dict['wavelength']
-    good_wl = np.where((wavelength < 1340) | (wavelength > 1955), wavelength, np.nan)
+    good_wl = np.where(((wavelength < 1340) | (wavelength > 1445)) & ((wavelength < 1790) | (wavelength > 1955)) & (wavelength >= 400) & (wavelength <= 2400), wavelength, np.nan)
     good_wl_list = good_wl[~np.isnan(good_wl)]
     # Perform corrections on each 'good' band
     print("Creating arrays")
@@ -179,8 +181,22 @@ for i,file in enumerate(file_names):
                      where=(fullarraystack[:, :, nir_band] + fullarraystack[:, :, red_band]) != 0)
     print("Shape of ndvi array:", ndvi.shape)
     # Apply NDVI threshold mask
-    mask = ndvi < ndvi_threshold
-    print("Shape of mask array:", mask.shape)
+    ndvi_mask = ndvi < ndvi_threshold
+    print("Shape of NDVI mask array:", mask.shape)
+
+    # Add NIR-based shade mask (shade areas where NIR values are low)
+    print("Creating NIR shade mask")
+    nir_shade_mask = fullarraystack[:, :, nir_band] < nir_shade_threshold  # Define your shade threshold here
+    print("Shape of NIR shade mask array:", nir_shade_mask.shape)
+
+    # Combine NDVI mask and NIR shade mask
+    combined_mask = ndvi_mask | nir_shade_mask  # Combine with OR condition
+    print("Shape of combined mask array:", combined_mask.shape)
+
+    # Apply the combined mask to the full array stack
+    print("Masking by NDVI and NIR shade")
+    fullarraystack[combined_mask, :] = np.nan  # Apply mask, set masked pixels to NaN
+    
     print("masking by ndvi")
     fullarraystack[mask, :] = np.nan
     
