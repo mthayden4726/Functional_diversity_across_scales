@@ -182,7 +182,7 @@ for i,file in enumerate(file_names):
     print("Shape of ndvi array:", ndvi.shape)
     # Apply NDVI threshold mask
     ndvi_mask = ndvi < ndvi_threshold
-    print("Shape of NDVI mask array:", mask.shape)
+    print("Shape of NDVI mask array:", ndvi_mask.shape)
 
     # Add NIR-based shade mask (shade areas where NIR values are low)
     print("Creating NIR shade mask")
