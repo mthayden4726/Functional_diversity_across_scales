@@ -26,6 +26,7 @@ DATE = '20190825'
 DATE_ID = '2019082513'
 EPSG = '36219'
 NDVI_THRESHOLD = 0.25
+NIR_THRESHOLD = 0.2
 
 
 # Workflow to get Functional Richness and Functional Divergence for set of NEON plots (within a site)
@@ -38,6 +39,7 @@ script_string = "python 02_scripts/S02_TopoBRDF_Corrections.py --SITECODE " + SI
                 + "--DATE_ID " + DATE_ID 
                 + "--EPSG " + EPSG 
                 + "--NDVI " + NDVI_THRESHOLD
+                + "--NIR" + NIR_THRESHOLD
 os.system(script_string)
 print("Corrections complete.")
 
