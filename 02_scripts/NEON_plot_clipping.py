@@ -123,7 +123,7 @@ for i in plots:
     print(mosaicID)
     
     # Filter to get coordinates
-    filtered_site = df[df['plotID'].str.contains(mosaicID)]
+    filtered_site = df[df['plotID'].apply(lambda x: x in mosaicID)]
     if filtered_site.empty:
         raise ValueError(f"Site {mosaicID} not found in the CSV.")
         continue
